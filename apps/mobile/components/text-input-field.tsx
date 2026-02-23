@@ -1,12 +1,19 @@
-import { Platform, Text, TextInput, View } from "react-native";
+import {
+  Platform,
+  StyleProp,
+  Text,
+  TextInput,
+  TextStyle,
+  View,
+} from "react-native";
 
 const TextInputField = ({
   fieldName,
   ...props
 }: { fieldName: string } & React.ComponentProps<typeof TextInput>) => {
-  let _props = { ...props };
+  let _style: StyleProp<TextStyle> = {};
   if (Platform.OS === "ios") {
-    _props = { ..._props, style: { lineHeight: 0 } };
+    _style.lineHeight = 0;
   }
 
   return (
@@ -16,6 +23,7 @@ const TextInputField = ({
         className="bg-gray-50 border border-gray-200 text-gray-900 text-lg rounded-lg t-colors focus:ring-ut-blue focus:border-ut-blue block w-full p-4"
         {...props}
         placeholderTextColor={"#6b7280"}
+        style={_style}
       />
     </View>
   );
