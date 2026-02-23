@@ -27,7 +27,7 @@ const GuidelinesList = ({ includeBottomBorder = false }) => {
     },
     {
       icon: <MapPinIcon />,
-      title: "Pick Up/Drop Off Boundaries",
+      title: "Pick Up / Drop Off Boundaries",
       description:
         "• Pickups: Must begin from an on-campus location \n• Drop-offs: Allowed to West Campus, off-campus neighborhoods within the service area, or to another on-campus location \n• Sure Walk does not provide rides to any food establishment",
     },
@@ -65,7 +65,7 @@ const GuidelinesList = ({ includeBottomBorder = false }) => {
 
   return (
     <IconContext.Provider
-      value={{ color: "#BF5700", size: 21, weight: "bold" }}
+      value={{ color: "#BF5700", size: 20, weight: "bold" }}
     >
       <View className="flex-1 gap-5 p-5 pt-8">
         {!includeBottomBorder && (
@@ -78,7 +78,7 @@ const GuidelinesList = ({ includeBottomBorder = false }) => {
             <View key={index} className="gap-2">
               <View className="flex-row gap-2 items-center">
                 {guideline.icon}
-                <Text className="text-gray-900 text-xl font-semibold leading-[26px]">
+                <Text className="text-gray-900 text-2xl font-semibold leading-[26px]">
                   {guideline.title}
                 </Text>
               </View>

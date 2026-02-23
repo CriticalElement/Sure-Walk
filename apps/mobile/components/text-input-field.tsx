@@ -11,6 +11,9 @@ const TextInputField = ({
         className="bg-gray-50 border border-gray-200 text-gray-900 text-lg rounded-lg t-colors focus:ring-ut-blue focus:border-ut-blue block w-full p-4"
         {...props}
         placeholderTextColor={"#6b7280"}
+        style={{
+          lineHeight: 0,
+        }}
       />
     </View>
   );
