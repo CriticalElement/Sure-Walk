@@ -1,3 +1,5 @@
+import UserType from "./user-type";
+
 type User = {
   id: string;
   firstName: string;
@@ -5,6 +7,7 @@ type User = {
   phoneNumber: string;
   requiresAssistance: boolean;
   eid?: string;
+  userType: UserType;
 };
 
 export default User;

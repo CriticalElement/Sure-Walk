@@ -68,9 +68,11 @@ const GuidelinesList = ({ includeBottomBorder = false }) => {
       value={{ color: "#BF5700", size: 21, weight: "bold" }}
     >
       <View className="flex-1 gap-5 p-5 pt-8">
-        <Text className="text-gray-950 text-2xl font-medium leading-none">
-          Information and Guidelines
-        </Text>
+        {!includeBottomBorder && (
+          <Text className="text-gray-950 text-3xl font-medium leading-none">
+            Information and Guidelines
+          </Text>
+        )}
         <View className="flex-1 gap-3.5 justify-start">
           {guidelines.map((guideline, index) => (
             <View key={index} className="gap-2">

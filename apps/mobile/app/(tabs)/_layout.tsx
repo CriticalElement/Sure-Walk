@@ -1,14 +1,36 @@
-import { Tabs } from "expo-router";
+import { Redirect, SplashScreen, Tabs } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Platform } from "react-native";
+import { Platform, View, ActivityIndicator } from "react-native";
 import {
   ClipboardTextIcon,
   UserCircleIcon,
   HouseIcon,
 } from "phosphor-react-native";
+import { useSession } from "@/utils/context/user-context";
+import { useEffect } from "react";
 
 const _layout = () => {
   let paddingBottom: number = useSafeAreaInsets().bottom;
+
+  const { loadingState, user } = useSession();
+
+  useEffect(() => {
+    if (loadingState === "done") {
+      SplashScreen.hideAsync();
+    }
+  }, [loadingState]);
+
+  if (loadingState === "loading") {
+    return (
+      <View className="flex-1 items-center justify-center bg-white">
+        <ActivityIndicator size="large" color="#BF5700" />
+      </View>
+    );
+  }
+
+  if (user === null) {
+    return <Redirect href="/login" />;
+  }
 
   return (
     <Tabs
