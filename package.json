@@ -10,7 +10,9 @@
     "build:mobile": "pnpm --filter surewalk-mobile-app build",
     "build:web": "pnpm --filter surewalk-web-app build",
     "lint:mobile": "pnpm --filter surewalk-mobile-app lint",
-    "lint:web": "pnpm --filter surewalk-web-app lint"
+    "lint:web": "pnpm --filter surewalk-web-app lint",
+    "format": "prettier --write .",
+    "format:check": "prettier . --check --ignore-unknown"
   },
   "workspaces": [
     "apps/*",
