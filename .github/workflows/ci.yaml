@@ -1,7 +1,6 @@
 name: CI
 on:
   push:
-    branches: [main]
   pull_request:
     branches: [main]
 
@@ -40,6 +39,22 @@ jobs:
           distribution: "temurin"
           java-version: "17"
       - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+        run: chmod +x apps/mobile/android/gradlew
       - name: Build debug APK
-        run: ./gradlew assembleDebug
+        run: cd apps/mobile/android && ./gradlew assembleDebug
+
+  build-ios:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Install dependencies
+        run: |
+          cd apps/mobile/ios && pod install --repo-update
+      - name: Build iOS app (debug)
+        run: |
+          xcodebuild build -workspace SureWalkApp.xcworkspace \
+            -scheme SureWalkApp \
+            -configuration Debug \
+            -destination "generic/platform=iOS Simulator" \
+            CODE_SIGN_STYLE="Automatic"
