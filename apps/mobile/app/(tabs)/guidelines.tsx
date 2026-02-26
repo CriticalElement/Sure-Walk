@@ -19,7 +19,7 @@ const guidelines = () => {
     >
       <ScrollView className="bg-white flex-1 h-full">
         <View className="flex-1 gap-5 p-5 pt-8">
-          <FontText className="text-gray-950 text-2xl font-medium leading-none">
+          <FontText className="text-gray-950 text-2xl font-medium leading-6.25">
             Information and Guidelines
           </FontText>
           <View className="flex-1 gap-3.5 justify-start">
