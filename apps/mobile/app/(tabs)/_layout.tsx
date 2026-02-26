@@ -1,4 +1,4 @@
-import { Tabs } from "expo-router";
+import { SplashScreen, Tabs } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Platform } from "react-native";
 import {
@@ -6,9 +6,42 @@ import {
   UserCircleIcon,
   HouseIcon,
 } from "phosphor-react-native";
+import {
+  Geist_100Thin,
+  Geist_200ExtraLight,
+  Geist_300Light,
+  Geist_400Regular,
+  Geist_500Medium,
+  Geist_600SemiBold,
+  Geist_700Bold,
+  Geist_800ExtraBold,
+  Geist_900Black,
+  useFonts,
+} from "@expo-google-fonts/geist";
+import { useEffect } from "react";
+
+SplashScreen.preventAutoHideAsync();
 
 const _layout = () => {
   let paddingBottom: number = useSafeAreaInsets().bottom;
+
+  const [loaded, error] = useFonts({
+    Geist_100Thin,
+    Geist_200ExtraLight,
+    Geist_300Light,
+    Geist_400Regular,
+    Geist_500Medium,
+    Geist_600SemiBold,
+    Geist_700Bold,
+    Geist_800ExtraBold,
+    Geist_900Black,
+  });
+
+  useEffect(() => {
+    if (loaded || error) {
+      SplashScreen.hideAsync();
+    }
+  }, [loaded, error]);
 
   return (
     <Tabs
@@ -22,7 +55,7 @@ const _layout = () => {
           borderTopWidth: 1,
         },
         tabBarLabelStyle: {
-          fontFamily: "Geist", // TODO: actually use the font
+          fontFamily: "Geist_400Regular",
           fontSize: 12,
           paddingTop: 2,
           color: "#0F172A",
