@@ -29,6 +29,7 @@ jobs:
         run: pnpm format:check
 
   build-android:
+    needs: lint-format
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -55,6 +56,7 @@ jobs:
         run: cd apps/mobile/android && ./gradlew assembleDebug
 
   build-ios:
+    needs: lint-format
     runs-on: macos-latest
     steps:
       - name: Checkout code
