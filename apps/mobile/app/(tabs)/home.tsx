@@ -1,4 +1,4 @@
-import FontText from "@/components/FontText";
+import FontText from "@/components/font-text";
 import { View } from "react-native";
 
 const Home = () => {

@@ -6,7 +6,8 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        "ut-burntorange": "##BF5700",
+        "ut-burntorange": "#BF5700",
+        "ut-blue": "#005F86",
       },
       fontFamily: {
         thin: ["Geist_100Thin"],

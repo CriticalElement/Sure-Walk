@@ -1,5 +1,5 @@
 import { View } from "react-native";
-import FontText from "@/components/FontText";
+import FontText from "@/components/font-text";
 import { useSession } from "@/utils/context/user-context";
 import { Link } from "expo-router";
 
