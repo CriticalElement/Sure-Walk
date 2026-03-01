@@ -1,7 +1,7 @@
 name: CI
 on:
   push:
-    branches: [main, ci]
+    branches: [ci]
   pull_request:
     branches: [main]
 
@@ -42,7 +42,7 @@ jobs:
           node-version: 20
           cache: "pnpm"
       - name: Install dependencies
-        run: pnpm install && sed -i 's/# //g' pnpm-workspace.yaml
+        run: sed -i 's/# //g' pnpm-workspace.yaml && pnpm install
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
