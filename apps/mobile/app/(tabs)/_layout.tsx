@@ -44,7 +44,7 @@ const _layout = () => {
     if (loadingState === "done" && (loaded || error)) {
       SplashScreen.hideAsync();
     }
-  }, [loadingState]);
+  }, [loadingState, loaded, error]);
 
   if (loadingState === "loading") {
     return (

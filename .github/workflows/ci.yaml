@@ -6,19 +6,16 @@ on:
 jobs:
   lint-format:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [20]
     steps:
       - uses: actions/checkout@v4
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 10
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js 20
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 20
           cache: "pnpm"
       - name: Install dependencies
         run: pnpm install
@@ -37,10 +34,10 @@ jobs:
         uses: pnpm/action-setup@v4
         with:
           version: 10
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js 20
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 20
           cache: "pnpm"
       - name: Install dependencies
         run: sed -i 's/# //g' pnpm-workspace.yaml && pnpm install
@@ -64,13 +61,13 @@ jobs:
         uses: pnpm/action-setup@v4
         with:
           version: 10
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js 20
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 20
           cache: "pnpm"
       - name: Install dependencies
-        run: sed -i 's/# //g' pnpm-workspace.yaml && pnpm install
+        run: sed -i '' 's/# //g' pnpm-workspace.yaml && pnpm install
       - name: Install dependencies
         run: |
           cd apps/mobile/ios && pod install --repo-update
