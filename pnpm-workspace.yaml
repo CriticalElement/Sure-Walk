@@ -7,8 +7,8 @@ ignoredBuiltDependencies:
   - sharp
   - unrs-resolver
 
-publicHoistPattern:
-  - "*expo-modules-core"
-  - "*expo-modules-autolinking"
-  - "*babel-preset-expo"
-nodeLinker: hoisted
+# publicHoistPattern:
+#   - "*expo-modules-core"
+#   - "*expo-modules-autolinking"
+#   - "*babel-preset-expo"
+# nodeLinker: hoisted
