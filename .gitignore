@@ -68,3 +68,7 @@ coverage/
 
 # Logs
 *.log
+
+# open-next build
+# apps/web/.open-next/
+# apps/web/.wrangler/
