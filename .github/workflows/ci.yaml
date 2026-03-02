@@ -120,4 +120,4 @@ jobs:
       - name: Install dependencies
         run: pnpm install && cd apps/web && pnpm install
       - name: Build web app
-        run: cd apps/web && && pnpm build && pnpm opennextjs-cloudflare build
+        run: cd apps/web && pnpm build && pnpm opennextjs-cloudflare build
