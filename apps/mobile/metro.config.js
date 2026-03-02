@@ -5,4 +5,4 @@ const config = getDefaultConfig(__dirname);
 
 config.resolver.sourceExts.push("cjs");
 
-module.exports = withNativeWind(config, { input: "./app/globals.css" });
+module.exports = withNativeWind(config, { input: "./src/app/globals.css" });

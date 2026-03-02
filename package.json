@@ -6,7 +6,6 @@
     "prepare": "husky",
     "commitlint": "commitlint --edit",
     "dev:mobile": "pnpm --filter surewalk-mobile-app start",
-    "dev:web": "pnpm --filter surewalk-web-app dev",
     "build:mobile": "pnpm --filter surewalk-mobile-app build",
     "build:web": "pnpm --filter surewalk-web-app build",
     "lint:mobile": "pnpm --filter surewalk-mobile-app lint",
