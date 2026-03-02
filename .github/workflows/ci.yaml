@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  lint-format:
+  lint-format-mobile:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -23,12 +23,32 @@ jobs:
       - name: Install dependencies
         run: pnpm install
       - name: Run lint
-        run: pnpm lint:mobile && pnpm lint:web
+        run: pnpm lint:mobile
       - name: Run format check
-        run: pnpm format:check
+        run: pnpm format:check-mobile
+
+  lint-format-web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+      - name: Install dependencies
+        run: pnpm install
+      - name: Run lint
+        run: pnpm lint:web
+      - name: Run format check
+        run: pnpm format:check-web
 
   build-android:
-    needs: lint-format
+    needs: lint-format-mobile
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -55,7 +75,7 @@ jobs:
         run: cd apps/mobile/android && ./gradlew assembleDebug
 
   build-ios:
-    needs: lint-format
+    needs: lint-format-mobile
     runs-on: macos-latest
     steps:
       - name: Checkout code
@@ -81,3 +101,23 @@ jobs:
             -configuration Debug \
             -destination "generic/platform=iOS Simulator" \
             CODE_SIGN_STYLE="Automatic"
+
+  build-web:
+    needs: lint-format-web
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+      - name: Install dependencies
+        run: pnpm install
+      - name: Build web app
+        run: cd apps/web && pnpm opennextjs-cloudflare build
