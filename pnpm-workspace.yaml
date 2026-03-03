@@ -6,9 +6,9 @@ packages:
 ignoredBuiltDependencies:
   - sharp
   - unrs-resolver
+  - workerd
 
-# publicHoistPattern:
-#   - "*expo-modules-core"
-#   - "*expo-modules-autolinking"
-#   - "*babel-preset-expo"
-# nodeLinker: hoisted
+shamefullyHoist: true
+
+onlyBuiltDependencies:
+  - esbuild
