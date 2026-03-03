@@ -41,9 +41,10 @@ export const SessionProvider = ({ children }: PropsWithChildren) => {
       await SecureStore.deleteItemAsync("userData");
       setLoadingState("done");
       return;
+    } finally {
+      setLoadingState("done");
+      return;
     }
-
-    setLoadingState("done");
   };
 
   useEffect(() => {
