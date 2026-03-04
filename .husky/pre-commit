@@ -1,3 +1,4 @@
 #!/usr/bin/env sh
-pnpm lint
+pnpm lint:mobile
+pnpm lint:web
 pnpm exec lint-staged
