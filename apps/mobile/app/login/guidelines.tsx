@@ -58,7 +58,7 @@ const Guidelines = () => {
           colors={["#ffffff00", "#ffffffff"]}
           style={{
             position: "absolute",
-            bottom: -1,
+            bottom: 0,
             left: 0,
             right: 0,
             height: 32,
@@ -67,7 +67,7 @@ const Guidelines = () => {
         />
         <ScrollView className="flex-col">
           <GuidelinesList includeBottomBorder />
-          <View className="pt-6 px-5 pb-[38px]">
+          <View className="pt-6 px-5 pb-[46px]">
             <CheckButton
               label="I have read and accept the guidelines."
               isChecked={checked}
@@ -76,7 +76,7 @@ const Guidelines = () => {
           </View>
         </ScrollView>
       </View>
-      <View className="px-5 mt-2">
+      <View className="px-5">
         <LargeButton
           title="Continue"
           onPress={updateUserAndContinue}
