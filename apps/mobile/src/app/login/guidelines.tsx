@@ -49,11 +49,11 @@ const Guidelines = () => {
         />
         <LinearGradient
           colors={["#ffffff00", "#ffffffff"]}
-          className="absolute bottom-0 left-0 right-0 h-8 z-10"
+          className="absolute bottom-[-1px] left-0 right-0 h-8 z-10"
         />
         <ScrollView className="flex-col">
           <GuidelinesList includeBottomBorder />
-          <View className="pt-6 px-5 pb-[46px]">
+          <View className="pt-6 px-5 pb-[38px]">
             <CheckButton
               label="I have read and accept the guidelines."
               isChecked={checked}
@@ -62,7 +62,7 @@ const Guidelines = () => {
           </View>
         </ScrollView>
       </View>
-      <View className="px-5">
+      <View className="px-5 mt-2">
         <LargeButton
           title="Continue"
           onPress={updateUserAndContinue}
