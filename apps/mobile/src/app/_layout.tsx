@@ -1,7 +1,7 @@
 import { SplashScreen, Stack } from "expo-router";
 import "../app/globals.css";
 import { Platform, View } from "react-native";
-import { SessionProvider } from "@/utils/context/user-context";
+import { SessionProvider } from "@/src/utils/context/user-context";
 import { useEffect } from "react";
 import * as NavigationBar from "expo-navigation-bar";
 

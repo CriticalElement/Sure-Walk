@@ -6,7 +6,7 @@ import {
   UserCircleIcon,
   HouseIcon,
 } from "phosphor-react-native";
-import { useSession } from "@/utils/context/user-context";
+import { useSession } from "@/src/utils/context/user-context";
 import { useEffect } from "react";
 import {
   Geist_100Thin,

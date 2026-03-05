@@ -1,10 +1,10 @@
-import LargeButton from "@/components/large-button";
-import RadioButton from "@/components/radio-button";
-import { useLoginSession } from "@/utils/context/login-context";
-import { useSession } from "@/utils/context/user-context";
+import LargeButton from "@/src/components/large-button";
+import RadioButton from "@/src/components/radio-button";
+import { useLoginSession } from "@/src/utils/context/login-context";
+import { useSession } from "@/src/utils/context/user-context";
 import { Link, router } from "expo-router";
 import { View } from "react-native";
-import FontText from "@/components/font-text";
+import FontText from "@/src/components/font-text";
 
 const Index = () => {
   const { setUser } = useSession();

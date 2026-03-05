@@ -1,6 +1,6 @@
 import { View } from "react-native";
-import FontText from "@/components/font-text";
-import { useSession } from "@/utils/context/user-context";
+import FontText from "@/src/components/font-text";
+import { useSession } from "@/src/utils/context/user-context";
 import { Link } from "expo-router";
 
 const Profile = () => {

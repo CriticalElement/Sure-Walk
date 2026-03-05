@@ -1,4 +1,4 @@
-import { LoginSessionProvider } from "@/utils/context/login-context";
+import { LoginSessionProvider } from "@/src/utils/context/login-context";
 import { router, Stack, usePathname } from "expo-router";
 import { CaretLeftIcon } from "phosphor-react-native";
 import { TouchableOpacity, View } from "react-native";

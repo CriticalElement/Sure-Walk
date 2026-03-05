@@ -1,5 +1,5 @@
 import { ScrollView } from "react-native";
-import GuidelinesList from "@/components/guidelines-list";
+import GuidelinesList from "@/src/components/guidelines-list";
 
 const guidelines = () => {
   return (
