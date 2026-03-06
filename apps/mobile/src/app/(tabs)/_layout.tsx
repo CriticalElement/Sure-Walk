@@ -41,10 +41,7 @@ const _layout = () => {
   });
 
   useEffect(() => {
-    if (
-      loadingState === "done" ||
-      (loadingState === "error" && (loaded || error))
-    ) {
+    if (loadingState !== "loading" && (loaded || error)) {
       SplashScreen.hideAsync();
     }
   }, [loadingState, loaded, error]);
