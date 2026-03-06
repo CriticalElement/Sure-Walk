@@ -6,7 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/images/ios-light.png",
     "scheme": "myapp",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
@@ -29,7 +29,8 @@
       },
       "package": "com.anonymous.SureWalkApp",
       "statusBar": {
-        "backgroundColor": "#FFFFFF",
+        "backgroundColor": "FFFFFF",
+        "barStyle": "dark-content",
         "translucent": true
       }
     },
