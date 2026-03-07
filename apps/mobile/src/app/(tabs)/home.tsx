@@ -24,13 +24,22 @@ import BottomSheet, {
 import Animated, { Easing, FadeInUp, FadeOutUp } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
 import CheckButton from "@/src/components/check-button";
+import { ScrollView } from "react-native-gesture-handler";
 
 const Home = () => {
   const sheetRef = useRef<BottomSheet>(null);
   const destinationRef = useRef<TextInput>(null);
   const { height } = useWindowDimensions();
+  const androidOffset = Platform.OS === "android" ? -16 : 0; // weird offset hack on android
+  // maybe due to bottom bar safe area inset?
+
+  // snap bar at roughly 11%, 40%, and 90%
   const snapPoints = useMemo(
-    () => [`${(104 / height) * 100}%`, `${(320 / height) * 100}%`, "90%"],
+    () => [
+      `${((112 + androidOffset) / height) * 100}%`,
+      `${((328 + androidOffset * 1.5) / height) * 100}%`,
+      "90%",
+    ],
     [height],
   );
   const [snapIndex, setSnapIndex] = useState<number>(1);
@@ -137,6 +146,8 @@ const Home = () => {
         <BottomSheetScrollView
           stickyHeaderIndices={[0]}
           overScrollMode={"always"}
+          nestedScrollEnabled
+          scrollEnabled={snapIndex === 2}
         >
           <View className="flex-col mb-[-24px]">
             <View className="flex-col bg-white">
