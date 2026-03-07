@@ -7,7 +7,7 @@ import {
   StarIcon,
   UserCirclePlusIcon,
 } from "phosphor-react-native";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Platform,
   StyleProp,
@@ -24,10 +24,12 @@ import BottomSheet, {
 import Animated, { Easing, FadeInUp, FadeOutUp } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
 import CheckButton from "@/src/components/check-button";
-import { ScrollView } from "react-native-gesture-handler";
+import MapView from "react-native-maps";
+import * as Location from "expo-location";
 
 const Home = () => {
   const sheetRef = useRef<BottomSheet>(null);
+  const mapRef = useRef<MapView>(null);
   const destinationRef = useRef<TextInput>(null);
   const { height } = useWindowDimensions();
   const androidOffset = Platform.OS === "android" ? -16 : 0; // weird offset hack on android
@@ -40,12 +42,16 @@ const Home = () => {
       `${((328 + androidOffset * 1.5) / height) * 100}%`,
       "90%",
     ],
-    [height],
+    [height, androidOffset],
   );
   const [snapIndex, setSnapIndex] = useState<number>(1);
   const [legendOpen, setLegendOpen] = useState<boolean>(false);
   const [showPickupBoundary, setPickupBoundary] = useState<boolean>(false);
   const [showDropoffBoundary, setDropoffBoundary] = useState<boolean>(false);
+
+  const [location, setLocation] = useState<Location.LocationObject | null>(
+    null,
+  );
 
   const [destinationText, setDestinationText] = useState<string>("");
 
@@ -54,9 +60,39 @@ const Home = () => {
     _style.lineHeight = 0;
   }
 
+  const centerMapOnLocation = () => {
+    if (location) {
+      mapRef.current?.animateCamera({
+        center: {
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+        },
+      });
+    }
+  };
+
+  useEffect(() => {
+    async function requestLocationPermissions() {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        console.error("location denied");
+        return;
+      } else {
+        let location = await Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.BestForNavigation,
+          timeInterval: 10,
+        });
+        setLocation(location);
+        centerMapOnLocation();
+      }
+    }
+
+    requestLocationPermissions();
+  }, [centerMapOnLocation]);
+
   return (
     <View className="bg-white flex-1 flex-col items-center">
-      <View className="relative flex-col items-center justify-center pt-3 pb-1.5 px-5 w-full">
+      <View className="relative flex-col items-center justify-center pt-3 pb-3.5 px-5 w-full">
         <View className="flex-col items-center justify-center gap-1">
           <View className="flex-row justify-center items-center gap-1">
             <NavigationArrowIcon
@@ -76,14 +112,14 @@ const Home = () => {
         <TouchableOpacity
           className="absolute right-5 top-3 p-3 items-center justify-center rounded-2xl bg-slate-50"
           onPress={() => {
-            if (snapIndex == 2) sheetRef.current?.snapToIndex(1);
+            if (snapIndex === 2) sheetRef.current?.snapToIndex(1);
             setLegendOpen(!legendOpen);
           }}
         >
           <FadersHorizontalIcon color="#334155" size="24" />
         </TouchableOpacity>
       </View>
-      <View className="relative flex-1 bg-slate-100 w-full">
+      <View className="relative flex-1 w-full">
         <LinearGradient
           colors={["#ffffffff", "#ffffff00"]}
           style={{
@@ -92,6 +128,21 @@ const Home = () => {
             zIndex: 100,
           }}
         />
+        <View className="w-full h-full mt-[-34px]">
+          <MapView
+            style={{ width: "100%", height: "100%" }}
+            showsUserLocation
+            followsUserLocation
+            initialRegion={{
+              latitude: 30.282962,
+              longitude: -97.737224,
+              latitudeDelta: 0.01,
+              longitudeDelta: 0.01,
+            }}
+            mapPadding={{ bottom: 92, top: 20, left: 0, right: 0 }}
+            tintColor="#BF5700"
+          />
+        </View>
         {legendOpen && (
           <>
             <Animated.View

@@ -46,7 +46,7 @@ const _layout = () => {
     }
   }, [loadingState, loaded, error]);
 
-  if (loadingState === "loading") {
+  if (loadingState === "loading" || (!loaded && !error)) {
     return (
       <View className="flex-1 items-center justify-center bg-white">
         <ActivityIndicator size="large" color="#BF5700" />

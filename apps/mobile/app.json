@@ -18,6 +18,9 @@
         "dark": "./assets/images/ios-dark.png",
         "light": "./assets/images/ios-light.png",
         "tinted": "./assets/images/ios-tinted.png"
+      },
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Sure Walk needs your location to determine the pickup location, and display where you are relative to your driver."
       }
     },
     "android": {
@@ -78,6 +81,12 @@
             "node_modules/@expo-google-fonts/geist/800ExtraBold/Geist_800ExtraBold.ttf",
             "node_modules/@expo-google-fonts/geist/900Black/Geist_900Black.ttf"
           ]
+        }
+      ],
+      [
+        "react-native-permissions",
+        {
+          "iosPermissions": ["LocationWhenInUse"]
         }
       ]
     ],
