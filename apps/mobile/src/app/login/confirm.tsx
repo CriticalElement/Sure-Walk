@@ -13,7 +13,7 @@ const Confirm = () => {
 
   return (
     <View className="flex-1 bg-white px-5">
-      <FontText className="text-3xl font-medium mb-2">
+      <FontText className="text-2xl font-medium mb-2">
         Verify your phone number
       </FontText>
       <FontText className="text-lg mb-12">

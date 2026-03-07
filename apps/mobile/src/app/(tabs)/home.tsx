@@ -36,7 +36,7 @@ const Home = () => {
   // snap bar at roughly 11%, 40%, and 90%
   const snapPoints = useMemo(
     () => [
-      `${((112 + androidOffset) / height) * 100}%`,
+      `${((110 + androidOffset) / height) * 100}%`,
       `${((328 + androidOffset * 1.5) / height) * 100}%`,
       "90%",
     ],
@@ -146,8 +146,9 @@ const Home = () => {
         <BottomSheetScrollView
           stickyHeaderIndices={[0]}
           overScrollMode={"always"}
-          nestedScrollEnabled
-          scrollEnabled={snapIndex === 2}
+          scrollEnabled={
+            Platform.OS === "android" ? snapIndex === 2 : undefined
+          }
         >
           <View className="flex-col mb-[-24px]">
             <View className="flex-col bg-white">
@@ -198,7 +199,7 @@ const Home = () => {
             />
           </View>
           <View className="relative px-5 pt-4 flex-col gap-4 justify-start">
-            {[...Array(20)].map((_, index) => (
+            {[...Array(10)].map((_, index) => (
               <View
                 key={index}
                 className="flex-col border-b border-gray-200 pb-4"

@@ -10,7 +10,7 @@ const Assistance = () => {
 
   return (
     <View className="flex-1 bg-white px-5">
-      <FontText className="text-3xl font-medium mb-2">
+      <FontText className="text-2xl font-medium mb-2">
         Do you need ADA assistance?
       </FontText>
       <FontText className="text-lg mb-12">
