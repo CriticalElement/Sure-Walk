@@ -8,7 +8,15 @@ import {
   UserCirclePlusIcon,
 } from "phosphor-react-native";
 import { useMemo, useRef, useState } from "react";
-import { TextInput, TouchableOpacity, View } from "react-native";
+import {
+  Platform,
+  StyleProp,
+  TextInput,
+  TextStyle,
+  TouchableOpacity,
+  useWindowDimensions,
+  View,
+} from "react-native";
 import BottomSheet, {
   BottomSheetScrollView,
   TouchableOpacity as TO,
@@ -20,10 +28,22 @@ import CheckButton from "@/src/components/check-button";
 const Home = () => {
   const sheetRef = useRef<BottomSheet>(null);
   const destinationRef = useRef<TextInput>(null);
-  const snapPoints = useMemo(() => ["11%", "34%", "90%"], []);
+  const { height } = useWindowDimensions();
+  const snapPoints = useMemo(
+    () => [`${(104 / height) * 100}%`, `${(320 / height) * 100}%`, "90%"],
+    [height],
+  );
+  const [snapIndex, setSnapIndex] = useState<number>(1);
   const [legendOpen, setLegendOpen] = useState<boolean>(false);
   const [showPickupBoundary, setPickupBoundary] = useState<boolean>(false);
   const [showDropoffBoundary, setDropoffBoundary] = useState<boolean>(false);
+
+  const [destinationText, setDestinationText] = useState<string>("");
+
+  let _style: StyleProp<TextStyle> = {};
+  if (Platform.OS === "ios") {
+    _style.lineHeight = 0;
+  }
 
   return (
     <View className="bg-white flex-1 flex-col items-center">
@@ -47,7 +67,7 @@ const Home = () => {
         <TouchableOpacity
           className="absolute right-5 top-3 p-3 items-center justify-center rounded-2xl bg-slate-50"
           onPress={() => {
-            sheetRef.current?.snapToIndex(1);
+            if (snapIndex == 2) sheetRef.current?.snapToIndex(1);
             setLegendOpen(!legendOpen);
           }}
         >
@@ -101,56 +121,73 @@ const Home = () => {
         index={1}
         style={{ borderRadius: 28, backgroundColor: "transparent" }}
         onChange={(index) => {
-          if (index !== 2) destinationRef.current?.blur();
+          if (index !== 2) {
+            destinationRef.current?.blur();
+          }
+          setSnapIndex(index);
         }}
         handleComponent={() => (
-          <View className="relative flex-col rounded-t-[28px] mb-[-24px]">
+          <View className="relative flex-col rounded-t-[28px]">
             <View className="rounded-t-[28px] flex-col items-center py-4">
               <View className="bg-slate-300 rounded w-8 h-1" />
             </View>
-            <View className="flex-col gap-5 px-5 pb-5">
-              <View className="flex-row w-full justify-between items-center">
-                <FontText className="text-2xl font-medium">
-                  Book a ride
-                </FontText>
-                <TO>
-                  <View className="flex-row gap-1 p-3 items-center bg-slate-100 rounded-[32px]">
-                    <UserCirclePlusIcon color="#334155" size="24" />
-                    <FontText className="font-medium">Add Riders</FontText>
-                  </View>
-                </TO>
+          </View>
+        )}
+      >
+        <BottomSheetScrollView
+          stickyHeaderIndices={[0]}
+          overScrollMode={"always"}
+        >
+          <View className="flex-col mb-[-24px]">
+            <View className="flex-col bg-white">
+              <View className="flex-col gap-5 px-5 pb-5">
+                <View className="flex-row w-full justify-between items-center">
+                  <FontText className="text-2xl font-medium">
+                    Book a ride
+                  </FontText>
+                  <TO>
+                    <View className="flex-row gap-1 p-3 items-center bg-slate-100 rounded-[32px]">
+                      <UserCirclePlusIcon color="#334155" size="24" />
+                      <FontText className="font-medium">Add Riders</FontText>
+                    </View>
+                  </TO>
+                </View>
               </View>
-            </View>
-            <View className="flex-col">
-              <View className="bg-white shadow-sm flex-row mx-5 px-4 py-[26.5px] gap-2 items-center rounded-t-lg border border-slate-200">
-                <CircleIcon color="#BF5700" weight="fill" size="24" />
-                <FontText className="font-medium text-base">
-                  Perry-Castañeda Library
-                </FontText>
-              </View>
-              <View className="bg-white shadow-sm flex-row mx-5 px-4 py-[26.5px] gap-2 items-center rounded-b-lg border border-slate-200 mt-[-1px] mb-6">
-                <MapPinIcon color="#0F172A" size="24" weight="fill" />
-                <TextInput
-                  ref={destinationRef}
-                  onFocus={() => sheetRef.current?.expand()}
-                  className="font-medium text-base flex-1"
-                  placeholder="Where to?"
-                />
+              <View className="flex-col">
+                <View className="bg-white shadow-sm flex-row mx-5 px-4 py-[26.5px] gap-2 items-center rounded-t-lg border border-slate-200">
+                  <CircleIcon color="#BF5700" weight="fill" size="24" />
+                  <FontText className="font-medium text-base">
+                    Perry-Castañeda Library
+                  </FontText>
+                </View>
+                <View className="bg-white shadow-sm flex-row mx-5 px-4 py-[26.5px] gap-2 items-center rounded-b-lg border border-slate-200 mt-[-1px] mb-6">
+                  <MapPinIcon color="#0F172A" size="24" weight="fill" />
+                  <TextInput
+                    ref={destinationRef}
+                    onFocus={() =>
+                      snapIndex !== 2 && sheetRef.current?.expand()
+                    }
+                    className="font-medium text-base flex-1"
+                    placeholder="Where to?"
+                    placeholderTextColor="#6B7280"
+                    onChangeText={(text) => setDestinationText(text)}
+                    value={destinationText}
+                    style={_style}
+                  />
+                </View>
               </View>
             </View>
             <LinearGradient
               colors={["#ffffffff", "#ffffff00"]}
               style={{
+                marginTop: -1,
                 height: 24,
                 zIndex: 50,
               }}
             />
           </View>
-        )}
-      >
-        <BottomSheetScrollView>
           <View className="relative px-5 pt-4 flex-col gap-4 justify-start">
-            {[...Array(25)].map((_, index) => (
+            {[...Array(20)].map((_, index) => (
               <View
                 key={index}
                 className="flex-col border-b border-gray-200 pb-4"
