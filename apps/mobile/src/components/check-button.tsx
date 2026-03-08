@@ -6,16 +6,18 @@ const CheckButton = ({
   label: text,
   onPress = () => {},
   isChecked,
+  color = "#BF5700",
 }: {
   label: string;
   onPress?: () => void;
   isChecked: boolean;
+  color?: string;
 }) => {
   return (
     <TouchableOpacity onPress={onPress}>
       <View className="flex-row items-center justify-start gap-2.5 t-colors">
         {isChecked ? (
-          <CheckSquareIcon size={20} color="#BF5700" weight="fill" />
+          <CheckSquareIcon size={20} color={color} weight="fill" />
         ) : (
           <SquareIcon size={20} color="#44403c" />
         )}

@@ -24,8 +24,12 @@ import BottomSheet, {
 import Animated, { Easing, FadeInUp, FadeOutUp } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
 import CheckButton from "@/src/components/check-button";
-import MapView from "react-native-maps";
+import MapView, { Polygon } from "react-native-maps";
 import * as Location from "expo-location";
+import {
+  dropoffBoundaryPolygons,
+  pickupBoundaryPolygons,
+} from "@/src/utils/boundary-info";
 
 const Home = () => {
   const sheetRef = useRef<BottomSheet>(null);
@@ -46,8 +50,8 @@ const Home = () => {
   );
   const [snapIndex, setSnapIndex] = useState<number>(1);
   const [legendOpen, setLegendOpen] = useState<boolean>(false);
-  const [showPickupBoundary, setPickupBoundary] = useState<boolean>(false);
-  const [showDropoffBoundary, setDropoffBoundary] = useState<boolean>(false);
+  const [showPickupBoundary, setPickupBoundary] = useState<boolean>(true);
+  const [showDropoffBoundary, setDropoffBoundary] = useState<boolean>(true);
 
   const [location, setLocation] = useState<Location.LocationObject | null>(
     null,
@@ -130,7 +134,7 @@ const Home = () => {
         />
         <View className="w-full h-full mt-[-34px]">
           <MapView
-            style={{ width: "100%", height: "100%" }}
+            style={{ width: "100%", height: "100%", zIndex: 0 }}
             showsUserLocation
             followsUserLocation
             initialRegion={{
@@ -141,7 +145,48 @@ const Home = () => {
             }}
             mapPadding={{ bottom: 92, top: 20, left: 0, right: 0 }}
             tintColor="#BF5700"
-          />
+          >
+            {pickupBoundaryPolygons.map((coords, index) => (
+              <Polygon
+                coordinates={coords}
+                key={index}
+                fillColor={showPickupBoundary ? "#BF570060" : "#00000000"}
+                strokeColor={
+                  showPickupBoundary ? "#BF5700" : "rgba(0, 0, 0, 0)"
+                }
+              />
+            ))}
+            {dropoffBoundaryPolygons.map((coords, index) => (
+              <Polygon
+                coordinates={coords}
+                holes={
+                  index === 0
+                    ? [
+                        [
+                          { latitude: 30.289121, longitude: -97.7429238 },
+                          { latitude: 30.2883058, longitude: -97.7430042 },
+                          { latitude: 30.2882641, longitude: -97.7423873 },
+                          { latitude: 30.2890701, longitude: -97.7423283 },
+                          { latitude: 30.289121, longitude: -97.7429238 },
+                        ],
+                        [
+                          { latitude: 30.2888591, longitude: -97.7437415 },
+                          { latitude: 30.287935, longitude: -97.743838 },
+                          { latitude: 30.2878887, longitude: -97.7431889 },
+                          { latitude: 30.288822, longitude: -97.7430897 },
+                          { latitude: 30.2888591, longitude: -97.7437415 },
+                        ],
+                      ]
+                    : undefined
+                }
+                key={index}
+                fillColor={showDropoffBoundary ? "#005F8660" : "#00000000"}
+                strokeColor={
+                  showDropoffBoundary ? "#005F86" : "rgba(0, 0, 0, 0)"
+                }
+              />
+            ))}
+          </MapView>
         </View>
         {legendOpen && (
           <>
@@ -169,6 +214,7 @@ const Home = () => {
                 label="Drop-Off Boundary"
                 onPress={() => setDropoffBoundary(!showDropoffBoundary)}
                 isChecked={showDropoffBoundary}
+                color={"#005F86"}
               />
             </Animated.View>
           </>
