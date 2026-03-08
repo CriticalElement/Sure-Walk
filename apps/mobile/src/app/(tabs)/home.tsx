@@ -53,9 +53,7 @@ const Home = () => {
   const [showPickupBoundary, setPickupBoundary] = useState<boolean>(true);
   const [showDropoffBoundary, setDropoffBoundary] = useState<boolean>(true);
 
-  const [location, setLocation] = useState<Location.LocationObject | null>(
-    null,
-  );
+  const [, setLocation] = useState<Location.LocationObject | null>(null);
 
   const [destinationText, setDestinationText] = useState<string>("");
 
@@ -64,15 +62,15 @@ const Home = () => {
     _style.lineHeight = 0;
   }
 
-  const centerMapOnLocation = () => {
-    if (location) {
+  const centerMapOnLocation = (location: Location.LocationObject) => {
+    setTimeout(() => {
       mapRef.current?.animateCamera({
         center: {
-          latitude: location.coords.latitude,
+          latitude: location.coords.latitude - 0.0038,
           longitude: location.coords.longitude,
         },
       });
-    }
+    }, 1000);
   };
 
   useEffect(() => {
@@ -84,15 +82,14 @@ const Home = () => {
       } else {
         let location = await Location.getCurrentPositionAsync({
           accuracy: Location.Accuracy.BestForNavigation,
-          timeInterval: 10,
         });
         setLocation(location);
-        centerMapOnLocation();
+        centerMapOnLocation(location);
       }
     }
 
     requestLocationPermissions();
-  }, [centerMapOnLocation]);
+  }, []);
 
   return (
     <View className="bg-white flex-1 flex-col items-center">
@@ -134,14 +131,15 @@ const Home = () => {
         />
         <View className="w-full h-full mt-[-34px]">
           <MapView
+            ref={mapRef}
             style={{ width: "100%", height: "100%", zIndex: 0 }}
             showsUserLocation
             followsUserLocation
             initialRegion={{
               latitude: 30.282962,
               longitude: -97.737224,
-              latitudeDelta: 0.01,
-              longitudeDelta: 0.01,
+              latitudeDelta: 0.02,
+              longitudeDelta: 0.02,
             }}
             mapPadding={{ bottom: 92, top: 20, left: 0, right: 0 }}
             tintColor="#BF5700"

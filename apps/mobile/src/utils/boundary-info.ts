@@ -1,6 +1,6 @@
 import { LatLng } from "react-native-maps";
 
-export const pickupBoundaryPolygons: Array<Array<LatLng>> = [
+export const pickupBoundaryPolygons: LatLng[][] = [
   [
     { latitude: 30.2821227, longitude: -97.7420139 },
     { latitude: 30.2819606, longitude: -97.7419871 },
@@ -137,7 +137,7 @@ export const pickupBoundaryPolygons: Array<Array<LatLng>> = [
   ],
 ];
 
-export const dropoffBoundaryPolygons: Array<Array<LatLng>> = [
+export const dropoffBoundaryPolygons: LatLng[][] = [
   [
     { latitude: 30.2827804, longitude: -97.7451471 },
     { latitude: 30.2827424, longitude: -97.7451265 },
