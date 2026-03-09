@@ -1,12 +1,13 @@
 import { CheckSquareIcon, SquareIcon } from "phosphor-react-native";
 import { TouchableOpacity, View } from "react-native";
 import FontText from "./font-text";
+import { UTBurntOrange } from "../utils/colors";
 
 const CheckButton = ({
   label: text,
   onPress = () => {},
   isChecked,
-  color = "#BF5700",
+  color = UTBurntOrange,
 }: {
   label: string;
   onPress?: () => void;

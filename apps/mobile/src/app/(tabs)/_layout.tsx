@@ -20,6 +20,7 @@ import {
   Geist_900Black,
   useFonts,
 } from "@expo-google-fonts/geist";
+import { UTBurntOrange } from "@/src/utils/colors";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -49,7 +50,7 @@ const _layout = () => {
   if (loadingState === "loading" || (!loaded && !error)) {
     return (
       <View className="flex-1 items-center justify-center bg-white">
-        <ActivityIndicator size="large" color="#BF5700" />
+        <ActivityIndicator size="large" color={UTBurntOrange} />
       </View>
     );
   }

@@ -30,6 +30,7 @@ import {
   dropoffBoundaryPolygons,
   pickupBoundaryPolygons,
 } from "@/src/utils/boundary-info";
+import { UTBurntOrange, UTTangerine, UTTurquoise } from "@/src/utils/colors";
 
 const Home = () => {
   const sheetRef = useRef<BottomSheet>(null);
@@ -97,7 +98,7 @@ const Home = () => {
         <View className="flex-col items-center justify-center gap-1">
           <View className="flex-row justify-center items-center gap-1">
             <NavigationArrowIcon
-              color="#BF5700"
+              color={UTBurntOrange}
               size="16"
               weight="fill"
               mirrored
@@ -142,15 +143,17 @@ const Home = () => {
               longitudeDelta: 0.02,
             }}
             mapPadding={{ bottom: 92, top: 20, left: 0, right: 0 }}
-            tintColor="#BF5700"
+            tintColor={UTBurntOrange}
           >
             {pickupBoundaryPolygons.map((coords, index) => (
               <Polygon
                 coordinates={coords}
                 key={index}
-                fillColor={showPickupBoundary ? "#BF570060" : "#00000000"}
+                fillColor={
+                  showPickupBoundary ? `${UTTangerine}30` : "#00000000"
+                }
                 strokeColor={
-                  showPickupBoundary ? "#BF5700" : "rgba(0, 0, 0, 0)"
+                  showPickupBoundary ? UTTangerine : "rgba(0, 0, 0, 0)"
                 }
               />
             ))}
@@ -178,9 +181,11 @@ const Home = () => {
                     : undefined
                 }
                 key={index}
-                fillColor={showDropoffBoundary ? "#005F8660" : "#00000000"}
+                fillColor={
+                  showDropoffBoundary ? `${UTTurquoise}30` : "#00000000"
+                }
                 strokeColor={
-                  showDropoffBoundary ? "#005F86" : "rgba(0, 0, 0, 0)"
+                  showDropoffBoundary ? UTTurquoise : "rgba(0, 0, 0, 0)"
                 }
               />
             ))}
@@ -197,6 +202,7 @@ const Home = () => {
                 label="Pickup Boundary"
                 onPress={() => setPickupBoundary(!showPickupBoundary)}
                 isChecked={showPickupBoundary}
+                color={UTTangerine}
               />
             </Animated.View>
             <Animated.View
@@ -212,7 +218,7 @@ const Home = () => {
                 label="Drop-Off Boundary"
                 onPress={() => setDropoffBoundary(!showDropoffBoundary)}
                 isChecked={showDropoffBoundary}
-                color={"#005F86"}
+                color={UTTurquoise}
               />
             </Animated.View>
           </>
@@ -262,7 +268,7 @@ const Home = () => {
               </View>
               <View className="flex-col">
                 <View className="bg-white shadow-sm flex-row mx-5 px-4 py-[26.5px] gap-2 items-center rounded-t-lg border border-slate-200">
-                  <CircleIcon color="#BF5700" weight="fill" size="24" />
+                  <CircleIcon color={UTBurntOrange} weight="fill" size="24" />
                   <FontText className="font-medium text-base">
                     Perry-Castañeda Library
                   </FontText>

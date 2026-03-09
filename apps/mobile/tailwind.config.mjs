@@ -1,3 +1,10 @@
+import {
+  UTBurntOrange,
+  UTBluebonnet,
+  UTTurquoise,
+  UTTangerine,
+} from "./src/utils/colors";
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   // NOTE: Update this to include the paths to all of your component files.
@@ -6,8 +13,10 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        "ut-burntorange": "#BF5700",
-        "ut-blue": "#005F86",
+        "ut-burntorange": UTBurntOrange,
+        "ut-bluebonnet": UTBluebonnet,
+        "ut-turquoise": UTTurquoise,
+        "ut-tangerine": UTTangerine,
       },
       fontFamily: {
         thin: ["Geist_100Thin"],

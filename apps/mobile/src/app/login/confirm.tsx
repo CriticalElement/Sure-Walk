@@ -31,7 +31,7 @@ const Confirm = () => {
             {[...Array(6).keys()].map((_, index) => (
               <View
                 key={index}
-                className={`py-4 px-3 border ${textInputRef.current?.isFocused() ? "border-ut-blue" : "border-gray-200"} rounded-lg bg-gray-50 items-center justify-center`}
+                className={`py-4 px-3 border ${textInputRef.current?.isFocused() ? "border-ut-bluebonnet" : "border-gray-200"} rounded-lg bg-gray-50 items-center justify-center`}
               >
                 {code[index] ? (
                   <FontText

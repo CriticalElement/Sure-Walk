@@ -7,50 +7,50 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0CA81799AF3F40EEA8C6DD67 /* Geist_400Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CC99398CE3B6496CA64F69F1 /* Geist_400Regular.ttf */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		34B20D31095D4F42AD0492B5 /* Geist_700Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1E6AF7D04B9842B09F69A008 /* Geist_700Bold.ttf */; };
+		247D47E69822446EA7C2556B /* Geist_400Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5882ACF7A1744AF7AE537DAF /* Geist_400Regular.ttf */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		4D291BC9CAFF46C1A2A489B0 /* Geist_500Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 91FBEA28A1E3412680EB270D /* Geist_500Medium.ttf */; };
-		6EFBE86F176D4C98BED19044 /* Geist_300Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 392ADF1110E74CEEAA15EE3F /* Geist_300Light.ttf */; };
+		477B84E1FC7AD9097111D78A /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = D068233C9E5F5715248889EA /* PrivacyInfo.xcprivacy */; };
+		5516DB33DC18455EA66382FD /* Geist_500Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 50CC16F98B2E423A986784CA /* Geist_500Medium.ttf */; };
+		87FCB46302884629A07ECAEA /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = 408CAFEA565B4B22839A70DD /* noop-file.swift */; };
 		96905EF65AED1B983A6B3ABC /* libPods-SureWalk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 58EEBF8E8E6FB1BC6CAF49B5 /* libPods-SureWalk.a */; };
-		9DD8A5DC4ED241B882E4A8D1 /* Geist_600SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9B81F2292717499D83BFE8C3 /* Geist_600SemiBold.ttf */; };
-		AB3D36E6E5AF8AAEF0FAD818 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 0BF663499B133427E5264099 /* PrivacyInfo.xcprivacy */; };
-		ADEDC9E5947A42CF8C12C91A /* Geist_800ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 737F853FD6D24D63B601D5DA /* Geist_800ExtraBold.ttf */; };
+		972DB9E03BE2461D95771E27 /* Geist_200ExtraLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 11E719F985A54AD49CECE4B3 /* Geist_200ExtraLight.ttf */; };
+		A5F3CA1A1188435FAE01BB53 /* Geist_100Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 310F31846021463BA174AD7F /* Geist_100Thin.ttf */; };
 		B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */; };
-		B2985D3C89304A3AB46C1B6B /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3226867BD29481293F8BB0F /* noop-file.swift */; };
-		B4FB52B4DCA74071B2662C68 /* Geist_900Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 680F24F838CD43118F326243 /* Geist_900Black.ttf */; };
+		B94CB107FF474319A643D33E /* Geist_600SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DBBD2B8F297849ABB6DDEBD2 /* Geist_600SemiBold.ttf */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
-		C1D637C0BE2647BE9D4AEEFC /* Geist_100Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E17B0B08EF1A440FA83B1D3F /* Geist_100Thin.ttf */; };
-		F139B45D30E0489DAF24BF00 /* Geist_200ExtraLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D56E7C7EFC40421C984777DB /* Geist_200ExtraLight.ttf */; };
+		C6F049F403B745FB9D6F70F8 /* Geist_800ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5DC03F0DCA1341159B18E4AE /* Geist_800ExtraBold.ttf */; };
+		D5A13F1840164FB4B3515A99 /* Geist_900Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1622E5F23E4A4A72BDA2BE49 /* Geist_900Black.ttf */; };
+		D8581E75403C43769C969A50 /* Geist_300Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0A6301E13E8B402BB3BB2CF7 /* Geist_300Light.ttf */; };
+		DFD7A1CEDEBF4B92A68FC3D5 /* Geist_700Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7ED74B16CE04402E974DDC9C /* Geist_700Bold.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		0BF663499B133427E5264099 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = SureWalk/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		0A6301E13E8B402BB3BB2CF7 /* Geist_300Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = Geist_300Light.ttf; path = "../node_modules/@expo-google-fonts/geist/300Light/Geist_300Light.ttf"; sourceTree = "<group>"; };
+		11E719F985A54AD49CECE4B3 /* Geist_200ExtraLight.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = Geist_200ExtraLight.ttf; path = "../node_modules/@expo-google-fonts/geist/200ExtraLight/Geist_200ExtraLight.ttf"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* SureWalk.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SureWalk.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = SureWalk/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = SureWalk/AppDelegate.mm; sourceTree = "<group>"; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = SureWalk/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = SureWalk/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = SureWalk/main.m; sourceTree = "<group>"; };
-		1E6AF7D04B9842B09F69A008 /* Geist_700Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = Geist_700Bold.ttf; path = "../node_modules/@expo-google-fonts/geist/700Bold/Geist_700Bold.ttf"; sourceTree = "<group>"; };
-		392ADF1110E74CEEAA15EE3F /* Geist_300Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = Geist_300Light.ttf; path = "../node_modules/@expo-google-fonts/geist/300Light/Geist_300Light.ttf"; sourceTree = "<group>"; };
-		4AE023EA605F4CC3BBB09435 /* SureWalk-Bridging-Header.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = "SureWalk-Bridging-Header.h"; path = "SureWalk/SureWalk-Bridging-Header.h"; sourceTree = "<group>"; };
+		1622E5F23E4A4A72BDA2BE49 /* Geist_900Black.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = Geist_900Black.ttf; path = "../node_modules/@expo-google-fonts/geist/900Black/Geist_900Black.ttf"; sourceTree = "<group>"; };
+		310F31846021463BA174AD7F /* Geist_100Thin.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = Geist_100Thin.ttf; path = "../node_modules/@expo-google-fonts/geist/100Thin/Geist_100Thin.ttf"; sourceTree = "<group>"; };
+		408CAFEA565B4B22839A70DD /* noop-file.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "noop-file.swift"; path = "SureWalk/noop-file.swift"; sourceTree = "<group>"; };
+		50CC16F98B2E423A986784CA /* Geist_500Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = Geist_500Medium.ttf; path = "../node_modules/@expo-google-fonts/geist/500Medium/Geist_500Medium.ttf"; sourceTree = "<group>"; };
+		5882ACF7A1744AF7AE537DAF /* Geist_400Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = Geist_400Regular.ttf; path = "../node_modules/@expo-google-fonts/geist/400Regular/Geist_400Regular.ttf"; sourceTree = "<group>"; };
 		58EEBF8E8E6FB1BC6CAF49B5 /* libPods-SureWalk.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SureWalk.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		680F24F838CD43118F326243 /* Geist_900Black.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = Geist_900Black.ttf; path = "../node_modules/@expo-google-fonts/geist/900Black/Geist_900Black.ttf"; sourceTree = "<group>"; };
+		5DC03F0DCA1341159B18E4AE /* Geist_800ExtraBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = Geist_800ExtraBold.ttf; path = "../node_modules/@expo-google-fonts/geist/800ExtraBold/Geist_800ExtraBold.ttf"; sourceTree = "<group>"; };
 		6C2E3173556A471DD304B334 /* Pods-SureWalk.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SureWalk.debug.xcconfig"; path = "Target Support Files/Pods-SureWalk/Pods-SureWalk.debug.xcconfig"; sourceTree = "<group>"; };
-		737F853FD6D24D63B601D5DA /* Geist_800ExtraBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = Geist_800ExtraBold.ttf; path = "../node_modules/@expo-google-fonts/geist/800ExtraBold/Geist_800ExtraBold.ttf"; sourceTree = "<group>"; };
 		7A4D352CD337FB3A3BF06240 /* Pods-SureWalk.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SureWalk.release.xcconfig"; path = "Target Support Files/Pods-SureWalk/Pods-SureWalk.release.xcconfig"; sourceTree = "<group>"; };
-		91FBEA28A1E3412680EB270D /* Geist_500Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = Geist_500Medium.ttf; path = "../node_modules/@expo-google-fonts/geist/500Medium/Geist_500Medium.ttf"; sourceTree = "<group>"; };
-		9B81F2292717499D83BFE8C3 /* Geist_600SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = Geist_600SemiBold.ttf; path = "../node_modules/@expo-google-fonts/geist/600SemiBold/Geist_600SemiBold.ttf"; sourceTree = "<group>"; };
+		7ED74B16CE04402E974DDC9C /* Geist_700Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = Geist_700Bold.ttf; path = "../node_modules/@expo-google-fonts/geist/700Bold/Geist_700Bold.ttf"; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = SureWalk/SplashScreen.storyboard; sourceTree = "<group>"; };
-		B3226867BD29481293F8BB0F /* noop-file.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "noop-file.swift"; path = "SureWalk/noop-file.swift"; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
-		CC99398CE3B6496CA64F69F1 /* Geist_400Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = Geist_400Regular.ttf; path = "../node_modules/@expo-google-fonts/geist/400Regular/Geist_400Regular.ttf"; sourceTree = "<group>"; };
-		D56E7C7EFC40421C984777DB /* Geist_200ExtraLight.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = Geist_200ExtraLight.ttf; path = "../node_modules/@expo-google-fonts/geist/200ExtraLight/Geist_200ExtraLight.ttf"; sourceTree = "<group>"; };
-		E17B0B08EF1A440FA83B1D3F /* Geist_100Thin.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = Geist_100Thin.ttf; path = "../node_modules/@expo-google-fonts/geist/100Thin/Geist_100Thin.ttf"; sourceTree = "<group>"; };
+		CA9281CF67AC4703BA947AE3 /* SureWalk-Bridging-Header.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = "SureWalk-Bridging-Header.h"; path = "SureWalk/SureWalk-Bridging-Header.h"; sourceTree = "<group>"; };
+		D068233C9E5F5715248889EA /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = SureWalk/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		DBBD2B8F297849ABB6DDEBD2 /* Geist_600SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = Geist_600SemiBold.ttf; path = "../node_modules/@expo-google-fonts/geist/600SemiBold/Geist_600SemiBold.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-SureWalk/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -77,11 +77,28 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				B3226867BD29481293F8BB0F /* noop-file.swift */,
-				4AE023EA605F4CC3BBB09435 /* SureWalk-Bridging-Header.h */,
-				0BF663499B133427E5264099 /* PrivacyInfo.xcprivacy */,
+				408CAFEA565B4B22839A70DD /* noop-file.swift */,
+				CA9281CF67AC4703BA947AE3 /* SureWalk-Bridging-Header.h */,
+				D068233C9E5F5715248889EA /* PrivacyInfo.xcprivacy */,
 			);
 			name = SureWalk;
+			sourceTree = "<group>";
+		};
+		1D6899823E2940DB95497697 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				310F31846021463BA174AD7F /* Geist_100Thin.ttf */,
+				11E719F985A54AD49CECE4B3 /* Geist_200ExtraLight.ttf */,
+				0A6301E13E8B402BB3BB2CF7 /* Geist_300Light.ttf */,
+				5882ACF7A1744AF7AE537DAF /* Geist_400Regular.ttf */,
+				50CC16F98B2E423A986784CA /* Geist_500Medium.ttf */,
+				DBBD2B8F297849ABB6DDEBD2 /* Geist_600SemiBold.ttf */,
+				7ED74B16CE04402E974DDC9C /* Geist_700Bold.ttf */,
+				5DC03F0DCA1341159B18E4AE /* Geist_800ExtraBold.ttf */,
+				1622E5F23E4A4A72BDA2BE49 /* Geist_900Black.ttf */,
+			);
+			name = Resources;
+			path = "";
 			sourceTree = "<group>";
 		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
@@ -109,7 +126,7 @@
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				D65327D7A22EEC0BE12398D9 /* Pods */,
 				D7E4C46ADA2E9064B798F356 /* ExpoModulesProviders */,
-				D5D32EFEF85B44C78A53BB21 /* Resources */,
+				1D6899823E2940DB95497697 /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -141,23 +158,6 @@
 			path = SureWalk/Supporting;
 			sourceTree = "<group>";
 		};
-		D5D32EFEF85B44C78A53BB21 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				E17B0B08EF1A440FA83B1D3F /* Geist_100Thin.ttf */,
-				D56E7C7EFC40421C984777DB /* Geist_200ExtraLight.ttf */,
-				392ADF1110E74CEEAA15EE3F /* Geist_300Light.ttf */,
-				CC99398CE3B6496CA64F69F1 /* Geist_400Regular.ttf */,
-				91FBEA28A1E3412680EB270D /* Geist_500Medium.ttf */,
-				9B81F2292717499D83BFE8C3 /* Geist_600SemiBold.ttf */,
-				1E6AF7D04B9842B09F69A008 /* Geist_700Bold.ttf */,
-				737F853FD6D24D63B601D5DA /* Geist_800ExtraBold.ttf */,
-				680F24F838CD43118F326243 /* Geist_900Black.ttf */,
-			);
-			name = Resources;
-			path = "";
-			sourceTree = "<group>";
-		};
 		D65327D7A22EEC0BE12398D9 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -183,13 +183,13 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "SureWalk" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
-				E7E3B931B3520593F542D459 /* [Expo] Configure project */,
+				577B73854A1E9EBAC90A63B7 /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				ABBE35352F7AABA9589384E2 /* [CP] Embed Pods Frameworks */,
+				9DBBDEDE249B8171FE8621A2 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -239,16 +239,16 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				C1D637C0BE2647BE9D4AEEFC /* Geist_100Thin.ttf in Resources */,
-				F139B45D30E0489DAF24BF00 /* Geist_200ExtraLight.ttf in Resources */,
-				6EFBE86F176D4C98BED19044 /* Geist_300Light.ttf in Resources */,
-				0CA81799AF3F40EEA8C6DD67 /* Geist_400Regular.ttf in Resources */,
-				4D291BC9CAFF46C1A2A489B0 /* Geist_500Medium.ttf in Resources */,
-				9DD8A5DC4ED241B882E4A8D1 /* Geist_600SemiBold.ttf in Resources */,
-				34B20D31095D4F42AD0492B5 /* Geist_700Bold.ttf in Resources */,
-				ADEDC9E5947A42CF8C12C91A /* Geist_800ExtraBold.ttf in Resources */,
-				B4FB52B4DCA74071B2662C68 /* Geist_900Black.ttf in Resources */,
-				AB3D36E6E5AF8AAEF0FAD818 /* PrivacyInfo.xcprivacy in Resources */,
+				A5F3CA1A1188435FAE01BB53 /* Geist_100Thin.ttf in Resources */,
+				972DB9E03BE2461D95771E27 /* Geist_200ExtraLight.ttf in Resources */,
+				D8581E75403C43769C969A50 /* Geist_300Light.ttf in Resources */,
+				247D47E69822446EA7C2556B /* Geist_400Regular.ttf in Resources */,
+				5516DB33DC18455EA66382FD /* Geist_500Medium.ttf in Resources */,
+				B94CB107FF474319A643D33E /* Geist_600SemiBold.ttf in Resources */,
+				DFD7A1CEDEBF4B92A68FC3D5 /* Geist_700Bold.ttf in Resources */,
+				C6F049F403B745FB9D6F70F8 /* Geist_800ExtraBold.ttf in Resources */,
+				D5A13F1840164FB4B3515A99 /* Geist_900Black.ttf in Resources */,
+				477B84E1FC7AD9097111D78A /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -292,6 +292,25 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		577B73854A1E9EBAC90A63B7 /* [Expo] Configure project */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "[Expo] Configure project";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-SureWalk/expo-configure-project.sh\"\n";
+		};
 		800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -334,7 +353,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SureWalk/Pods-SureWalk-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		ABBE35352F7AABA9589384E2 /* [CP] Embed Pods Frameworks */ = {
+		9DBBDEDE249B8171FE8621A2 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -352,25 +371,6 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SureWalk/Pods-SureWalk-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		E7E3B931B3520593F542D459 /* [Expo] Configure project */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "[Expo] Configure project";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-SureWalk/expo-configure-project.sh\"\n";
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -381,7 +381,7 @@
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 				B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */,
-				B2985D3C89304A3AB46C1B6B /* noop-file.swift in Sources */,
+				87FCB46302884629A07ECAEA /* noop-file.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

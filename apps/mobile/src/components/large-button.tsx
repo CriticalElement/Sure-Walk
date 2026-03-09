@@ -16,7 +16,7 @@ const LargeButton = ({
     ? "bg-gray-300"
     : orange
       ? "bg-ut-burntorange"
-      : "bg-ut-blue";
+      : "bg-ut-bluebonnet";
 
   return (
     <TouchableOpacity
