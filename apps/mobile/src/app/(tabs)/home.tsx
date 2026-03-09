@@ -52,7 +52,7 @@ const Home = () => {
     () => [
       `${((110 + androidOffset) / height) * 100}%`,
       `${((328 + androidOffset * 1.5) / height) * 100}%`,
-      "90%",
+      "87.5%",
     ],
     [height, androidOffset],
   );
@@ -272,7 +272,11 @@ const Home = () => {
         snapPoints={snapPoints}
         enableDynamicSizing={false}
         index={1}
-        style={{ borderRadius: 28, backgroundColor: "transparent" }}
+        style={{
+          borderRadius: 28,
+          backgroundColor: "transparent",
+          zIndex: 150,
+        }}
         onChange={(index) => {
           if (index !== 2) {
             destinationRef.current?.blur();
@@ -283,6 +287,19 @@ const Home = () => {
           <View className="relative flex-col rounded-t-[28px]">
             <View className="rounded-t-[28px] flex-col items-center py-4">
               <View className="bg-slate-300 rounded w-8 h-1" />
+            </View>
+            <View className="flex-col gap-5 px-5 pb-5">
+              <View className="flex-row w-full justify-between items-center">
+                <FontText className="text-2xl font-medium">
+                  Book a ride
+                </FontText>
+                <TO>
+                  <View className="flex-row gap-1 p-3 items-center bg-slate-100 rounded-[32px]">
+                    <UserCirclePlusIcon color={slate700} size="24" />
+                    <FontText className="font-medium">Add Riders</FontText>
+                  </View>
+                </TO>
+              </View>
             </View>
           </View>
         )}
@@ -296,19 +313,6 @@ const Home = () => {
         >
           <View className="flex-col mb-[-24px]">
             <View className="flex-col bg-white">
-              <View className="flex-col gap-5 px-5 pb-5">
-                <View className="flex-row w-full justify-between items-center">
-                  <FontText className="text-2xl font-medium">
-                    Book a ride
-                  </FontText>
-                  <TO>
-                    <View className="flex-row gap-1 p-3 items-center bg-slate-100 rounded-[32px]">
-                      <UserCirclePlusIcon color={slate700} size="24" />
-                      <FontText className="font-medium">Add Riders</FontText>
-                    </View>
-                  </TO>
-                </View>
-              </View>
               <View className="flex-col">
                 <View className="bg-white shadow-sm flex-row mx-5 px-4 py-[26.5px] gap-2 items-center rounded-t-lg border border-slate-200">
                   <CircleIcon color={UTBurntOrange} weight="fill" size="24" />
