@@ -94,7 +94,7 @@ const Home = () => {
 
   return (
     <View className="bg-white flex-1 flex-col items-center">
-      <View className="relative flex-col items-center justify-center pt-3 pb-3.5 px-5 w-full">
+      <View className="relative flex-col items-center justify-center pt-3 pb-8 px-5 w-full">
         <View className="flex-col items-center justify-center gap-1">
           <View className="flex-row justify-center items-center gap-1">
             <NavigationArrowIcon
@@ -126,7 +126,8 @@ const Home = () => {
           colors={["#ffffffff", "#ffffff00"]}
           style={{
             position: "fixed",
-            height: 34,
+            top: -10,
+            height: 24,
             zIndex: 100,
           }}
         />
@@ -142,7 +143,12 @@ const Home = () => {
               latitudeDelta: 0.02,
               longitudeDelta: 0.02,
             }}
-            mapPadding={{ bottom: 92, top: 20, left: 0, right: 0 }}
+            mapPadding={{
+              bottom: 92,
+              top: legendOpen ? 128 : 20,
+              left: 0,
+              right: 0,
+            }}
             tintColor={UTBurntOrange}
           >
             {pickupBoundaryPolygons.map((coords, index) => (
@@ -164,18 +170,48 @@ const Home = () => {
                   index === 0
                     ? [
                         [
-                          { latitude: 30.289121, longitude: -97.7429238 },
-                          { latitude: 30.2883058, longitude: -97.7430042 },
-                          { latitude: 30.2882641, longitude: -97.7423873 },
-                          { latitude: 30.2890701, longitude: -97.7423283 },
-                          { latitude: 30.289121, longitude: -97.7429238 },
+                          {
+                            latitude: 30.289121 + 0.00001,
+                            longitude: -97.7429238 - 0.00001,
+                          },
+                          {
+                            latitude: 30.2883058 - 0.00001,
+                            longitude: -97.7430042 - 0.00001,
+                          },
+                          {
+                            latitude: 30.2882641 - 0.00001,
+                            longitude: -97.7423873 + 0.00001,
+                          },
+                          {
+                            latitude: 30.2890701 + 0.00001,
+                            longitude: -97.7423283 + 0.00001,
+                          },
+                          {
+                            latitude: 30.289121 + 0.00001,
+                            longitude: -97.7429238 - 0.00001,
+                          },
                         ],
                         [
-                          { latitude: 30.2888591, longitude: -97.7437415 },
-                          { latitude: 30.287935, longitude: -97.743838 },
-                          { latitude: 30.2878887, longitude: -97.7431889 },
-                          { latitude: 30.288822, longitude: -97.7430897 },
-                          { latitude: 30.2888591, longitude: -97.7437415 },
+                          {
+                            latitude: 30.2888591 + 0.00001,
+                            longitude: -97.7437415 - 0.00001,
+                          },
+                          {
+                            latitude: 30.287935 - 0.00001,
+                            longitude: -97.743838 - 0.00001,
+                          },
+                          {
+                            latitude: 30.2878887 - 0.00001,
+                            longitude: -97.7431889 + 0.00001,
+                          },
+                          {
+                            latitude: 30.288822 + 0.00001,
+                            longitude: -97.7430897 + 0.00001,
+                          },
+                          {
+                            latitude: 30.2888591 + 0.00001,
+                            longitude: -97.7437415 - 0.00001,
+                          },
                         ],
                       ]
                     : undefined
@@ -194,7 +230,7 @@ const Home = () => {
         {legendOpen && (
           <>
             <Animated.View
-              className="absolute top-[38px] right-5 px-4 py-2 bg-white rounded-full border border-slate-200 flex-row justify-end"
+              className="absolute top-[28px] right-5 px-4 py-2 bg-white rounded-full border border-slate-200 flex-row justify-end"
               entering={FadeInUp.duration(150).easing(Easing.out(Easing.cubic))}
               exiting={FadeOutUp.duration(150).easing(Easing.in(Easing.cubic))}
             >
@@ -206,7 +242,7 @@ const Home = () => {
               />
             </Animated.View>
             <Animated.View
-              className="absolute top-[80px] right-5 mt-2.5 px-4 py-2 bg-white rounded-full border border-slate-200 flex-row"
+              className="absolute top-[70px] right-5 mt-2.5 px-4 py-2 bg-white rounded-full border border-slate-200 flex-row"
               entering={FadeInUp.duration(150)
                 .delay(50)
                 .easing(Easing.out(Easing.cubic))}
