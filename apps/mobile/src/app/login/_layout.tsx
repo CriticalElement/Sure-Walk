@@ -1,3 +1,4 @@
+import { gray900 } from "@/src/utils/colors";
 import { LoginSessionProvider } from "@/src/utils/context/login-context";
 import { router, Stack, usePathname } from "expo-router";
 import { CaretLeftIcon } from "phosphor-react-native";
@@ -12,7 +13,7 @@ const _layout = () => {
         <View className="h-6 w-6 mb-4 ml-5">
           {pathname !== "/login" && (
             <TouchableOpacity onPress={() => router.back()}>
-              <CaretLeftIcon size={24} color="#111827" />
+              <CaretLeftIcon size={24} color={gray900} />
             </TouchableOpacity>
           )}
         </View>

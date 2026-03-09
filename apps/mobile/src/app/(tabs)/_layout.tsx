@@ -20,7 +20,7 @@ import {
   Geist_900Black,
   useFonts,
 } from "@expo-google-fonts/geist";
-import { UTBurntOrange } from "@/src/utils/colors";
+import { slate200, slate900, UTBurntOrange } from "@/src/utils/colors";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -67,17 +67,17 @@ const _layout = () => {
           minHeight: Platform.OS !== "ios" ? 64 + paddingBottom : undefined,
           paddingBottom: paddingBottom,
           boxShadow: "none",
-          borderTopColor: "#E2E8F0",
+          borderTopColor: slate200,
           borderTopWidth: 1,
         },
         tabBarLabelStyle: {
           fontFamily: "Geist_400Regular",
           fontSize: 12,
           paddingTop: 2,
-          color: "#0F172A",
+          color: slate900,
         },
         tabBarIconStyle: {
-          color: "#0F172A",
+          color: slate900,
         },
       }}
     >

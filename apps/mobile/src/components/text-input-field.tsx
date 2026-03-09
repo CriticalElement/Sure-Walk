@@ -1,5 +1,6 @@
 import { Platform, StyleProp, TextInput, TextStyle, View } from "react-native";
 import FontText from "./font-text";
+import { gray500 } from "../utils/colors";
 
 const TextInputField = ({
   fieldName,
@@ -16,9 +17,9 @@ const TextInputField = ({
         {fieldName}
       </FontText>
       <TextInput
-        className="bg-gray-50 border border-gray-200 text-gray-900 text-lg rounded-lg t-colors focus:ring-ut-bluebonnet focus:border-ut-bluebonnet block w-full p-4"
+        className="bg-gray-50 border border-gray-200 text-gray-900 text-lg font-regular rounded-lg t-colors focus:ring-ut-bluebonnet focus:border-ut-bluebonnet block w-full p-4"
         {...props}
-        placeholderTextColor={"#6b7280"}
+        placeholderTextColor={gray500}
         style={_style}
       />
     </View>

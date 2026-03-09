@@ -30,7 +30,14 @@ import {
   dropoffBoundaryPolygons,
   pickupBoundaryPolygons,
 } from "@/src/utils/boundary-info";
-import { UTBurntOrange, UTTangerine, UTTurquoise } from "@/src/utils/colors";
+import {
+  gray500,
+  slate700,
+  slate900,
+  UTBurntOrange,
+  UTTangerine,
+  UTTurquoise,
+} from "@/src/utils/colors";
 
 const Home = () => {
   const sheetRef = useRef<BottomSheet>(null);
@@ -112,13 +119,13 @@ const Home = () => {
           </FontText>
         </View>
         <TouchableOpacity
-          className="absolute right-5 top-3 p-3 items-center justify-center rounded-2xl bg-slate-50"
+          className="absolute right-5 top-3 p-3 items-center justify-center rounded-2xl bg-slate-100"
           onPress={() => {
             if (snapIndex === 2) sheetRef.current?.snapToIndex(1);
             setLegendOpen(!legendOpen);
           }}
         >
-          <FadersHorizontalIcon color="#334155" size="24" />
+          <FadersHorizontalIcon color={slate700} size="24" />
         </TouchableOpacity>
       </View>
       <View className="relative flex-1 w-full">
@@ -296,7 +303,7 @@ const Home = () => {
                   </FontText>
                   <TO>
                     <View className="flex-row gap-1 p-3 items-center bg-slate-100 rounded-[32px]">
-                      <UserCirclePlusIcon color="#334155" size="24" />
+                      <UserCirclePlusIcon color={slate700} size="24" />
                       <FontText className="font-medium">Add Riders</FontText>
                     </View>
                   </TO>
@@ -310,7 +317,7 @@ const Home = () => {
                   </FontText>
                 </View>
                 <View className="bg-white shadow-sm flex-row mx-5 px-4 py-[26.5px] gap-2 items-center rounded-b-lg border border-slate-200 mt-[-1px] mb-6">
-                  <MapPinIcon color="#0F172A" size="24" weight="fill" />
+                  <MapPinIcon color={slate900} size="24" weight="fill" />
                   <TextInput
                     ref={destinationRef}
                     onFocus={() =>
@@ -318,7 +325,7 @@ const Home = () => {
                     }
                     className="font-medium text-base flex-1"
                     placeholder="Where to?"
-                    placeholderTextColor="#6B7280"
+                    placeholderTextColor={gray500}
                     onChangeText={(text) => setDestinationText(text)}
                     value={destinationText}
                     style={_style}
@@ -342,7 +349,7 @@ const Home = () => {
                 className="flex-col border-b border-gray-200 pb-4"
               >
                 <View className="flex-row gap-2 items-center">
-                  <MapPinIcon color="#0F172A" size="24" />
+                  <MapPinIcon color={slate900} size="24" />
                   <View className="flex-1 flex-col gap-2 justify-between">
                     <FontText className="font-medium text-base">
                       Texan Pearl
@@ -351,7 +358,7 @@ const Home = () => {
                       2515 Pearl St
                     </FontText>
                   </View>
-                  <StarIcon color="#0F172A" size="24" />
+                  <StarIcon color={slate900} size="24" />
                 </View>
               </View>
             ))}

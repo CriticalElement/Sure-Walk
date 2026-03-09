@@ -5,6 +5,7 @@ import { CircleIcon } from "phosphor-react-native";
 import { useRef, useState } from "react";
 import { View, TextInput, TouchableWithoutFeedback } from "react-native";
 import FontText from "@/src/components/font-text";
+import { gray500 } from "@/src/utils/colors";
 
 const Confirm = () => {
   const { phoneNumber } = useLoginSession();
@@ -41,7 +42,7 @@ const Confirm = () => {
                   </FontText>
                 ) : (
                   <View className="w-6 items-center justify-center">
-                    <CircleIcon size={8} color="#6b7280" weight="fill" />
+                    <CircleIcon size={8} color={gray500} weight="fill" />
                   </View>
                 )}
               </View>
