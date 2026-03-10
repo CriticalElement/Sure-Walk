@@ -63,12 +63,14 @@ jobs:
           node-version: 20
           cache: "pnpm"
       - name: Install dependencies
-        run: sed -i 's/# //g' pnpm-workspace.yaml && pnpm install
+        run: pnpm install
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           distribution: "temurin"
           java-version: "17"
+      - name: Add keys
+        run: echo "GOOGLE_MAPS_SDK_API_KEY=$GOOGLE_MAPS_SDK_API_KEY" >> apps/mobile/android/local.properties
       - name: Grant execute permission for gradlew
         run: chmod +x apps/mobile/android/gradlew
       - name: Build debug APK
@@ -90,7 +92,7 @@ jobs:
           node-version: 20
           cache: "pnpm"
       - name: Install dependencies
-        run: pnpm install && sed -i '' 's/# //g' pnpm-workspace.yaml
+        run: pnpm install
       - name: Install dependencies
         run: |
           cd apps/mobile/ios && pod install --repo-update

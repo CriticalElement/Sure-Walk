@@ -1,4 +1,4 @@
-package com.anonymous.SureWalkApp
+package dev.longhorns.LonghornLifts
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build

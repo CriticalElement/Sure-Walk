@@ -72,19 +72,36 @@ const Home = () => {
 
   const centerMapOnLocation = (location: Location.LocationObject) => {
     setTimeout(() => {
-      mapRef.current?.animateCamera({
-        center: {
-          latitude: location.coords.latitude - 0.0038,
-          longitude: location.coords.longitude,
-        },
+      mapRef.current?.animateToRegion({
+        latitude: location.coords.latitude - 0.0038,
+        longitude: location.coords.longitude,
+        latitudeDelta: 0.02,
+        longitudeDelta: 0.02,
       });
     }, 1000);
   };
 
   useEffect(() => {
     async function requestLocationPermissions() {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
+      let { status: currentStatus } =
+        await Location.getForegroundPermissionsAsync();
+      let finalStatus = currentStatus;
+      if (currentStatus !== "granted") {
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        finalStatus = status;
+      }
+
+      mapRef.current?.animateToRegion(
+        {
+          latitude: 30.282962,
+          longitude: -97.737224,
+          latitudeDelta: 0.02,
+          longitudeDelta: 0.02,
+        },
+        0,
+      );
+
+      if (finalStatus !== "granted") {
         console.error("location denied");
         return;
       } else {
@@ -138,10 +155,10 @@ const Home = () => {
             zIndex: 100,
           }}
         />
-        <View className="w-full h-full mt-[-34px]">
+        <View className="w-full h-full mt-[-34px] items-center justify-center">
           <MapView
             ref={mapRef}
-            style={{ width: "100%", height: "100%", zIndex: 0 }}
+            style={{ width: "100%", flex: 1, zIndex: 0 }}
             showsUserLocation
             followsUserLocation
             initialRegion={{

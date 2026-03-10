@@ -22,19 +22,21 @@ export default function RootLayout() {
   }, []);
 
   return (
-    <View className="flex-1 bg-white pt-safe">
-      <GestureHandlerRootView>
-        <SessionProvider>
-          <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen
-              name="(tabs)"
-              options={{
-                headerShown: false,
-              }}
-            />
-          </Stack>
-        </SessionProvider>
-      </GestureHandlerRootView>
+    <View className="bg-white h-full w-full">
+      <View className="flex-1 bg-white pt-safe">
+        <GestureHandlerRootView>
+          <SessionProvider>
+            <Stack screenOptions={{ headerShown: false }}>
+              <Stack.Screen
+                name="(tabs)"
+                options={{
+                  headerShown: false,
+                }}
+              />
+            </Stack>
+          </SessionProvider>
+        </GestureHandlerRootView>
+      </View>
     </View>
   );
 }
