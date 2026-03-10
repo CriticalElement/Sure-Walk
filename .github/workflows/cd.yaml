@@ -18,6 +18,8 @@ jobs:
           cache: "pnpm"
       - name: Install dependencies
         run: pnpm install
+      - name: Build web app
+        run: cd apps/web && pnpm opennextjs-cloudflare build
       - name: Deploy to Cloudflare Workers
         uses: cloudflare/wrangler-action@v3
         with:
