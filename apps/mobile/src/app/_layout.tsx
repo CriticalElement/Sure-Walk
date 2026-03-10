@@ -4,6 +4,7 @@ import { Platform, View } from "react-native";
 import { SessionProvider } from "@/src/utils/context/user-context";
 import { useEffect } from "react";
 import * as NavigationBar from "expo-navigation-bar";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -21,17 +22,21 @@ export default function RootLayout() {
   }, []);
 
   return (
-    <View className="flex-1 bg-white pt-safe">
-      <SessionProvider>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen
-            name="(tabs)"
-            options={{
-              headerShown: false,
-            }}
-          />
-        </Stack>
-      </SessionProvider>
+    <View className="bg-white h-full w-full">
+      <View className="flex-1 bg-white pt-safe">
+        <GestureHandlerRootView>
+          <SessionProvider>
+            <Stack screenOptions={{ headerShown: false }}>
+              <Stack.Screen
+                name="(tabs)"
+                options={{
+                  headerShown: false,
+                }}
+              />
+            </Stack>
+          </SessionProvider>
+        </GestureHandlerRootView>
+      </View>
     </View>
   );
 }

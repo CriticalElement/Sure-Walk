@@ -5,6 +5,7 @@ import { CircleIcon } from "phosphor-react-native";
 import { useRef, useState } from "react";
 import { View, TextInput, TouchableWithoutFeedback } from "react-native";
 import FontText from "@/src/components/font-text";
+import { gray500 } from "@/src/utils/colors";
 
 const Confirm = () => {
   const { phoneNumber } = useLoginSession();
@@ -13,7 +14,7 @@ const Confirm = () => {
 
   return (
     <View className="flex-1 bg-white px-5">
-      <FontText className="text-3xl font-medium mb-2">
+      <FontText className="text-2xl font-medium mb-2">
         Verify your phone number
       </FontText>
       <FontText className="text-lg mb-12">
@@ -31,7 +32,7 @@ const Confirm = () => {
             {[...Array(6).keys()].map((_, index) => (
               <View
                 key={index}
-                className={`py-4 px-3 border ${textInputRef.current?.isFocused() ? "border-ut-blue" : "border-gray-200"} rounded-lg bg-gray-50 items-center justify-center`}
+                className={`py-4 px-3 border ${textInputRef.current?.isFocused() ? "border-ut-bluebonnet" : "border-gray-200"} rounded-lg bg-gray-50 items-center justify-center`}
               >
                 {code[index] ? (
                   <FontText
@@ -41,7 +42,7 @@ const Confirm = () => {
                   </FontText>
                 ) : (
                   <View className="w-6 items-center justify-center">
-                    <CircleIcon size={8} color="#6b7280" weight="fill" />
+                    <CircleIcon size={8} color={gray500} weight="fill" />
                   </View>
                 )}
               </View>

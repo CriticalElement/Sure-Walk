@@ -11,6 +11,7 @@ import {
   IconContext,
 } from "phosphor-react-native";
 import FontText from "./font-text";
+import { UTBurntOrange } from "../utils/colors";
 
 const GuidelinesList = ({ includeBottomBorder = false }) => {
   const guidelines = [
@@ -66,16 +67,9 @@ const GuidelinesList = ({ includeBottomBorder = false }) => {
 
   return (
     <IconContext.Provider
-      value={{ color: "#BF5700", size: 20, weight: "bold" }}
+      value={{ color: UTBurntOrange, size: 20, weight: "bold" }}
     >
-      <View
-        className={`flex-1 gap-5 p-5 ${!includeBottomBorder ? "pt-8" : "pt-4"}`}
-      >
-        {!includeBottomBorder && (
-          <FontText className="text-gray-950 text-2xl font-medium leading-6.25">
-            Information and Guidelines
-          </FontText>
-        )}
+      <View className={"flex-1 gap-5 p-5 pt-4"}>
         <View className="flex-1 gap-3.5 justify-start">
           {guidelines.map((guideline, index) => (
             <View key={index} className="gap-2">

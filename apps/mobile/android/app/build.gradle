@@ -3,6 +3,8 @@ apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 
 def projectRoot = rootDir.getAbsoluteFile().getParentFile().getAbsolutePath()
+def localProperties = new Properties()
+localProperties.load(new FileInputStream(rootProject.file("local.properties")))
 
 /**
  * This is the configuration block to customize your React Native Android app.
@@ -86,9 +88,10 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.anonymous.SureWalkApp'
+    namespace 'dev.longhorns.LonghornLifts'
     defaultConfig {
-        applicationId 'com.anonymous.SureWalkApp'
+        manifestPlaceholders["GOOGLE_MAPS_SDK_API_KEY"] = localProperties['GOOGLE_MAPS_SDK_API_KEY']
+        applicationId 'dev.longhorns.LonghornLifts'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
