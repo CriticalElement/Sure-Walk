@@ -63,7 +63,7 @@ jobs:
           node-version: 20
           cache: "pnpm"
       - name: Install dependencies
-        run: pnpm install
+        run: sed -i 's/# //g' pnpm-workspace.yaml && pnpm install
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:

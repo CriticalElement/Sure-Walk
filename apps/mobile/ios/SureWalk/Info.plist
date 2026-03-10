@@ -27,8 +27,8 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
-          <string>myapp</string>
-          <string>com.anonymous.SureWalkApp</string>
+          <string>surewalk</string>
+          <string>dev.longhorns.LonghornLifts</string>
         </array>
       </dict>
       <dict>
