@@ -45,6 +45,7 @@ import { router } from "expo-router";
 import { Location as LocationType } from "@/src/utils/types/location";
 import { getMatchingPickupLocations } from "@/src/utils/locations/pickup-locations";
 import { getMatchingDropoffLocations } from "@/src/utils/locations/dropoff-locations";
+import { useRideSession } from "@/src/utils/context/ride-context";
 
 const Home = () => {
   let _style: StyleProp<TextStyle> = {};
@@ -53,6 +54,7 @@ const Home = () => {
   }
 
   const { members } = useGroupRideSession();
+  const { setPickupLocation, setDropoffLocation } = useRideSession();
 
   const sheetRef = useRef<BottomSheet>(null);
   const mapRef = useRef<MapView>(null);
@@ -162,6 +164,7 @@ const Home = () => {
   const clickedPickupLocation = (location: LocationType) => () => {
     setStartLocationText(location.name);
     setStartAddress(location.address);
+    setPickupLocation(location);
     setFocusedInput("dropoff");
     if (startLocationRef.current?.isFocused()) {
       destinationRef.current?.focus();
@@ -171,6 +174,9 @@ const Home = () => {
   const clickedDropoffLocation = (location: LocationType) => () => {
     setDestinationText(location.name);
     setDestinationAddress(location.address);
+    setDropoffLocation(location);
+    destinationRef.current?.blur();
+    router.navigate("/home/confirm-ride");
   };
 
   return (
@@ -414,6 +420,7 @@ const Home = () => {
                           setStartLocationText(text);
                           if (!startLocationAddress.startsWith("Select")) {
                             setStartAddress("Select your pickup location");
+                            setPickupLocation(null);
                           }
                         }}
                         value={startLocationText}
@@ -449,6 +456,7 @@ const Home = () => {
                           setDestinationText(text);
                           if (!destinationAddress.startsWith("Select")) {
                             setDestinationAddress("Select your destination");
+                            setDropoffLocation(null);
                           }
                         }}
                         value={destinationText}
@@ -506,9 +514,11 @@ const Home = () => {
                 onPress={() =>
                   focusedInput === "pickup"
                     ? (setStartLocationText(""),
-                      setStartAddress("Select your pickup location"))
+                      setStartAddress("Select your pickup location"),
+                      setPickupLocation(null))
                     : (setDestinationText(""),
-                      setDestinationAddress("Select your destination"))
+                      setDestinationAddress("Select your destination"),
+                      setDropoffLocation(null))
                 }
               >
                 <FontText className="mt-4">
