@@ -85,7 +85,9 @@ const ConfirmRide = () => {
         </View>
         <View className="flex-col gap-4 flex-1">
           <View className="flex-row w-full justify-between items-center h-12">
-            <FontText className="text-xl font-semibold">Ride members</FontText>
+            <FontText className="text-xl font-semibold">
+              Ride members ({members.length + 1})
+            </FontText>
             <OutlineButton
               title="Edit"
               icon={<PencilLineIcon size={24} color={UTBluebonnet} />}
@@ -93,7 +95,7 @@ const ConfirmRide = () => {
               small
             />
           </View>
-          <View className="relative p-0 z-5 flex-1">
+          <View className="relative mt-[-8px] z-5 flex-1">
             <LinearGradient
               colors={["#ffffffff", "#ffffff00"]}
               style={{
@@ -120,7 +122,7 @@ const ConfirmRide = () => {
               className="flex-col py-4 pt-[-16px]"
               showsVerticalScrollIndicator={false}
             >
-              <View className="flex-col gap-4 pt-3">
+              <View className="flex-col gap-4 pt-3 pb-4">
                 <RiderCard
                   member={{ firstName, lastName, userType, eid }}
                   actionComponent={
