@@ -2,7 +2,7 @@ import { ExpoConfig } from "expo/config";
 
 const config: ExpoConfig = {
   name: "Sure Walk",
-  slug: "SureWalkApp",
+  slug: "longhorn-lifts",
   version: "1.0.0",
   orientation: "portrait",
   icon: "./assets/images/ios-light.png",
@@ -101,6 +101,12 @@ const config: ExpoConfig = {
   ],
   experiments: {
     typedRoutes: true,
+  },
+  owner: "longhorn-lifts",
+  extra: {
+    eas: {
+      projectId: "ba38d70d-e9a3-4170-868c-36a0393aa6bc",
+    },
   },
 };
 
