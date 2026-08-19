@@ -13,8 +13,8 @@ import {
 import RideUpdateNotification from "@sure-walk/utils/types/ride-update-notification";
 import * as Notifications from "expo-notifications";
 import {
-  ExternalPathString,
   Redirect,
+  RelativePathString,
   router,
   SplashScreen,
   Tabs,
@@ -46,6 +46,7 @@ const TabScreens = () => {
   } = usePushNotificationsContext();
 
   const segments = useSegments();
+  const lastNotificationResponse = Notifications.useLastNotificationResponse();
   let paddingBottom: number = useSafeAreaInsets().bottom;
 
   const [loaded, error] = useFonts({
@@ -60,36 +61,49 @@ const TabScreens = () => {
     Geist_900Black,
   });
 
-  const onNotificationTapped = (data: RideUpdateNotification) => {
-    // @ts-ignore
-    if (!segments.includes("home") || (activeTab === "home" && data.route)) {
-      goMyRide();
-      router.push(data.route as unknown as ExternalPathString);
+  const onNotificationResponseReceieved = (
+    response: Notifications.NotificationResponse,
+  ) => {
+    const eventType = response.notification.request.content.data.eventType;
+    if (eventType === "routeUpdate" || eventType === "vehicleInfo") {
+      Notifications.clearLastNotificationResponseAsync();
+      const data: RideUpdateNotification = response.notification.request.content
+        .data as unknown as RideUpdateNotification;
+      // @ts-ignore
+      if ((!segments.includes("home") || activeTab === "home") && data.route) {
+        goMyRide();
+        router.push(data.route as unknown as RelativePathString);
+      }
+    }
+    if (eventType === "rideFeedback") {
+      Notifications.clearLastNotificationResponseAsync();
+      const data = response.notification.request.content.data;
+      router.push(data.route);
     }
   };
 
   useEffect(() => {
     registerForPushNotificationsAsync();
     const responseListener =
-      Notifications.addNotificationResponseReceivedListener((response) => {
-        console.log(response);
-        const eventType = response.notification.request.content.data.eventType;
-        if (eventType === "routeUpdate" || eventType === "vehicleInfo") {
-          const data: RideUpdateNotification = response.notification.request
-            .content.data as unknown as RideUpdateNotification;
-          console.log(data.route);
-          onNotificationTapped(data);
-        }
-        if (eventType === "rideFeedback") {
-          const data = response.notification.request.content.data;
-          router.push(data.route);
-        }
-      });
+      Notifications.addNotificationResponseReceivedListener(
+        onNotificationResponseReceieved,
+      );
 
     return () => {
       responseListener.remove();
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (
+      lastNotificationResponse &&
+      lastNotificationResponse.notification.request.content.data.url &&
+      lastNotificationResponse.actionIdentifier ===
+        Notifications.DEFAULT_ACTION_IDENTIFIER
+    ) {
+      onNotificationResponseReceieved(lastNotificationResponse);
+    }
+  }, [lastNotificationResponse]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (

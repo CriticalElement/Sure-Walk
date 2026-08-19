@@ -268,12 +268,14 @@ const CurrentRideInfo = () => {
   };
 
   useEffect(() => {
-    setRideDetails(null);
-    connect(() =>
-      setTimeout(() => {
-        sheetRef.current?.snapToIndex(1);
-      }, 200),
-    );
+    setTimeout(() => {
+      setRideDetails(null);
+      connect(() =>
+        setTimeout(() => {
+          sheetRef.current?.snapToIndex(1);
+        }, 200),
+      );
+    });
 
     return () => {
       if (wsRef.current) {
@@ -447,6 +449,7 @@ const CurrentRideInfo = () => {
             }}
             tintColor={UTBurntOrange}
             userInterfaceStyle="light"
+            loadingEnabled
           >
             <Marker
               coordinate={{
@@ -470,20 +473,6 @@ const CurrentRideInfo = () => {
                 <MapPinIcon color={UTBluebonnet} size="20" weight="fill" />
               </View>
             </Marker>
-            {/* <Polyline
-              coordinates={[
-                {
-                  latitude: pickupLocation?.lat ?? 0,
-                  longitude: pickupLocation?.lon ?? 0,
-                },
-                {
-                  latitude: dropoffLocation?.lat ?? 0,
-                  longitude: dropoffLocation?.lon ?? 0,
-                },
-              ]}
-              strokeColor="#fff"
-              strokeWidth={4}
-            /> */}
             <Marker
               coordinate={{
                 latitude: vehicleLocation.latitude,
@@ -506,22 +495,23 @@ const CurrentRideInfo = () => {
         enableDynamicSizing={false}
         snapPoints={snapPoints}
         index={-1}
-        handleComponent={null}
-      >
-        <View className="relative w-full">
-          <View className="rounded-t-[28px] flex-col items-center pt-4">
-            <View className="bg-slate-300 rounded w-8 h-1" />
+        handleComponent={() => (
+          <View className="relative w-full">
+            <View className="rounded-t-[28px] flex-col items-center pt-4">
+              <View className="bg-slate-300 rounded w-8 h-1" />
+            </View>
+            <LinearGradient
+              colors={["#ffffffff", "#ffffff00"]}
+              style={{
+                position: "fixed",
+                top: 16,
+                height: 16,
+                zIndex: 100,
+              }}
+            />
           </View>
-          <LinearGradient
-            colors={["#ffffffff", "#ffffff00"]}
-            style={{
-              position: "fixed",
-              top: 16,
-              height: 16,
-              zIndex: 100,
-            }}
-          />
-        </View>
+        )}
+      >
         <BottomSheetScrollView className="px-5" ref={scrollRef}>
           {loadingState === "done" && rideDetails && (
             <>

@@ -67,6 +67,8 @@ const MyRide = ({ initialIndex }: { initialIndex: number }) => {
   );
   const [disabled, setDisabled] = useState<boolean>(false);
 
+  const lastNotificationResponse = Notifications.useLastNotificationResponse();
+
   useEffect(() => {
     setMyRideSheetRef(sheetRef);
   }, [setMyRideSheetRef]);
@@ -105,27 +107,25 @@ const MyRide = ({ initialIndex }: { initialIndex: number }) => {
 
   useEffect(() => {
     const responseListener =
-      Notifications.addNotificationResponseReceivedListener((response) => {
-        console.log(response);
-        const data = response.notification.request.content.data;
-        if (data.eventType === "missedRide") {
-          setMissedPickupLocation(
-            CAMPUS_LOCATIONS.find((loc) => loc.id === data.pickupLocationID),
-          );
-          setMissedDropoffLocation(
-            WEST_CAMPUS_LOCATIONS.find(
-              (loc) => loc.id === data.dropoffLocationID,
-            ),
-          );
-          setTimeout(goMyRide, 100);
-          setTimeout(() => setShowModal(true), 300);
-        }
-      });
+      Notifications.addNotificationResponseReceivedListener(
+        handleMissedRideNotificationResponse,
+      );
 
     return () => {
       responseListener.remove();
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (
+      lastNotificationResponse &&
+      lastNotificationResponse.notification.request.content.data.route &&
+      lastNotificationResponse.actionIdentifier ===
+        Notifications.DEFAULT_ACTION_IDENTIFIER
+    ) {
+      handleMissedRideNotificationResponse(lastNotificationResponse);
+    }
+  }, [lastNotificationResponse]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const fetchCurrentRide = async () => {
@@ -150,6 +150,23 @@ const MyRide = ({ initialIndex }: { initialIndex: number }) => {
       clearInterval(interval);
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleMissedRideNotificationResponse = (
+    response: Notifications.NotificationResponse,
+  ) => {
+    const data = response.notification.request.content.data;
+    if (data.eventType === "missedRide") {
+      Notifications.clearLastNotificationResponseAsync();
+      setMissedPickupLocation(
+        CAMPUS_LOCATIONS.find((loc) => loc.id === data.pickupLocationID),
+      );
+      setMissedDropoffLocation(
+        WEST_CAMPUS_LOCATIONS.find((loc) => loc.id === data.dropoffLocationID),
+      );
+      setTimeout(goMyRide, 100);
+      setTimeout(() => setShowModal(true), 300);
+    }
+  };
 
   const handleLayout1 = (event: LayoutChangeEvent) => {
     let height = event.nativeEvent.layout.height;
