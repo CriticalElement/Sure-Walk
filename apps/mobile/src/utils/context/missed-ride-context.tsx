@@ -1,5 +1,7 @@
 import CurrentRideMini from "@sure-walk/utils/types/current-ride-mini";
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
+
+import { useTabContext } from "./tab-context";
 
 interface MissedRideContextType {
   missedRide: CurrentRideMini | null;
@@ -27,8 +29,18 @@ export const MissedRideProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const { goMyRide } = useTabContext();
+
   const [missedRide, setMissedRide] = useState<CurrentRideMini | null>(null);
   const [showModal, setShowModal] = useState<boolean>(false);
+
+  useEffect(() => {
+    // when a missed ride notification is pressed, make sure the tab switches
+    // to the my ride page
+    if (showModal === true) {
+      goMyRide();
+    }
+  }, [showModal, goMyRide]);
 
   return (
     <MissedRideContext.Provider

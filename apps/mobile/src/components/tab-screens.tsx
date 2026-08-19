@@ -71,7 +71,6 @@ const TabScreens = () => {
         .data as unknown as RideUpdateNotification;
       // @ts-ignore
       if ((!segments.includes("home") || activeTab === "home") && data.route) {
-        goMyRide();
         router.push(data.route as unknown as RelativePathString);
       }
     }
