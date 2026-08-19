@@ -32,7 +32,7 @@ const MyRide = ({ initialIndex }: { initialIndex: number }) => {
   const { height } = useWindowDimensions();
   const { top } = useSafeAreaInsets();
   const { setMyRideSheetRef } = useTabContext();
-  const { goHome, goMyRide } = useTabContext();
+  const { goHome } = useTabContext();
   const { currentRide, setCurrentRide, loadingState, setLoadingState } =
     useCurrentRideSession();
   const { missedRide, showModal, setShowModal } = useMissedRideSession();
@@ -157,13 +157,13 @@ const MyRide = ({ initialIndex }: { initialIndex: number }) => {
     const data = response.notification.request.content.data;
     if (data.eventType === "missedRide") {
       Notifications.clearLastNotificationResponseAsync();
+      setCurrentRide(null);
       setMissedPickupLocation(
         CAMPUS_LOCATIONS.find((loc) => loc.id === data.pickupLocationID),
       );
       setMissedDropoffLocation(
         WEST_CAMPUS_LOCATIONS.find((loc) => loc.id === data.dropoffLocationID),
       );
-      setTimeout(goMyRide, 100);
       setTimeout(() => setShowModal(true), 300);
     }
   };

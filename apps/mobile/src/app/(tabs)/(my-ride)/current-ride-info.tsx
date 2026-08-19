@@ -50,6 +50,7 @@ import { useCurrentRideSession } from "@/src/utils/context/current-ride-context"
 import { useMissedRideSession } from "@/src/utils/context/missed-ride-context";
 import { usePushNotificationsContext } from "@/src/utils/context/push-notifications-context";
 import { useRideDetailsSession } from "@/src/utils/context/ride-details-context";
+import { useTabContext } from "@/src/utils/context/tab-context";
 import { useToastContext } from "@/src/utils/context/toast-context";
 import { WEST_CAMPUS_LOCATIONS } from "@/src/utils/locations/dropoff-locations";
 import { CAMPUS_LOCATIONS } from "@/src/utils/locations/pickup-locations";
@@ -62,6 +63,7 @@ const CurrentRideInfo = () => {
   const { setMissedRide, setShowModal } = useMissedRideSession();
   const { setToast } = useToastContext();
   const { pushToken } = usePushNotificationsContext();
+  const { homeSheetRef, myRideSheetRef, setActiveTab } = useTabContext();
 
   // shareCode is for viewing group rides
   const params = useSearchParams();
@@ -81,8 +83,8 @@ const CurrentRideInfo = () => {
   );
   const [modalVisible, setModalVisible] = useState<boolean>(false);
 
-  const wsRef = useRef<WebSocket>(undefined);
-  const wsConnectTimeoutRef = useRef<NodeJS.Timeout>(undefined);
+  const wsRef = useRef<WebSocket | undefined>(undefined);
+  const wsConnectTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const mapRef = useRef<MapView | null>(null);
   const sheetRef = useRef<BottomSheet | null>(null);
   const scrollRef = useRef<BottomSheetScrollViewMethods | null>(null);
@@ -98,6 +100,11 @@ const CurrentRideInfo = () => {
   ) as SharedValue<(string | number)[]>;
 
   const connect = (onConnect = () => {}) => {
+    // when clicking on a notification, make sure the tab sheets get switched
+    setActiveTab("my-ride");
+    homeSheetRef.current?.close();
+    myRideSheetRef.current?.snapToIndex(1);
+
     const wsURL = new URL(API_URL.replace("http", "ws"));
     const accessToken = SecureStore.getItem("accessToken");
     wsURL.pathname = "/api/ride/events";
