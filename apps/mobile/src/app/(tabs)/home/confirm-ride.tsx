@@ -79,7 +79,7 @@ const ConfirmRide = () => {
         });
         clearMembers();
         setLoadingState("done");
-        goMyRide(undefined, 0);
+        goMyRide();
         setTimeout(() => router.push("/home/ride-info-wrapper"), 500);
       }
     } catch (err) {

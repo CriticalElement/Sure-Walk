@@ -4,7 +4,7 @@
   "name": "lifts-web",
   // Set this to today's date
   "compatibility_date": "2026-07-16",
-  "compatibility_flags": ["nodejs_compat"],
+  "compatibility_flags": ["nodejs_compat", "disable_nodejs_console_module"],
   "dev": {
     "port": 3000,
     "ip": "0.0.0.0",
@@ -35,4 +35,7 @@
       "new_sqlite_classes": ["RideInfoStream"],
     },
   ],
+  "triggers": {
+    "crons": ["15 * * * *"],
+  },
 }

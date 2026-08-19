@@ -32,6 +32,7 @@ import Animated, {
   FadeInUp,
   FadeOutDown,
   FadeOutUp,
+  useAnimatedStyle,
   useDerivedValue,
   useSharedValue,
   withRepeat,
@@ -58,6 +59,7 @@ import {
 } from "@/src/utils/colors";
 import { useCurrentRideSession } from "@/src/utils/context/current-ride-context";
 import { useGroupRideSession } from "@/src/utils/context/group-ride-context";
+import { usePushNotificationsContext } from "@/src/utils/context/push-notifications-context";
 import { useRideSession } from "@/src/utils/context/ride-context";
 import { useTabContext } from "@/src/utils/context/tab-context";
 import { getMatchingDropoffLocations } from "@/src/utils/locations/dropoff-locations";
@@ -82,6 +84,7 @@ const Home = () => {
   } = useRideSession();
   const { setHomeSheetRef } = useTabContext();
   const { currentRide } = useCurrentRideSession();
+  const { registerForPushNotificationsAsync } = usePushNotificationsContext();
 
   const sheetRef = useRef<BottomSheet>(null);
   const mapRef = useRef<MapView>(null);
@@ -106,7 +109,6 @@ const Home = () => {
   const [location, setLocation] = useState<Location.LocationObject | null>(
     null,
   );
-  const [markerReady, setMarkerReady] = useState(false);
   const [userLocationLabel, setUserLocationLabel] =
     useState<string>("Loading...");
   const [startLocationText, setStartLocationText] = useState<string>(
@@ -131,6 +133,7 @@ const Home = () => {
   const [showMyRide, setShowMyRide] = useState<boolean>(false);
 
   useEffect(() => {
+    registerForPushNotificationsAsync();
     if (currentRide) {
       setShowMyRide(true);
       setShowHome(false);
@@ -145,7 +148,7 @@ const Home = () => {
   useEffect(() => {
     pulseScale.value = withRepeat(
       withSequence(
-        withTiming(18 / 16, {
+        withTiming(0.8, {
           duration: 1400,
           easing: Easing.inOut(Easing.ease),
         }),
@@ -155,9 +158,10 @@ const Home = () => {
       false,
     );
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
-  // const _pulseStyle = useAnimatedStyle(() => ({
-  //   transform: [{ scale: pulseScale.value }],
-  // }));
+
+  const pulseStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: pulseScale.value }],
+  }));
 
   const centerMapOnLocation = (location: Location.LocationObject) => {
     setTimeout(() => {
@@ -390,11 +394,12 @@ const Home = () => {
             }}
             mapPadding={{
               bottom: 92,
-              top: legendOpen ? 128 : 20,
+              top: 20,
               left: 0,
               right: 0,
             }}
             tintColor={UTBurntOrange}
+            userInterfaceStyle="light"
           >
             {pickupBoundaryPolygons.map((coords, index) => (
               <Polygon
@@ -476,23 +481,26 @@ const Home = () => {
                   latitude: location.coords.latitude,
                   longitude: location.coords.longitude,
                 }}
-                tracksViewChanges={!markerReady}
+                tracksViewChanges={true}
               >
-                <View
-                  onLayout={() => setMarkerReady(true)}
-                  style={{
-                    width: 24,
-                    height: 24,
-                    borderRadius: 12,
-                    backgroundColor: "white",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    shadowColor: "#000",
-                    shadowOffset: { width: 0, height: 2 },
-                    shadowOpacity: 0.2,
-                    shadowRadius: 4,
-                    elevation: 4,
-                  }}
+                <Animated.View
+                  style={[
+                    {
+                      width: 24,
+                      height: 24,
+                      borderRadius: 12,
+                      backgroundColor: "white",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      shadowColor: "#000",
+                      shadowOffset: { width: 0, height: 2 },
+                      shadowOpacity: 0.2,
+                      shadowRadius: 4,
+                      elevation: 4,
+                      margin: 4,
+                    },
+                    pulseStyle,
+                  ]}
                 >
                   <View
                     style={{
@@ -502,7 +510,7 @@ const Home = () => {
                       backgroundColor: UTBurntOrange,
                     }}
                   />
-                </View>
+                </Animated.View>
               </Marker>
             )}
           </MapView>

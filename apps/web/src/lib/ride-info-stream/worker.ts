@@ -1,4 +1,5 @@
 import { eq } from "drizzle-orm";
+import Expo from "expo-server-sdk";
 import { NextResponse } from "next/server";
 
 import { ensureAuthenticated } from "../auth";
@@ -42,6 +43,10 @@ export async function handleRideStream(request: Request, env: CloudflareEnv) {
     | undefined = undefined;
 
   const url = new URL(request.url);
+  let pushToken = url.searchParams.get("pushToken");
+  if (!Expo.isExpoPushToken(pushToken)) {
+    pushToken = null;
+  }
   const code = url.searchParams.get("shareCode");
   if (code) {
     // treat this as viewing a group ride
@@ -75,8 +80,9 @@ export async function handleRideStream(request: Request, env: CloudflareEnv) {
     );
   }
 
+  const isLeader = code === null;
   const rideState = getInProgressRideStateFromRide(currentRide);
-  const rideFullInfo = { ...currentRide, rideState: rideState };
+  const rideFullInfo = { ...currentRide, rideState, pushToken, isLeader };
 
   // forward data so pulling from db is not required for the initial ws connection
   // within the Durable Object fetch handler
