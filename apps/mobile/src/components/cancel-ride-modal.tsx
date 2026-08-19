@@ -82,56 +82,61 @@ const CancelRideModal = ({
   }, [currentRide]);
 
   return (
-    <Modal
-      animationType="fade"
-      transparent
-      visible={modalVisible}
-      onRequestClose={() => setModalVisible(false)}
-      className="z-1000"
-    >
-      <Pressable
-        className="flex-1 bg-[#00000080] items-center justify-center p-5"
-        onPress={() => setModalVisible(false)}
+    <View className="absolute inset-0 flex-1">
+      <Modal
+        animationType="fade"
+        transparent
+        visible={modalVisible}
+        statusBarTranslucent={true}
+        onRequestClose={() => setModalVisible(false)}
+        className="z-1000 flex-1"
       >
-        <Pressable className="p-4 bg-white flex-col gap-6 rounded-3xl w-full">
-          <View className="flex-col gap-3">
-            <View className="flex-row gap-2 items-center">
-              <WarningIcon color={UTBurntOrange} size={32} />
-              <FontText className="text-2xl font-medium">Cancel Ride</FontText>
+        <Pressable
+          className="flex-1 bg-[#00000080] items-center justify-center p-5"
+          onPress={() => setModalVisible(false)}
+        >
+          <Pressable className="p-4 bg-white flex-col gap-6 rounded-3xl w-full">
+            <View className="flex-col gap-3">
+              <View className="flex-row gap-2 items-center">
+                <WarningIcon color={UTBurntOrange} size={32} />
+                <FontText className="text-2xl font-medium">
+                  Cancel Ride
+                </FontText>
+              </View>
+              <FontText className="text-lg">
+                {isGroupRide ? (
+                  <>
+                    This will cancel the following booking for{" "}
+                    <FontText className="font-semibold text-lg">
+                      everyone
+                    </FontText>{" "}
+                    in the ride. Are you sure?
+                  </>
+                ) : (
+                  <>
+                    You will have to make a new request if you still need a
+                    ride. Are you sure?
+                  </>
+                )}
+              </FontText>
             </View>
-            <FontText className="text-lg">
-              {isGroupRide ? (
-                <>
-                  This will cancel the following booking for{" "}
-                  <FontText className="font-semibold text-lg">
-                    everyone
-                  </FontText>{" "}
-                  in the ride. Are you sure?
-                </>
-              ) : (
-                <>
-                  You will have to make a new request if you still need a ride.
-                  Are you sure?
-                </>
-              )}
-            </FontText>
-          </View>
-          <View className="my-[-4px]">
-            <PickupDropoffLocationInfo
-              pickupLocation={pickupLocation ?? null}
-              dropoffLocation={dropoffLocation ?? null}
-            />
-          </View>
-          <View className="flex-col gap-3">
-            <OutlineButton title="Yes, cancel" red onPress={cancelRide} />
-            <LargeButton
-              title="No, never mind"
-              onPress={() => setModalVisible(false)}
-            />
-          </View>
+            <View className="my-[-4px]">
+              <PickupDropoffLocationInfo
+                pickupLocation={pickupLocation ?? null}
+                dropoffLocation={dropoffLocation ?? null}
+              />
+            </View>
+            <View className="flex-col gap-3">
+              <OutlineButton title="Yes, cancel" red onPress={cancelRide} />
+              <LargeButton
+                title="No, never mind"
+                onPress={() => setModalVisible(false)}
+              />
+            </View>
+          </Pressable>
         </Pressable>
-      </Pressable>
-    </Modal>
+      </Modal>
+    </View>
   );
 };
 

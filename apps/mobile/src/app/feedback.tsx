@@ -178,10 +178,12 @@ const Feedback = () => {
                     minimumValue={1}
                     maximumValue={5}
                     step={1}
-                    value={rating}
+                    value={5}
                     onValueChange={setRating}
                     minimumTrackTintColor={UTBurntOrange}
                     maximumTrackTintColor={slate200}
+                    thumbSize={16}
+                    style={{ height: 16 }}
                   />
                   <View className="mt-1 flex-row justify-between">
                     {Array.from({ length: 5 }, (_, i) => i + 1).map((i) => (

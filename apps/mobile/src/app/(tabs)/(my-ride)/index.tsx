@@ -1,4 +1,5 @@
 import BottomSheet from "@gorhom/bottom-sheet";
+import * as Notifications from "expo-notifications";
 import { router } from "expo-router";
 import { ArrowCircleRightIcon, WarningIcon } from "phosphor-react-native";
 import { useEffect, useRef, useState } from "react";
@@ -31,7 +32,7 @@ const MyRide = ({ initialIndex }: { initialIndex: number }) => {
   const { height } = useWindowDimensions();
   const { top } = useSafeAreaInsets();
   const { setMyRideSheetRef } = useTabContext();
-  const { goHome } = useTabContext();
+  const { goHome, goMyRide } = useTabContext();
   const { currentRide, setCurrentRide, loadingState, setLoadingState } =
     useCurrentRideSession();
   const { missedRide, showModal, setShowModal } = useMissedRideSession();
@@ -103,6 +104,30 @@ const MyRide = ({ initialIndex }: { initialIndex: number }) => {
   }, [missedRide]);
 
   useEffect(() => {
+    const responseListener =
+      Notifications.addNotificationResponseReceivedListener((response) => {
+        console.log(response);
+        const data = response.notification.request.content.data;
+        if (data.eventType === "missedRide") {
+          setMissedPickupLocation(
+            CAMPUS_LOCATIONS.find((loc) => loc.id === data.pickupLocationID),
+          );
+          setMissedDropoffLocation(
+            WEST_CAMPUS_LOCATIONS.find(
+              (loc) => loc.id === data.dropoffLocationID,
+            ),
+          );
+          setTimeout(goMyRide, 100);
+          setTimeout(() => setShowModal(true), 300);
+        }
+      });
+
+    return () => {
+      responseListener.remove();
+    };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
     const fetchCurrentRide = async () => {
       try {
         const res = await api.get("/ride");
@@ -110,7 +135,6 @@ const MyRide = ({ initialIndex }: { initialIndex: number }) => {
           setCurrentRide(null);
         } else if (res.status === 200) {
           setCurrentRide(res.data);
-          sheetRef.current?.snapToIndex(0);
         } else {
           throw new Error("Could not fetch current ride details.");
         }
@@ -258,56 +282,61 @@ const MyRide = ({ initialIndex }: { initialIndex: number }) => {
           </View>
         </View>
       </BottomSheet>
-      <Modal
-        animationType="fade"
-        transparent
-        visible={showModal}
-        onRequestClose={() => setShowModal(false)}
-        className="z-1000"
-      >
-        <Pressable
-          className="flex-1 bg-[#00000080] items-center justify-center p-5"
-          onPress={() => setShowModal(false)}
+      <View className="absolute inset-0 flex-1">
+        <Modal
+          animationType="fade"
+          transparent
+          visible={showModal}
+          statusBarTranslucent={true}
+          onRequestClose={() => setShowModal(false)}
+          className="z-1000"
         >
-          <Pressable className="p-4 bg-white flex-col gap-4 rounded-3xl w-full">
-            <View className="flex-row gap-2 items-center mb-2">
-              <WarningIcon color={UTBurntOrange} size={32} />
-              <FontText className="text-2xl font-medium">Missed Ride</FontText>
-            </View>
-            <View className="flex-col gap-4">
-              <FontText className="text-lg">
-                You have missed the following ride:
-              </FontText>
-              <View className="flex-row px-5 py-4 gap-2 bg-slate-50 border border-slate-200 items-center rounded-2xl">
-                <FontText className="text-lg font-semibold">
-                  {missedPickupLocation?.abbreviation ?? ""}
-                </FontText>
-                <ArrowCircleRightIcon
-                  color={UTBluebonnet}
-                  size={24}
-                  weight="fill"
-                />
-                <FontText className="text-lg font-semibold">
-                  {missedDropoffLocation?.name ?? ""}
+          <Pressable
+            className="flex-1 bg-[#00000080] items-center justify-center p-5"
+            onPress={() => setShowModal(false)}
+          >
+            <Pressable className="p-4 bg-white flex-col gap-4 rounded-3xl w-full">
+              <View className="flex-row gap-2 items-center mb-2">
+                <WarningIcon color={UTBurntOrange} size={32} />
+                <FontText className="text-2xl font-medium">
+                  Missed Ride
                 </FontText>
               </View>
-              <View className="flex-col gap-3">
-                <LargeButton
-                  title="Book a New Ride"
-                  onPress={() => {
-                    setShowModal(false);
-                    goHome();
-                  }}
-                />
-                <OutlineButton
-                  title="Return"
-                  onPress={() => setShowModal(false)}
-                />
+              <View className="flex-col gap-4">
+                <FontText className="text-lg">
+                  You have missed the following ride:
+                </FontText>
+                <View className="flex-row px-5 py-4 gap-2 bg-slate-50 border border-slate-200 items-center rounded-2xl">
+                  <FontText className="text-lg font-semibold">
+                    {missedPickupLocation?.abbreviation ?? ""}
+                  </FontText>
+                  <ArrowCircleRightIcon
+                    color={UTBluebonnet}
+                    size={24}
+                    weight="fill"
+                  />
+                  <FontText className="text-lg font-semibold">
+                    {missedDropoffLocation?.name ?? ""}
+                  </FontText>
+                </View>
+                <View className="flex-col gap-3">
+                  <LargeButton
+                    title="Book a New Ride"
+                    onPress={() => {
+                      setShowModal(false);
+                      goHome();
+                    }}
+                  />
+                  <OutlineButton
+                    title="Return"
+                    onPress={() => setShowModal(false)}
+                  />
+                </View>
               </View>
-            </View>
+            </Pressable>
           </Pressable>
-        </Pressable>
-      </Modal>
+        </Modal>
+      </View>
     </>
   );
 };

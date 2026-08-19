@@ -1,6 +1,8 @@
+import "tsx/cjs";
+
 import { ExpoConfig } from "expo/config";
 
-const config: ExpoConfig = {
+const config = ({ _config }: { _config: ExpoConfig }) => ({
   name: "Sure Walk",
   slug: "longhorn-lifts",
   version: "1.0.0",
@@ -36,14 +38,15 @@ const config: ExpoConfig = {
       "android.permission.ACCESS_FINE_LOCATION",
       "android.permission.ACCESS_COARSE_LOCATION",
     ],
+    googleServicesFile: "./google-services.json",
   },
   androidNavigationBar: {
-    backgroundColor: "#FFFFFF00",
-    barStyle: "dark-content",
+    backgroundColor: "#00000000",
+    barStyle: "light-content",
   },
   androidStatusBar: {
-    backgroundColor: "#FFFFFF",
-    barStyle: "dark-content",
+    backgroundColor: "#00000000",
+    barStyle: "light-content",
     translucent: true,
   },
   web: {
@@ -98,6 +101,10 @@ const config: ExpoConfig = {
         iosPermissions: ["LocationWhenInUse"],
       },
     ],
+    "react-native-edge-to-edge",
+    "expo-notifications",
+    "./plugins/withMapsSDKSecretsPlugin.ts",
+    "./plugins/withSecretsManifest.ts",
   ],
   experiments: {
     typedRoutes: true,
@@ -108,6 +115,6 @@ const config: ExpoConfig = {
       projectId: "ba38d70d-e9a3-4170-868c-36a0393aa6bc",
     },
   },
-};
+});
 
 export default config;

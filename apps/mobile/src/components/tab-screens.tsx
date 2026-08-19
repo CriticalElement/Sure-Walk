@@ -10,7 +10,16 @@ import {
   Geist_900Black,
   useFonts,
 } from "@expo-google-fonts/geist";
-import { Redirect, SplashScreen, Tabs, useSegments } from "expo-router";
+import RideUpdateNotification from "@sure-walk/utils/types/ride-update-notification";
+import * as Notifications from "expo-notifications";
+import {
+  ExternalPathString,
+  Redirect,
+  router,
+  SplashScreen,
+  Tabs,
+  useSegments,
+} from "expo-router";
 import { CarIcon, HouseIcon, UserCircleIcon } from "phosphor-react-native";
 import { useEffect } from "react";
 import { ActivityIndicator, Platform, View } from "react-native";
@@ -20,6 +29,7 @@ import { slate200, slate900, UTBurntOrange } from "../utils/colors";
 import { useCurrentRideSession } from "../utils/context/current-ride-context";
 import { GroupRideProvider } from "../utils/context/group-ride-context";
 import { MissedRideProvider } from "../utils/context/missed-ride-context";
+import { usePushNotificationsContext } from "../utils/context/push-notifications-context";
 import { RideProvider } from "../utils/context/ride-context";
 import { RideDetailsProvider } from "../utils/context/ride-details-context";
 import { useTabContext } from "../utils/context/tab-context";
@@ -30,6 +40,10 @@ const TabScreens = () => {
   const { loadingState, user, guidelinesAccepted } = useSession();
   const { loadingState: rideLoadingState } = useCurrentRideSession();
   const { goHome, goMyRide, activeTab } = useTabContext();
+  const {
+    loadingState: notificationsLoadingState,
+    registerForPushNotificationsAsync,
+  } = usePushNotificationsContext();
 
   const segments = useSegments();
   let paddingBottom: number = useSafeAreaInsets().bottom;
@@ -46,19 +60,58 @@ const TabScreens = () => {
     Geist_900Black,
   });
 
+  const onNotificationTapped = (data: RideUpdateNotification) => {
+    // @ts-ignore
+    if (!segments.includes("home") || (activeTab === "home" && data.route)) {
+      goMyRide();
+      router.push(data.route as unknown as ExternalPathString);
+    }
+  };
+
+  useEffect(() => {
+    registerForPushNotificationsAsync();
+    const responseListener =
+      Notifications.addNotificationResponseReceivedListener((response) => {
+        console.log(response);
+        const eventType = response.notification.request.content.data.eventType;
+        if (eventType === "routeUpdate" || eventType === "vehicleInfo") {
+          const data: RideUpdateNotification = response.notification.request
+            .content.data as unknown as RideUpdateNotification;
+          console.log(data.route);
+          onNotificationTapped(data);
+        }
+        if (eventType === "rideFeedback") {
+          const data = response.notification.request.content.data;
+          router.push(data.route);
+        }
+      });
+
+    return () => {
+      responseListener.remove();
+    };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   useEffect(() => {
     if (
       loadingState !== "loading" &&
       rideLoadingState !== "loading" &&
+      notificationsLoadingState !== "loading" &&
       (loaded || error)
     ) {
       setTimeout(() => SplashScreen.hideAsync(), 200);
     }
-  }, [loadingState, rideLoadingState, loaded, error]);
+  }, [
+    loadingState,
+    rideLoadingState,
+    notificationsLoadingState,
+    loaded,
+    error,
+  ]);
 
   if (
     loadingState === "loading" ||
     rideLoadingState === "loading" ||
+    notificationsLoadingState === "loading" ||
     (!loaded && !error)
   ) {
     return (

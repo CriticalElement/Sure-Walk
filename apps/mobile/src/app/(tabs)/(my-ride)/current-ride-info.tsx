@@ -48,6 +48,7 @@ import RiderCard from "@/src/components/rider-card";
 import { slate700, UTBluebonnet, UTBurntOrange } from "@/src/utils/colors";
 import { useCurrentRideSession } from "@/src/utils/context/current-ride-context";
 import { useMissedRideSession } from "@/src/utils/context/missed-ride-context";
+import { usePushNotificationsContext } from "@/src/utils/context/push-notifications-context";
 import { useRideDetailsSession } from "@/src/utils/context/ride-details-context";
 import { useToastContext } from "@/src/utils/context/toast-context";
 import { WEST_CAMPUS_LOCATIONS } from "@/src/utils/locations/dropoff-locations";
@@ -60,6 +61,7 @@ const CurrentRideInfo = () => {
   const { setCurrentRide } = useCurrentRideSession();
   const { setMissedRide, setShowModal } = useMissedRideSession();
   const { setToast } = useToastContext();
+  const { pushToken } = usePushNotificationsContext();
 
   // shareCode is for viewing group rides
   const params = useSearchParams();
@@ -96,12 +98,17 @@ const CurrentRideInfo = () => {
   ) as SharedValue<(string | number)[]>;
 
   const connect = (onConnect = () => {}) => {
-    const wsURL = API_URL.replace("http", "ws");
+    const wsURL = new URL(API_URL.replace("http", "ws"));
     const accessToken = SecureStore.getItem("accessToken");
-    const ws = new WebSocket(
-      `${wsURL}/ride/events${shareCode ? `?shareCode=${shareCode}` : ""}`,
-      `Bearer ${accessToken ?? ""}`,
-    );
+    wsURL.pathname = "/api/ride/events";
+    if (shareCode) {
+      wsURL.searchParams.append("shareCode", shareCode);
+    }
+    console.log("abc", pushToken);
+    if (pushToken) {
+      wsURL.searchParams.append("pushToken", pushToken);
+    }
+    const ws = new WebSocket(wsURL.toString(), `Bearer ${accessToken ?? ""}`);
     wsRef.current = ws;
 
     ws.addEventListener("message", (event) => {
@@ -272,6 +279,7 @@ const CurrentRideInfo = () => {
       if (wsRef.current) {
         wsRef.current.onclose = null;
         wsRef.current.close();
+        wsRef.current = undefined;
       }
       if (wsConnectTimeoutRef.current) {
         clearTimeout(wsConnectTimeoutRef.current);
@@ -438,13 +446,14 @@ const CurrentRideInfo = () => {
               right: 0,
             }}
             tintColor={UTBurntOrange}
+            userInterfaceStyle="light"
           >
             <Marker
               coordinate={{
                 latitude: pickupLocation?.lat ?? 0,
                 longitude: pickupLocation?.lon ?? 0,
               }}
-              tracksViewChanges={false}
+              tracksViewChanges={true}
             >
               <View className="bg-[#EDD9CA] rounded-full items-center justify-center w-[32px] h-[32px]">
                 <CircleIcon color={UTBurntOrange} weight="fill" size="20" />
@@ -455,7 +464,7 @@ const CurrentRideInfo = () => {
                 latitude: dropoffLocation?.lat ?? 0,
                 longitude: dropoffLocation?.lon ?? 0,
               }}
-              tracksViewChanges={false}
+              tracksViewChanges={true}
             >
               <View className="bg-[#C6DBE4] rounded-full items-center justify-center w-[32px] h-[32px]">
                 <MapPinIcon color={UTBluebonnet} size="20" weight="fill" />
@@ -480,6 +489,7 @@ const CurrentRideInfo = () => {
                 latitude: vehicleLocation.latitude,
                 longitude: vehicleLocation.longitude,
               }}
+              tracksViewChanges={true}
             >
               <View
                 className="bg-white rounded-full items-center justify-center w-[44px] h-[44px]"
