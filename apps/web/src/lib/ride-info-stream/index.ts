@@ -154,6 +154,10 @@ export class RideInfoStream extends DurableObject<CloudflareEnv> {
     this.sql.exec(`DELETE FROM pushTokens WHERE rideID = ?;`, rideID);
   }
 
+  removeSubscriber(pushToken: string) {
+    this.sql.exec(`DELETE FROM pushTokens where pushToken = ?`, pushToken);
+  }
+
   getSubscribers(rideID: string) {
     const res = this.sql
       .exec(`SELECT * FROM pushTokens where rideID = ?;`, rideID)
@@ -305,7 +309,7 @@ export class RideInfoStream extends DurableObject<CloudflareEnv> {
         if (route?.vehicle || route?.driver) {
           await setPickupStopState(ride.pickupStopID, "scheduled", this.env);
           await setDropoffStopState(ride.dropoffStopID, "scheduled", this.env);
-          await this.sendRouteUpdate(ride.id, "assigned");
+          this.sendRouteUpdate(ride.id, "assigned");
           const subscribers = this.getSubscribers(ride.id);
           if (subscribers) {
             const res = await sendRouteUpdateNotification({
@@ -378,13 +382,13 @@ export class RideInfoStream extends DurableObject<CloudflareEnv> {
           if (rideID) {
             if (stopState === "scheduled") {
               // already done in streamAssignmentChanges
-              // await this.sendRouteUpdate(rideID, "assigned");
+              // this.sendRouteUpdate(rideID, "assigned");
             }
             if (stopState === "en route") {
               // if the stop becomes en route, that means the driver / vehicle
               // has been finalized and is now currently driving towards the
               // user's pickup location directly
-              await this.sendRouteUpdate(rideID, "en route");
+              this.sendRouteUpdate(rideID, "en route");
               const subscribers = this.getSubscribers(rideID);
               if (subscribers) {
                 const res = await sendRouteUpdateNotification({
@@ -475,7 +479,7 @@ export class RideInfoStream extends DurableObject<CloudflareEnv> {
                   .set({ vehicleID: vehicleID })
                   .where(eq(rides.samsaraID, ride.route.id));
 
-                await this.sendVehicleInfo(rideID, vehicle);
+                this.sendVehicleInfo(rideID, vehicle);
                 if (subscribers) {
                   const res = await sendVehicleInfoNotification({
                     vehicleInfo: this.vehicleInfoShort(vehicle),
@@ -490,7 +494,7 @@ export class RideInfoStream extends DurableObject<CloudflareEnv> {
             }
             if (stopState === "arrived") {
               // the user will now have 2 minutes to board the vehicle
-              await this.sendRouteUpdate(rideID, "arrived");
+              this.sendRouteUpdate(rideID, "arrived");
               const subscribers = this.getSubscribers(rideID);
               if (subscribers) {
                 const res = await sendRouteUpdateNotification({
@@ -563,7 +567,7 @@ export class RideInfoStream extends DurableObject<CloudflareEnv> {
                   .update(rides)
                   .set({ numPickedUp })
                   .where(eq(rides.id, rideID));
-                await this.sendRouteUpdate(rideID, "in progress");
+                this.sendRouteUpdate(rideID, "in progress");
               }
             }
           }
@@ -575,8 +579,7 @@ export class RideInfoStream extends DurableObject<CloudflareEnv> {
           if (rideID) {
             if (stopState === "arrived") {
               // the end of the ride, record time for metrics
-
-              await this.sendRouteUpdate(rideID, "dropped off");
+              this.sendRouteUpdate(rideID, "dropped off");
               await getDBInWorker(this.env)
                 .update(rides)
                 .set({ actualDropoffTime: stop.actualArrivalTime })
@@ -609,9 +612,7 @@ export class RideInfoStream extends DurableObject<CloudflareEnv> {
     }
   }
 
-  async sendRouteUpdate(rideID: string, rideState: InProgressRideState) {
-    // send push notification (TODO)
-
+  sendRouteUpdate(rideID: string, rideState: InProgressRideState) {
     this.sendEvent("routeUpdate", { rideState }, rideID);
   }
 
@@ -632,11 +633,8 @@ export class RideInfoStream extends DurableObject<CloudflareEnv> {
     return vehicleInfo;
   }
 
-  async sendVehicleInfo(rideID: string, vehicle: Vehicle) {
+  sendVehicleInfo(rideID: string, vehicle: Vehicle) {
     const vehicleInfo = this.vehicleInfoShort(vehicle);
-
-    // send push notification (TODO)
-
     this.sendEvent("vehicleInfo", vehicleInfo, rideID);
   }
 

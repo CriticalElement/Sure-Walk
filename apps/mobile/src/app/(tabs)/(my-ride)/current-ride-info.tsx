@@ -8,6 +8,7 @@ import RideEvent from "@sure-walk/utils/types/ride-event";
 import VehicleInfoShort from "@sure-walk/utils/types/vehicle-info-short";
 import * as Clipboard from "expo-clipboard";
 import { LinearGradient } from "expo-linear-gradient";
+import * as ExpoLocation from "expo-location";
 import { router } from "expo-router";
 import { useSearchParams } from "expo-router/build/hooks";
 import * as SecureStore from "expo-secure-store";
@@ -39,6 +40,7 @@ import { api } from "@/src/client/session";
 import CancelRideModal from "@/src/components/cancel-ride-modal";
 import FontText from "@/src/components/font-text";
 import { GuidelinesListShort } from "@/src/components/guidelines-list";
+import LocationMarker from "@/src/components/location-marker";
 import OutlineButton from "@/src/components/outline-button";
 import PickupDropoffLocationInfo from "@/src/components/pickup-dropoff-location-info";
 import RideStateStep, {
@@ -82,6 +84,8 @@ const CurrentRideInfo = () => {
     undefined,
   );
   const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [userLocation, setUserLocation] =
+    useState<ExpoLocation.LocationObject | null>(null);
 
   const wsRef = useRef<WebSocket | undefined>(undefined);
   const wsConnectTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
@@ -275,6 +279,7 @@ const CurrentRideInfo = () => {
   };
 
   useEffect(() => {
+    fetchUserLocation();
     setTimeout(() => {
       setRideDetails(null);
       connect(() =>
@@ -296,6 +301,18 @@ const CurrentRideInfo = () => {
       }
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const fetchUserLocation = async () => {
+    const { status } = await ExpoLocation.getForegroundPermissionsAsync();
+    if (status !== "granted") {
+      return;
+    }
+
+    const location = await ExpoLocation.getCurrentPositionAsync({
+      accuracy: ExpoLocation.LocationAccuracy.BestForNavigation,
+    });
+    setUserLocation(location);
+  };
 
   const animateToStep = (rideState: InProgressRideState) => {
     if (rideState === "en route") {
@@ -494,6 +511,7 @@ const CurrentRideInfo = () => {
                 <CarSimpleIcon color={"#000"} size={32} weight="fill" />
               </View>
             </Marker>
+            <LocationMarker location={userLocation} />
           </MapView>
         </View>
       </View>
