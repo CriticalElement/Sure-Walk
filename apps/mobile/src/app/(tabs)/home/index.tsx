@@ -25,24 +25,21 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import MapView, { Marker, Polygon } from "react-native-maps";
+import MapView, { Polygon } from "react-native-maps";
 import Animated, {
   Easing,
   FadeInDown,
   FadeInUp,
   FadeOutDown,
   FadeOutUp,
-  useAnimatedStyle,
   useDerivedValue,
   useSharedValue,
-  withRepeat,
-  withSequence,
-  withTiming,
 } from "react-native-reanimated";
 
 import CheckButton from "@/src/components/check-button";
 import FontText from "@/src/components/font-text";
 import LargeButton from "@/src/components/large-button";
+import LocationMarker from "@/src/components/location-marker";
 import {
   dropoffBoundaryPolygons,
   pickupBoundaryPolygons,
@@ -143,25 +140,6 @@ const Home = () => {
       setShowMyRide(false);
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const pulseScale = useSharedValue(1);
-  useEffect(() => {
-    pulseScale.value = withRepeat(
-      withSequence(
-        withTiming(0.8, {
-          duration: 1400,
-          easing: Easing.inOut(Easing.ease),
-        }),
-        withTiming(1, { duration: 1400, easing: Easing.inOut(Easing.ease) }),
-      ),
-      -1,
-      false,
-    );
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const pulseStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: pulseScale.value }],
-  }));
 
   const centerMapOnLocation = (location: Location.LocationObject) => {
     setTimeout(() => {
@@ -475,44 +453,7 @@ const Home = () => {
                 }
               />
             ))}
-            {location && (
-              <Marker
-                coordinate={{
-                  latitude: location.coords.latitude,
-                  longitude: location.coords.longitude,
-                }}
-                tracksViewChanges={true}
-              >
-                <Animated.View
-                  style={[
-                    {
-                      width: 24,
-                      height: 24,
-                      borderRadius: 12,
-                      backgroundColor: "white",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      shadowColor: "#000",
-                      shadowOffset: { width: 0, height: 2 },
-                      shadowOpacity: 0.2,
-                      shadowRadius: 4,
-                      elevation: 4,
-                      margin: 4,
-                    },
-                    pulseStyle,
-                  ]}
-                >
-                  <View
-                    style={{
-                      width: 16,
-                      height: 16,
-                      borderRadius: 8,
-                      backgroundColor: UTBurntOrange,
-                    }}
-                  />
-                </Animated.View>
-              </Marker>
-            )}
+            <LocationMarker location={location} />
           </MapView>
         </View>
         <LinearGradient

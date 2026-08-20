@@ -13,7 +13,7 @@ import { useToastContext } from "./toast-context";
 interface UserContextType {
   user: User | null;
   setUser: (user: User) => void;
-  logOut: () => void;
+  logOut: (pushToken: string | undefined) => void;
   loadingState: LoadingState;
   guidelinesAccepted: boolean;
   acceptGuidelines: () => Promise<void>;
@@ -87,9 +87,9 @@ export const SessionProvider = ({ children }: PropsWithChildren) => {
       value={{
         user: userInfo,
         setUser: setUserInfo,
-        logOut: async () => {
+        logOut: async (pushToken: string | undefined) => {
           try {
-            await logout();
+            await logout(pushToken);
           } catch (error) {
             console.error("Error occurred while logging out, ignoring:", error);
           }

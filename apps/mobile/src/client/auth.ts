@@ -52,12 +52,12 @@ export const confirmGeneric = async (code: string) => {
   return response;
 };
 
-export const logout = async () => {
+export const logout = async (pushToken: string | undefined) => {
   const refreshToken = await SecureStore.getItemAsync("refreshToken");
 
   const response = await axios.post(
     `${API_URL}/auth/logout`,
-    { refreshToken },
+    { refreshToken, pushToken },
     { validateStatus: () => true },
   );
   return response;

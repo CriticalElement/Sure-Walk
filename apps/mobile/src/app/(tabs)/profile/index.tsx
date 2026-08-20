@@ -17,10 +17,12 @@ import FontText from "@/src/components/font-text";
 import LargeButton from "@/src/components/large-button";
 import OutlineButton from "@/src/components/outline-button";
 import { UTBluebonnet } from "@/src/utils/colors";
+import { usePushNotificationsContext } from "@/src/utils/context/push-notifications-context";
 import { useSession } from "@/src/utils/context/user-context";
 
 const Profile = () => {
   const { user, loadingState, logOut, setUser } = useSession();
+  const { pushToken } = usePushNotificationsContext();
 
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -258,7 +260,7 @@ const Profile = () => {
                     <View className="pb-2 w-full mb-6">
                       <OutlineButton
                         title="Log Out"
-                        onPress={logOut}
+                        onPress={() => logOut(pushToken ?? undefined)}
                         icon={<SignOutIcon color={UTBluebonnet} size={32} />}
                       />
                     </View>

@@ -1,3 +1,4 @@
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 import z from "zod";
@@ -8,6 +9,7 @@ import { refreshTokens } from "@/lib/db/schema/refresh-tokens";
 
 const logoutFormat = z.object({
   refreshToken: z.string(),
+  pushToken: z.string().optional(),
 });
 
 export async function POST(request: NextRequest) {
@@ -23,10 +25,17 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const { refreshToken } = validationResult.data;
+  const { refreshToken, pushToken } = validationResult.data;
   await getDB()
     .delete(refreshTokens)
     .where(eq(refreshTokens.hash, hashToken(refreshToken)));
+
+  if (pushToken) {
+    const { env } = getCloudflareContext();
+    const doID = env.RIDE_INFO_STREAM.idFromName("global");
+    const stub = env.RIDE_INFO_STREAM.get(doID);
+    await stub.removeSubscriber(pushToken);
+  }
 
   return NextResponse.json({ message: "Logged out successfully." });
 }
