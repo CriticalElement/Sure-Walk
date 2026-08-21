@@ -29,7 +29,7 @@ export const MissedRideProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { goMyRide } = useTabContext();
+  const { goMyRide, activeTab } = useTabContext();
 
   const [missedRide, setMissedRide] = useState<CurrentRideMini | null>(null);
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -37,7 +37,7 @@ export const MissedRideProvider = ({
   useEffect(() => {
     // when a missed ride notification is pressed, make sure the tab switches
     // to the my ride page
-    if (showModal === true) {
+    if (showModal === true && activeTab === "home") {
       goMyRide();
     }
   }, [showModal, goMyRide]);
