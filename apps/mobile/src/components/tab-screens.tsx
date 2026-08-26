@@ -20,7 +20,12 @@ import {
   Tabs,
   useSegments,
 } from "expo-router";
-import { CarIcon, HouseIcon, UserCircleIcon } from "phosphor-react-native";
+import {
+  CarIcon,
+  HouseIcon,
+  UserCircleIcon,
+  WifiXIcon,
+} from "phosphor-react-native";
 import { useEffect } from "react";
 import { ActivityIndicator, Platform, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -35,9 +40,11 @@ import { RideDetailsProvider } from "../utils/context/ride-details-context";
 import { useTabContext } from "../utils/context/tab-context";
 import { useSession } from "../utils/context/user-context";
 import FontText from "./font-text";
+import LargeButton from "./large-button";
 
 const TabScreens = () => {
-  const { loadingState, user, guidelinesAccepted } = useSession();
+  const { loadingState, user, guidelinesAccepted, fetchUserInfo } =
+    useSession();
   const { loadingState: rideLoadingState } = useCurrentRideSession();
   const { goHome, goMyRide, activeTab } = useTabContext();
   const {
@@ -137,8 +144,17 @@ const TabScreens = () => {
   if (loadingState === "error") {
     // network issues
     return (
-      <View className="flex-1 items-center justify-center bg-white">
-        <FontText className="text-2xl font-medium">No internet</FontText>
+      <View className="flex-1 items-center justify-center bg-white gap-5 p-5">
+        <WifiXIcon color={UTBurntOrange} size={68} />
+        <View className="flex-col gap-2 items-center">
+          <FontText className="text-2xl font-medium">No internet</FontText>
+          <FontText className="text-lg font-normal">
+            Please check your connection.
+          </FontText>
+        </View>
+        <View className="w-full">
+          <LargeButton title="Reload" onPress={fetchUserInfo} />
+        </View>
       </View>
     );
   }
