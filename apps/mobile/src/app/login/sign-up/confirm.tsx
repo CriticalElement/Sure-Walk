@@ -1,4 +1,4 @@
-import { router } from "expo-router";
+import { router, usePathname } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { CircleIcon } from "phosphor-react-native";
 import { useRef, useState } from "react";
@@ -23,6 +23,7 @@ const Confirm = () => {
   const { phoneNumber } = useLoginSession();
   const { setUser } = useSession();
   const { setToast } = useToastContext();
+  const pathname = usePathname();
 
   const [code, setCode] = useState("");
   const [focused, setFocus] = useState<boolean>(false);
@@ -51,7 +52,10 @@ const Confirm = () => {
       await SecureStore.setItemAsync("accessToken", accessToken);
       await SecureStore.setItemAsync("refreshToken", refreshToken);
       router.dismissAll();
-      router.replace("/login/guidelines");
+      const path = pathname.includes("login-generic")
+        ? "/login/login-generic/guidelines"
+        : "/login/sign-up/guidelines";
+      router.replace(path);
     } catch (error) {
       handleNetworkFailure(error, setToast);
     } finally {

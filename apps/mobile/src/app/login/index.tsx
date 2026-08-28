@@ -1,42 +1,33 @@
-import { Link, router } from "expo-router";
-import { View } from "react-native";
+import { router } from "expo-router";
+import { Image, View } from "react-native";
 
 import FontText from "@/src/components/font-text";
 import LargeButton from "@/src/components/large-button";
-import RadioButton from "@/src/components/radio-button";
-import { useLoginSession } from "@/src/utils/context/login-context";
+import OutlineButton from "@/src/components/outline-button";
 
 const Index = () => {
-  const { userType, setUserType, setEid } = useLoginSession();
-
   return (
-    <View className="flex-1 bg-white px-5 pt-8">
-      <FontText className="text-2xl font-medium mb-2">Who are you?</FontText>
-      <Link className="text-lg mb-12" replace href="/">
-        This helps us know who we’re picking up.
-      </Link>
-      <View className="flex-1 gap-4 flex-col justify-start">
-        <RadioButton
-          label="UT Student, Faculty, or Staff"
-          selected={userType === "ut-affiliated"}
-          onPress={() => setUserType("ut-affiliated")}
-        ></RadioButton>
-        <RadioButton
-          label="Guest"
-          selected={userType === "guest"}
-          onPress={() => setUserType("guest")}
-        ></RadioButton>
+    <View className="bg-white pt-safe pb-safe px-5 flex-col flex-1 justify-between">
+      <View className="px-[48px] py-[34px]">
+        <Image
+          source={require("../../../assets/images/splash-orange.png")}
+          className="w-full"
+          style={{ objectFit: "contain" }}
+        />
       </View>
-      <LargeButton
-        title="Continue"
-        onPress={() => {
-          if (userType === "guest") {
-            setEid(undefined);
-          }
-          router.navigate("/login/name");
-        }}
-        disabled={userType === null}
-      ></LargeButton>
+      <View className="flex-col gap-6">
+        <LargeButton
+          title="Sign Up"
+          onPress={() => router.navigate("/login/sign-up")}
+        />
+        <OutlineButton
+          title="Log In"
+          onPress={() => router.navigate("/login/login-generic")}
+        />
+        <FontText className="text-md font-normal color-slate-400 text-center">
+          Officially partnered with PTS,{"\n"}made by Longhorn Developers
+        </FontText>
+      </View>
     </View>
   );
 };

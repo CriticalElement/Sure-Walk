@@ -164,7 +164,7 @@ const TabScreens = () => {
   }
 
   if (!guidelinesAccepted) {
-    return <Redirect href="/login/guidelines" />;
+    return <Redirect href="/login/login-generic/guidelines" />;
   }
 
   return (

@@ -103,6 +103,8 @@ export const SessionProvider = ({ children }: PropsWithChildren) => {
             console.error("Error occurred while logging out, ignoring:", error);
           }
           setUserInfo(null);
+          await SecureStore.deleteItemAsync("accessToken");
+          await SecureStore.deleteItemAsync("refreshToken");
           await SecureStore.deleteItemAsync("guidelinesAccepted");
         },
         loadingState: loadingState,

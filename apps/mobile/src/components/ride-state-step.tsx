@@ -81,9 +81,8 @@ const RideStateStep = ({
   const highlighted = useSharedValue<boolean>(
     rideStateToStepNum[currentRideState]! >= rideStateToStepNum[rideState]!,
   );
-  const highlightFirst = useSharedValue<boolean>(
-    currentRideState !== "received",
-  );
+  const highlightFirst = useSharedValue<number>(0);
+  highlightFirst.value = withDelay(950, withTiming(1, { duration: 0 }));
 
   let titleText = (rideState as string).replace(/\b\w/g, (char) =>
     char.toUpperCase(),
@@ -169,10 +168,6 @@ const RideStateStep = ({
       : withTiming(0, { duration: 300 });
   }, [highlighted, highlightFirst]);
   /* eslint-enable react-hooks/rules-of-hooks */
-
-  useEffect(() => {
-    setTimeout(() => (highlightFirst.value = true), 1150);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <View className={`w-[${width}px]`}>

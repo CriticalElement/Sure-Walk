@@ -1,9 +1,9 @@
-import { router } from "expo-router";
+import { Link, router } from "expo-router";
 import { useState } from "react";
 import { Platform, View } from "react-native";
 
 import { getErrorMessage, handleNetworkFailure } from "@/src/client";
-import { registerGeneric } from "@/src/client/auth";
+import { loginGeneric } from "@/src/client/auth";
 import { ok } from "@/src/client/session";
 import FontText from "@/src/components/font-text";
 import LargeButton from "@/src/components/large-button";
@@ -11,17 +11,9 @@ import TextInputField from "@/src/components/text-input-field";
 import { useLoginSession } from "@/src/utils/context/login-context";
 import { useToastContext } from "@/src/utils/context/toast-context";
 
-const Phone = () => {
-  const {
-    firstName,
-    lastName,
-    eid,
-    userType,
-    requiresAssistance,
-    phoneNumber,
-    setPhoneNumber,
-  } = useLoginSession();
+const Index = () => {
   const { setToast } = useToastContext();
+  const { phoneNumber, setPhoneNumber } = useLoginSession();
 
   const checkValidity = (value: string) => {
     return value.replace(/\D/g, "").length >= 10;
@@ -35,22 +27,15 @@ const Phone = () => {
     setIsValid(checkValidity(value));
   };
 
-  const registerAccount = async () => {
+  const login = async () => {
     setSubmitting(true);
     try {
-      const response = await registerGeneric({
-        firstName,
-        lastName,
-        eid,
-        phoneNumber,
-        requiresAssistance: requiresAssistance!,
-        userType: userType!,
-      });
+      const response = await loginGeneric(phoneNumber);
 
       if (!ok(response)) {
-        const error = getErrorMessage(response, "Failed to register account");
+        const error = getErrorMessage(response, "Failed to log in");
         setToast({
-          title: "Failed to register account.",
+          title: "Failed to log in.",
           description: error,
           onDismiss: () => setToast(null),
           isError: true,
@@ -58,7 +43,7 @@ const Phone = () => {
         return;
       }
 
-      router.navigate("/login/confirm");
+      router.navigate("/login/login-generic/confirm");
     } catch (error) {
       handleNetworkFailure(error, setToast);
     } finally {
@@ -71,10 +56,10 @@ const Phone = () => {
       <FontText className="text-2xl font-medium mb-2">
         Enter your phone number
       </FontText>
-      <FontText className="text-lg mb-12">
-        We'll call as we approach your location.
-      </FontText>
-      <View className="flex-1 gap-4 flex-col justify-start">
+      <Link className="text-lg mb-12" replace href="/">
+        Use the number you entered when signing up.
+      </Link>
+      <View className="flex-1 flex-col justify-start">
         <TextInputField
           fieldName="Phone Number"
           value={phoneNumber}
@@ -87,12 +72,12 @@ const Phone = () => {
         />
       </View>
       <LargeButton
-        title={submitting ? "Submitting..." : "Continue"}
+        title="Continue"
+        onPress={login}
         disabled={!isValid || submitting}
-        onPress={registerAccount}
-      />
+      ></LargeButton>
     </View>
   );
 };
 
-export default Phone;
+export default Index;

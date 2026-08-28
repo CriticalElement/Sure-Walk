@@ -77,6 +77,11 @@ const Feedback = () => {
   }, [feedback]);
 
   const submit = async () => {
+    if (loadingState === "error") {
+      router.back();
+      return;
+    }
+
     setSubmitting(true);
     try {
       const res = await api.post("/ride/feedback", {

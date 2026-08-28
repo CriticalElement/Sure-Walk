@@ -41,6 +41,17 @@ export const registerGeneric = async ({
   return response;
 };
 
+export const loginGeneric = async (phoneNumber: string) => {
+  const response = await axios.post(
+    `${API_URL}/auth/login-generic`,
+    {
+      phoneNumber,
+    },
+    { validateStatus: () => true },
+  );
+  return response;
+};
+
 export const confirmGeneric = async (code: string) => {
   const response = await axios.post(
     `${API_URL}/auth/confirm-generic`,
