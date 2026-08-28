@@ -71,5 +71,5 @@ export async function POST(request: NextRequest) {
   const accessToken = generateAccessToken(result.accounts!);
   const refreshToken = await generateRefreshToken(result.accounts!);
 
-  return NextResponse.json({ accessToken, refreshToken, user: { ...user } });
+  return NextResponse.json({ accessToken, refreshToken, user });
 }

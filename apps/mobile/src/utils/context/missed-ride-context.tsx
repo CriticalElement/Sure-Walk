@@ -40,7 +40,7 @@ export const MissedRideProvider = ({
     if (showModal === true && activeTab === "home") {
       goMyRide();
     }
-  }, [showModal, goMyRide]);
+  }, [showModal, goMyRide]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <MissedRideContext.Provider

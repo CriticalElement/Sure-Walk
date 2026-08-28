@@ -7,50 +7,37 @@ import LargeButton from "@/src/components/large-button";
 import TextInputField from "@/src/components/text-input-field";
 import { useLoginSession } from "@/src/utils/context/login-context";
 
-const Name = () => {
-  const { firstName, lastName, setFirstName, setLastName, userType } =
-    useLoginSession();
+const EID = () => {
+  const { eid, setEid } = useLoginSession();
 
   const [isValid, setIsValid] = useState(false);
 
   useEffect(() => {
-    const valid = firstName.trim().length > 0 && lastName.trim().length > 0;
+    const valid = (eid ?? "").trim().length > 3;
     setIsValid(valid);
-  }, [firstName, lastName]);
+  }, [eid]);
 
   return (
     <View className="flex-1 bg-white px-5 pt-8">
       <FontText className="text-2xl font-medium mb-2">
-        What’s your name?
+        What’s your UT EID?
       </FontText>
       <FontText className="text-lg mb-12">
         This helps us know who we’re picking up.
       </FontText>
       <View className="flex-1 gap-4 flex-col justify-start">
         <TextInputField
-          fieldName="First Name"
-          value={firstName}
-          onChangeText={setFirstName}
-          autoCapitalize="words"
-          autoComplete="given-name"
-          maxLength={40}
-          placeholder="Longhorn"
-        />
-        <TextInputField
-          fieldName="Last Name"
-          value={lastName}
-          onChangeText={setLastName}
-          autoCapitalize="words"
-          autoComplete="family-name"
-          maxLength={40}
-          placeholder="Bevo"
+          fieldName="UT EID"
+          value={eid}
+          onChangeText={setEid}
+          maxLength={10}
+          placeholder="UT EID"
         />
       </View>
       <LargeButton
         title="Continue"
         onPress={() => {
-          userType === "ut-affiliated" && router.navigate("/login/eid");
-          userType === "guest" && router.navigate("/login/assistance");
+          router.navigate("/login/sign-up/assistance");
         }}
         disabled={!isValid}
       ></LargeButton>
@@ -58,4 +45,4 @@ const Name = () => {
   );
 };
 
-export default Name;
+export default EID;

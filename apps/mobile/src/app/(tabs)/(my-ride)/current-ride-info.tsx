@@ -458,7 +458,6 @@ const CurrentRideInfo = () => {
           <MapView
             ref={mapRef}
             style={{ width: "100%", flex: 1, zIndex: 0 }}
-            showsUserLocation
             initialRegion={{
               latitude: 30.282962,
               longitude: -97.737224,
