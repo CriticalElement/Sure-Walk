@@ -66,7 +66,7 @@ import { Location as LocationType } from "@/src/utils/types/location";
 import MyRide from "../(my-ride)";
 
 const Home = () => {
-  let _style: StyleProp<TextStyle> = {};
+  let _style: StyleProp<TextStyle> = { fontSize: 16 };
   if (Platform.OS === "ios") {
     _style.lineHeight = 0;
   }

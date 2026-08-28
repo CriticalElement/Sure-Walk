@@ -28,9 +28,9 @@ const OutlineButton = ({
       disabled={disabled}
     >
       {icon && <View className="items-center justify-center">{icon}</View>}
-      <View className={`items-center justify-center ${small ? "h-4" : ""}`}>
+      <View className={`items-center justify-center`}>
         <FontText
-          className={`${small ? "text-lg/[18px]" : "text-xl/10"} font-medium ${disabled ? "color-slate-500" : red ? "color-red-700" : "color-ut-bluebonnet"}`}
+          className={`${small ? "text-lg my-[-4px]" : "text-xl/10"} font-medium ${disabled ? "color-slate-500" : red ? "color-red-700" : "color-ut-bluebonnet"}`}
         >
           {title}
         </FontText>
