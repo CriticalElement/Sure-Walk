@@ -23,7 +23,8 @@ import { useSession } from "@/src/utils/context/user-context";
 
 const GroupRide = () => {
   const { user } = useSession();
-  const { members, addMember, removeMember } = useGroupRideSession();
+  const { members, addMember, removeMember, lastRideMembers, setMembers } =
+    useGroupRideSession();
 
   const [isAdding, setAdding] = useState<boolean>(false);
   const [addingUserType, setAddingUserType] =
@@ -239,13 +240,24 @@ const GroupRide = () => {
               </View>
             </View>
           )}
-          {!isAdding && !isFull && (
-            <OutlineButton
-              title="Add Riders"
-              onPress={() => setAdding(true)}
-              icon={<UserPlusIcon size={32} color={UTBluebonnet} />}
-            />
-          )}
+          <View className="flex-col gap-4">
+            {!isAdding && !isFull && (
+              <OutlineButton
+                title="Add Riders"
+                onPress={() => setAdding(true)}
+                icon={<UserPlusIcon size={32} color={UTBluebonnet} />}
+              />
+            )}
+            {!isAdding &&
+              members.length === 0 &&
+              lastRideMembers.length > 0 && (
+                <LargeButton
+                  title="Restore Last Group Ride"
+                  onPress={() => setMembers(lastRideMembers)}
+                  blue
+                />
+              )}
+          </View>
         </KeyboardAwareScrollView>
       </View>
       <LargeButton

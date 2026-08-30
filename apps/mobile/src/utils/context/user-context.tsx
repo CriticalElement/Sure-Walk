@@ -106,6 +106,7 @@ export const SessionProvider = ({ children }: PropsWithChildren) => {
           await SecureStore.deleteItemAsync("accessToken");
           await SecureStore.deleteItemAsync("refreshToken");
           await SecureStore.deleteItemAsync("guidelinesAccepted");
+          await SecureStore.deleteItemAsync("lastGroupRide");
         },
         loadingState: loadingState,
         guidelinesAccepted,
