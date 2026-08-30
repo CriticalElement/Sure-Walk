@@ -1,5 +1,6 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
+import * as SecureStore from "expo-secure-store";
 import { CaretLeftIcon, CrownSimpleIcon } from "phosphor-react-native";
 import { useState } from "react";
 import {
@@ -28,7 +29,7 @@ import { useSession } from "@/src/utils/context/user-context";
 
 const ConfirmRide = () => {
   const { pickupLocation, dropoffLocation } = useRideSession();
-  const { members, clearMembers } = useGroupRideSession();
+  const { members, clearMembers, setLastRideMembers } = useGroupRideSession();
   const { user } = useSession();
   const { firstName, lastName, userType, eid, phoneNumber } = user!;
   const { setDropoffLocation, setPickupLocation } = useRideSession();
@@ -53,6 +54,14 @@ const ConfirmRide = () => {
   const submitRide = async () => {
     setSubmitting(true);
     try {
+      if (members.length > 0) {
+        await SecureStore.setItemAsync(
+          "lastGroupRide",
+          JSON.stringify(members),
+        );
+        setLastRideMembers(members);
+      }
+
       const response = await api.post("/ride", {
         pickupLocation: pickupLocation!.id,
         dropoffLocation: dropoffLocation!.id,
