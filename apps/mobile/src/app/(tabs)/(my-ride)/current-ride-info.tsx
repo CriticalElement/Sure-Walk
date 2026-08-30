@@ -280,14 +280,12 @@ const CurrentRideInfo = () => {
 
   useEffect(() => {
     fetchUserLocation();
-    setTimeout(() => {
-      setRideDetails(null);
-      connect(() =>
-        setTimeout(() => {
-          sheetRef.current?.snapToIndex(1);
-        }, 200),
-      );
-    });
+    setRideDetails(null);
+    connect(() =>
+      setTimeout(() => {
+        sheetRef.current?.snapToIndex(1);
+      }, 200),
+    );
 
     return () => {
       if (wsRef.current) {
