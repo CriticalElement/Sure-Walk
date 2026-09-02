@@ -1,0 +1,1514 @@
+[
+  {
+    "id": 227077,
+    "abbreviation": "WEL",
+    "name": "Robert A. Welch Hall",
+    "address": "105 East 24th Street, Austin, TX 78712",
+    "lat": 30.286559682000004,
+    "lon": -97.737748394,
+    "type": "pickup"
+  },
+  {
+    "id": 1639372,
+    "abbreviation": "STD",
+    "name": "DKR Memorial Stadium",
+    "address": "2139 San Jacinto Boulevard, Austin, TX 78712",
+    "lat": 30.28394460000001,
+    "lon": -97.73283817205883,
+    "type": "pickup"
+  },
+  {
+    "id": 1710791,
+    "abbreviation": "NUR",
+    "name": "Nursing School",
+    "address": "1710 Red River Street, Austin, TX 78712",
+    "lat": 30.277751122222227,
+    "lon": -97.73348718333334,
+    "type": "pickup"
+  },
+  {
+    "id": 1711785,
+    "abbreviation": "GOL",
+    "name": "Goldsmith Hall",
+    "address": "310 Inner Campus Drive, Austin, TX 78705",
+    "lat": 30.285420661764707,
+    "lon": -97.74109207058825,
+    "type": "pickup"
+  },
+  {
+    "id": 1715386,
+    "abbreviation": "JCD",
+    "name": "Jester West Hall",
+    "address": "201 East 21st Street, Austin, TX 78705",
+    "lat": 30.28211526888888,
+    "lon": -97.73682379333336,
+    "type": "pickup"
+  },
+  {
+    "id": 1736658,
+    "abbreviation": "KIN",
+    "name": "Kinsolving Dormitory",
+    "address": "2605 Whitis Avenue, Austin, TX 78705",
+    "lat": 30.290299906521742,
+    "lon": -97.73960602608697,
+    "type": "pickup"
+  },
+  {
+    "id": 4464605,
+    "abbreviation": "RLP",
+    "name": "Patton Hall",
+    "address": "305 East 23rd Street, Austin, TX 78712",
+    "lat": 30.284959916666665,
+    "lon": -97.73523970000001,
+    "type": "pickup"
+  },
+  {
+    "id": 7478745,
+    "abbreviation": "ATT",
+    "name": "AT&T Executive Education and Conference Center",
+    "address": "1900 University Avenue, Austin, TX 78705",
+    "lat": 30.28196699714286,
+    "lon": -97.74037178857142,
+    "type": "pickup"
+  },
+  {
+    "id": 20972967,
+    "abbreviation": "BMA",
+    "name": "Blanton Museum of Art",
+    "address": "200 East Martin Luther King Jr Boulevard, Austin, TX 78705",
+    "lat": 30.28109671818182,
+    "lon": -97.73758097272729,
+    "type": "pickup"
+  },
+  {
+    "id": 25795473,
+    "abbreviation": "PCL",
+    "name": "Perry-Castañeda Library",
+    "address": "101 East 21st Street, Austin, TX 78705",
+    "lat": 30.282836178947367,
+    "lon": -97.73821121052633,
+    "type": "pickup"
+  },
+  {
+    "id": 27397850,
+    "abbreviation": "BRG",
+    "name": "Brazos Garage",
+    "address": "210 East Martin Luther King Jr Boulevard, Austin, TX 78705",
+    "lat": 30.280977629411762,
+    "lon": -97.73632804117646,
+    "type": "pickup"
+  },
+  {
+    "id": 27397879,
+    "abbreviation": "JES",
+    "name": "Beauford H. Jester Center",
+    "address": "201 East 21st Street, Austin, TX 78705",
+    "lat": 30.283048216666664,
+    "lon": -97.73695049444444,
+    "type": "pickup"
+  },
+  {
+    "id": 27397894,
+    "abbreviation": "MAI",
+    "name": "Main Building",
+    "address": "110 Inner Campus Drive, Austin, TX 78705",
+    "lat": 30.286006827999994,
+    "lon": -97.73932574399998,
+    "type": "pickup"
+  },
+  {
+    "id": 27397931,
+    "abbreviation": "DCP",
+    "name": "Denton A. Cooley Pavillion",
+    "address": "1601 Red River Street, Austin, TX 78701",
+    "lat": 30.27623695,
+    "lon": -97.73308986666667,
+    "type": "pickup"
+  },
+  {
+    "id": 30548579,
+    "abbreviation": "SJG",
+    "name": "San Jacinto Garage",
+    "address": "2401 San Jacinto Boulevard, Austin, TX 78705",
+    "lat": 30.28773386875,
+    "lon": -97.73290475625001,
+    "type": "pickup"
+  },
+  {
+    "id": 30548773,
+    "abbreviation": "DFA",
+    "name": "E. William Doty Fine Arts Building",
+    "address": "2301 Trinity Street, Austin, TX 78712",
+    "lat": 30.28585846129032,
+    "lon": -97.73178803548389,
+    "type": "pickup"
+  },
+  {
+    "id": 30880226,
+    "abbreviation": "IPF",
+    "name": "Indoor Practice Facility",
+    "address": "2501 Red River Street, Austin, TX 78705",
+    "lat": 30.286137066666665,
+    "lon": -97.72669536666668,
+    "type": "pickup"
+  },
+  {
+    "id": 30880274,
+    "abbreviation": "AFP",
+    "name": "Athletic Fields Pavilion",
+    "address": "2336 North Interstate Highway 35 Service Road, Austin, TX 78705",
+    "lat": 30.285298533333332,
+    "lon": -97.72630996666665,
+    "type": "pickup"
+  },
+  {
+    "id": 30905846,
+    "abbreviation": "TRG",
+    "name": "Trinity Garage",
+    "address": "1815 Trinity Street, Austin, TX 78712",
+    "lat": 30.27911545,
+    "lon": -97.7340256375,
+    "type": "pickup"
+  },
+  {
+    "id": 30905872,
+    "abbreviation": "CDL",
+    "name": "Collections Deposit Library",
+    "address": "1810 Red River Street, Austin, TX 78701",
+    "lat": 30.27881068,
+    "lon": -97.73306122,
+    "type": "pickup"
+  },
+  {
+    "id": 31962360,
+    "abbreviation": "CBA",
+    "name": "McCombs School of Business",
+    "address": "2110 Speedway, Austin, TX 78705",
+    "lat": 30.284292524999998,
+    "lon": -97.73784183333333,
+    "type": "pickup"
+  },
+  {
+    "id": 31962470,
+    "abbreviation": "GRE",
+    "name": "Gregory Gymnasium",
+    "address": "2101 Speedway, Austin, TX 78712",
+    "lat": 30.284059684000002,
+    "lon": -97.73635100800001,
+    "type": "pickup"
+  },
+  {
+    "id": 31962538,
+    "abbreviation": "MBE",
+    "name": "Music Building East",
+    "address": "2405 Trinity Street, Austin, TX 78705",
+    "lat": 30.28733482,
+    "lon": -97.73131336000002,
+    "type": "pickup"
+  },
+  {
+    "id": 31962674,
+    "abbreviation": "MRH",
+    "name": "Music Recital Hall",
+    "address": "2406 Robert Dedman Drive, Austin, TX 78712",
+    "lat": 30.287172004347827,
+    "lon": -97.73079092608695,
+    "type": "pickup"
+  },
+  {
+    "id": 31962952,
+    "abbreviation": "TCC",
+    "name": "Joe C. Thompson Conference Center",
+    "address": "2405 Robert Dedman Drive, Austin, TX 78712",
+    "lat": 30.287021238461534,
+    "lon": -97.72905636923078,
+    "type": "pickup"
+  },
+  {
+    "id": 31963306,
+    "abbreviation": "MAG",
+    "name": "Manor Garage",
+    "address": "2017 Robert Dedman Drive, Austin, TX 78712",
+    "lat": 30.282885181250002,
+    "lon": -97.73096996875,
+    "type": "pickup"
+  },
+  {
+    "id": 31963393,
+    "abbreviation": "UPB",
+    "name": "University Police Building",
+    "address": "2201 Robert Dedman Drive, Austin, TX 78712",
+    "lat": 30.284055060000004,
+    "lon": -97.73050952,
+    "type": "pickup"
+  },
+  {
+    "id": 38607779,
+    "abbreviation": "BIO",
+    "name": "Biological Laboratories",
+    "address": "205 West 24th Street, Austin, TX 78705",
+    "lat": 30.287244300000005,
+    "lon": -97.73982418,
+    "type": "pickup"
+  },
+  {
+    "id": 38607780,
+    "abbreviation": "WMB",
+    "name": "West Mall Office Building",
+    "address": "306 Inner Campus Drive, Austin, TX 78712",
+    "lat": 30.2854149,
+    "lon": -97.74058564285714,
+    "type": "pickup"
+  },
+  {
+    "id": 38607784,
+    "abbreviation": "FAC",
+    "name": "Peter T. Flawn Academic Center",
+    "address": "2304 Whitis Avenue, Austin, TX 78712",
+    "lat": 30.28635925,
+    "lon": -97.74056395,
+    "type": "pickup"
+  },
+  {
+    "id": 38607785,
+    "abbreviation": "HMA",
+    "name": "Hogg Memorial Auditorium",
+    "address": "2300 Whitis Avenue, Austin, TX 78712",
+    "lat": 30.286885909523807,
+    "lon": -97.74061391428573,
+    "type": "pickup"
+  },
+  {
+    "id": 38607786,
+    "abbreviation": "UNB",
+    "name": "Union Building",
+    "address": "2308 Whitis Avenue, Austin, TX 78712",
+    "lat": 30.286519908823525,
+    "lon": -97.74114399117649,
+    "type": "pickup"
+  },
+  {
+    "id": 38607983,
+    "abbreviation": "WCH",
+    "name": "Will C. Hogg Building",
+    "address": "120 Inner Campus Drive, Austin, TX 78712",
+    "lat": 30.286076975,
+    "lon": -97.738405675,
+    "type": "pickup"
+  },
+  {
+    "id": 38607984,
+    "abbreviation": "WAG",
+    "name": "Waggener Hall",
+    "address": "2210 Speedway, Austin, TX 78705",
+    "lat": 30.285136630000004,
+    "lon": -97.73762154,
+    "type": "pickup"
+  },
+  {
+    "id": 38607989,
+    "abbreviation": "PAI",
+    "name": "T. S. Painter Hall",
+    "address": "103 West 24th Street, Austin, TX 78712",
+    "lat": 30.287021799999998,
+    "lon": -97.73876722307692,
+    "type": "pickup"
+  },
+  {
+    "id": 38607992,
+    "abbreviation": "GEB",
+    "name": "Dorothy Gebauer Building",
+    "address": "116 Inner Campus Drive, Austin, TX 78705",
+    "lat": 30.286330457142856,
+    "lon": -97.73864117142857,
+    "type": "pickup"
+  },
+  {
+    "id": 38624858,
+    "abbreviation": "SWG",
+    "name": "Speedway Garage",
+    "address": "2630 Speedway, Austin, TX 78712",
+    "lat": 30.291224188888886,
+    "lon": -97.73709557777778,
+    "type": "pickup"
+  },
+  {
+    "id": 38624859,
+    "abbreviation": "BWY",
+    "name": "Bridgeway Building",
+    "address": "2616 Wichita Street, Austin, TX 78712",
+    "lat": 30.29080616,
+    "lon": -97.7382529,
+    "type": "pickup"
+  },
+  {
+    "id": 38624860,
+    "abbreviation": "SSB",
+    "name": "Student Services Building",
+    "address": "100 West Dean Keeton Street, Austin, TX 78712",
+    "lat": 30.290171022222225,
+    "lon": -97.73842815555557,
+    "type": "pickup"
+  },
+  {
+    "id": 38624861,
+    "abbreviation": "UA9",
+    "name": "2609 University Avenue",
+    "address": "2609 University Avenue, Austin, TX 78712",
+    "lat": 30.2903342,
+    "lon": -97.73872777777778,
+    "type": "pickup"
+  },
+  {
+    "id": 38624863,
+    "abbreviation": "TSG",
+    "name": "27th Street Garage",
+    "address": "109 West 27th Street, Austin, TX 78712",
+    "lat": 30.2913070625,
+    "lon": -97.73855742500001,
+    "type": "pickup"
+  },
+  {
+    "id": 38624864,
+    "abbreviation": "ASE",
+    "name": "Aerospace Engineering Building",
+    "address": "101 East 27th Street, Austin, TX 78712",
+    "lat": 30.291167942857147,
+    "lon": -97.73757288571427,
+    "type": "pickup"
+  },
+  {
+    "id": 38625297,
+    "abbreviation": "PAT",
+    "name": "J. T. Patterson Laboratories Building",
+    "address": "2415 Speedway, Austin, TX 78712",
+    "lat": 30.288005783333336,
+    "lon": -97.73639183333334,
+    "type": "pickup"
+  },
+  {
+    "id": 38625300,
+    "abbreviation": "PMA",
+    "name": "Physics, Math, and Astronomy Building",
+    "address": "2515 Speedway, Austin, TX 78712",
+    "lat": 30.288910761904763,
+    "lon": -97.73627020952384,
+    "type": "pickup"
+  },
+  {
+    "id": 38625301,
+    "abbreviation": "ECJ",
+    "name": "Ernest Cockrell, Jr. Hall",
+    "address": "301 East Dean Keeton Street, Austin, TX 78712",
+    "lat": 30.289003620000003,
+    "lon": -97.73556953999999,
+    "type": "pickup"
+  },
+  {
+    "id": 42561353,
+    "abbreviation": "GAR",
+    "name": "Garrison Hall",
+    "address": "128 Inner Campus Drive, Austin, TX 78705",
+    "lat": 30.285139224999998,
+    "lon": -97.73850516249999,
+    "type": "pickup"
+  },
+  {
+    "id": 42562527,
+    "abbreviation": "SAG",
+    "name": "San Antonio Garage",
+    "address": "2420 San Antonio Street, Austin, TX 78705",
+    "lat": 30.288589973684207,
+    "lon": -97.7426095,
+    "type": "pickup"
+  },
+  {
+    "id": 42807636,
+    "abbreviation": "D21",
+    "name": "Dobie Twenty21",
+    "address": "2025 Guadalupe Street, Austin, TX 78705",
+    "lat": 30.283396033333336,
+    "lon": -97.74120708666668,
+    "type": "pickup"
+  },
+  {
+    "id": 52480996,
+    "abbreviation": "PHR",
+    "name": "Pharmacy Building",
+    "address": "2409 University Avenue, Austin, TX 78712",
+    "lat": 30.2881693,
+    "lon": -97.73857829333333,
+    "type": "pickup"
+  },
+  {
+    "id": 79457819,
+    "abbreviation": "CS5",
+    "name": "Chilling Station No. 5",
+    "address": "2610 San Jacinto Boulevard, Austin, TX 78705",
+    "lat": 30.29064186666667,
+    "lon": -97.73556595000001,
+    "type": "pickup"
+  },
+  {
+    "id": 79457822,
+    "abbreviation": "CEE",
+    "name": "Continuing Engineering Education",
+    "address": "2613 Speedway, Austin, TX 78705",
+    "lat": 30.290651180000005,
+    "lon": -97.73646308000001,
+    "type": "pickup"
+  },
+  {
+    "id": 79457826,
+    "abbreviation": "SW7",
+    "name": "2617 Speedway",
+    "address": "2617 Speedway, Austin, TX 78705",
+    "lat": 30.290829844444445,
+    "lon": -97.73639232222223,
+    "type": "pickup"
+  },
+  {
+    "id": 79457840,
+    "abbreviation": "EPS",
+    "name": "E. P. Schoch Building",
+    "address": "2275 Speedway, Austin, TX 78705",
+    "lat": 30.28579382,
+    "lon": -97.73672588000001,
+    "type": "pickup"
+  },
+  {
+    "id": 79457842,
+    "abbreviation": "BRB",
+    "name": "Bernard and Audre Rapoport Building",
+    "address": "2225 Speedway, Austin, TX 78705",
+    "lat": 30.28521018,
+    "lon": -97.7367919,
+    "type": "pickup"
+  },
+  {
+    "id": 79457844,
+    "abbreviation": "CRH",
+    "name": "Creekside Residence Hall",
+    "address": "2501 San Jacinto Boulevard, Austin, TX 78705",
+    "lat": 30.288552127777777,
+    "lon": -97.73340092777778,
+    "type": "pickup"
+  },
+  {
+    "id": 79457845,
+    "abbreviation": "CPE",
+    "name": "Chemical and Petroleum Engineering Building",
+    "address": "200 East Dean Keeton Street, Austin, TX 78705",
+    "lat": 30.290269018749996,
+    "lon": -97.7361597,
+    "type": "pickup"
+  },
+  {
+    "id": 79457846,
+    "abbreviation": "CRD",
+    "name": "Carothers Dormitory",
+    "address": "2501 Whitis Avenue, Austin, TX 78705",
+    "lat": 30.288697840000005,
+    "lon": -97.74009266,
+    "type": "pickup"
+  },
+  {
+    "id": 79457847,
+    "abbreviation": "LTD",
+    "name": "Littlefield Dormitory",
+    "address": "2503 Whitis Avenue, Austin, TX 78705",
+    "lat": 30.289279892307693,
+    "lon": -97.73973013076923,
+    "type": "pickup"
+  },
+  {
+    "id": 79457848,
+    "abbreviation": "GWB",
+    "name": "Gordon-White Building",
+    "address": "210 West 24th Street, Austin, TX 78705",
+    "lat": 30.2878394076923,
+    "lon": -97.73987817692309,
+    "type": "pickup"
+  },
+  {
+    "id": 79457849,
+    "abbreviation": "GEA",
+    "name": "Mary E. Gearing Hall",
+    "address": "200 West 24th Street, Austin, TX 78705",
+    "lat": 30.287690445454544,
+    "lon": -97.73924407272726,
+    "type": "pickup"
+  },
+  {
+    "id": 79457851,
+    "abbreviation": "BLD",
+    "name": "Blanton Dormitory",
+    "address": "2500 University Avenue, Austin, TX 78705",
+    "lat": 30.28840038571428,
+    "lon": -97.73950154285714,
+    "type": "pickup"
+  },
+  {
+    "id": 92460208,
+    "abbreviation": "ANB",
+    "name": "Arno Nowotny Building",
+    "address": "709 East Martin Luther King Jr Boulevard, Austin, TX 78701",
+    "lat": 30.27823738,
+    "lon": -97.73104716,
+    "type": "pickup"
+  },
+  {
+    "id": 92460267,
+    "abbreviation": "JHH",
+    "name": "John W. Hargis Hall",
+    "address": "1823 Red River Street, Austin, TX 78701",
+    "lat": 30.278398740909093,
+    "lon": -97.73200180909089,
+    "type": "pickup"
+  },
+  {
+    "id": 124952572,
+    "abbreviation": "UTA",
+    "name": "UT Administration Building",
+    "address": "1616 Guadalupe Street, Austin, TX 78701",
+    "lat": 30.27926246,
+    "lon": -97.74290885999999,
+    "type": "pickup"
+  },
+  {
+    "id": 124952573,
+    "abbreviation": "GUG",
+    "name": "Guadalupe Garage",
+    "address": "417 West 17th Street, Austin, TX 78701",
+    "lat": 30.279495866666668,
+    "lon": -97.74331633333334,
+    "type": "pickup"
+  },
+  {
+    "id": 124953720,
+    "abbreviation": "JCD",
+    "name": "Jester East Hall",
+    "address": "203 East 21st Street, Austin, TX 78705",
+    "lat": 30.28231900434781,
+    "lon": -97.7359093173913,
+    "type": "pickup"
+  },
+  {
+    "id": 125100401,
+    "abbreviation": "SJH",
+    "name": "San Jacinto Hall",
+    "address": "309 East 21st Street, Austin, TX 78705",
+    "lat": 30.282329212244896,
+    "lon": -97.73433786530609,
+    "type": "pickup"
+  },
+  {
+    "id": 126017770,
+    "abbreviation": "ADH",
+    "name": "Almetris Duren Hall",
+    "address": "2624 Whitis Avenue, Austin, TX 78705",
+    "lat": 30.291581319047616,
+    "lon": -97.74059714761904,
+    "type": "pickup"
+  },
+  {
+    "id": 126017771,
+    "abbreviation": "AHG",
+    "name": "Anna Hiss Gymnasium",
+    "address": "2501 Wichita Street, Austin, TX 78712",
+    "lat": 30.28855366923077,
+    "lon": -97.7377878846154,
+    "type": "pickup"
+  },
+  {
+    "id": 126017772,
+    "abbreviation": "BUR",
+    "name": "Burdine Hall",
+    "address": "2505 University Avenue, Austin, TX 78712",
+    "lat": 30.288905968571434,
+    "lon": -97.73850999142856,
+    "type": "pickup"
+  },
+  {
+    "id": 126017773,
+    "abbreviation": "CMA",
+    "name": "Jesse H. Jones Communication Center - A",
+    "address": "2504A Whitis Avenue, Austin, TX 78705",
+    "lat": 30.289410537500004,
+    "lon": -97.7407581125,
+    "type": "pickup"
+  },
+  {
+    "id": 126017774,
+    "abbreviation": "CMB",
+    "name": "Jesse H. Jones Communication Center - B",
+    "address": "2504B Whitis Avenue, Austin, TX 78705",
+    "lat": 30.2892234,
+    "lon": -97.74116443333332,
+    "type": "pickup"
+  },
+  {
+    "id": 126017775,
+    "abbreviation": "FNT",
+    "name": "Larry R. Faulkner Nano Science and Technology Building",
+    "address": "102 East 24th Street, Austin, TX 78712",
+    "lat": 30.2878714,
+    "lon": -97.73804035999999,
+    "type": "pickup"
+  },
+  {
+    "id": 126017776,
+    "abbreviation": "LCH",
+    "name": "Littlefield Carriage House",
+    "address": "2410 Whitis Avenue, Austin, TX 78705",
+    "lat": 30.28854824,
+    "lon": -97.74088044,
+    "type": "pickup"
+  },
+  {
+    "id": 126017777,
+    "abbreviation": "LFH",
+    "name": "Littlefield House",
+    "address": "302 West 24th Street, Austin, TX 78705",
+    "lat": 30.288119252380948,
+    "lon": -97.74076621904763,
+    "type": "pickup"
+  },
+  {
+    "id": 126017778,
+    "abbreviation": "MBB",
+    "name": "Louise and James Robert Moffett Molecular Biology Building",
+    "address": "2506 Speedway, Austin, TX 78712",
+    "lat": 30.288530658064513,
+    "lon": -97.73728388709678,
+    "type": "pickup"
+  },
+  {
+    "id": 126017780,
+    "abbreviation": "NHB",
+    "name": "Norman Hackerman Building",
+    "address": "100 East 24th Street, Austin, TX 78712",
+    "lat": 30.287656775000002,
+    "lon": -97.73782413749998,
+    "type": "pickup"
+  },
+  {
+    "id": 126017781,
+    "abbreviation": "SEA",
+    "name": "Sarah M. and Charles E. Seay Building",
+    "address": "2603 Wichita Street, Austin, TX 78712",
+    "lat": 30.290141033333335,
+    "lon": -97.73744966000001,
+    "type": "pickup"
+  },
+  {
+    "id": 126017782,
+    "abbreviation": "HSM",
+    "name": "William Randolph Hearst Building",
+    "address": "2504C Whitis Avenue, Austin, TX 78705",
+    "lat": 30.288937928571432,
+    "lon": -97.74078934285716,
+    "type": "pickup"
+  },
+  {
+    "id": 126017786,
+    "abbreviation": "WWH",
+    "name": "Walter Webb Hall",
+    "address": "2500 Guadalupe Street, Austin, TX 78705",
+    "lat": 30.28933398,
+    "lon": -97.74180786,
+    "type": "pickup"
+  },
+  {
+    "id": 126020358,
+    "abbreviation": "ARC",
+    "name": "Animal Resource Center",
+    "address": "2701 Speedway, Austin, TX 78705",
+    "lat": 30.291567381818183,
+    "lon": -97.73601451515151,
+    "type": "pickup"
+  },
+  {
+    "id": 126020360,
+    "abbreviation": "ETC",
+    "name": "Engineering Teaching Center II",
+    "address": "204 East Dean Keeton Street, Austin, TX 78705",
+    "lat": 30.28991167142857,
+    "lon": -97.73548865714285,
+    "type": "pickup"
+  },
+  {
+    "id": 126020361,
+    "abbreviation": "E26",
+    "name": "University Sign Shop",
+    "address": "2903 Speedway, Austin, TX 78705",
+    "lat": 30.2925883,
+    "lon": -97.7363063,
+    "type": "pickup"
+  },
+  {
+    "id": 126027972,
+    "abbreviation": "CML",
+    "name": "Comal Child Development Center",
+    "address": "2205 Comal Street, Austin, TX 78722",
+    "lat": 30.282904849999998,
+    "lon": -97.7252999,
+    "type": "pickup"
+  },
+  {
+    "id": 126027974,
+    "abbreviation": "CDA",
+    "name": "Comal Child Development Center Annex",
+    "address": "2209 Comal Street, Austin, TX 78722",
+    "lat": 30.2829613,
+    "lon": -97.72567598000002,
+    "type": "pickup"
+  },
+  {
+    "id": 126027975,
+    "abbreviation": "CRB",
+    "name": "Computational Resource Building",
+    "address": "2200 Comal Street, Austin, TX 78722",
+    "lat": 30.282094527272726,
+    "lon": -97.7264696909091,
+    "type": "pickup"
+  },
+  {
+    "id": 126027977,
+    "abbreviation": "DEV",
+    "name": "Development Center",
+    "address": "2901 North Interstate Highway 35 Service Road, Austin, TX 78722",
+    "lat": 30.28726746,
+    "lon": -97.7236003,
+    "type": "pickup"
+  },
+  {
+    "id": 126027979,
+    "abbreviation": "FC1",
+    "name": "Facilities Complex Building 1",
+    "address": "1309 East Dean Keeton Street, Austin, TX 78722",
+    "lat": 30.284583859999998,
+    "lon": -97.72263046,
+    "type": "pickup"
+  },
+  {
+    "id": 126027980,
+    "abbreviation": "FC2",
+    "name": "Facilities Complex Building 2",
+    "address": "1301 East Dean Keeton Street, Austin, TX 78722",
+    "lat": 30.283903714285714,
+    "lon": -97.7231541857143,
+    "type": "pickup"
+  },
+  {
+    "id": 126027982,
+    "abbreviation": "FC3",
+    "name": "Facilities Complex Building 3",
+    "address": "1207 East Dean Keeton Street, Austin, TX 78722",
+    "lat": 30.284752118181814,
+    "lon": -97.7238274818182,
+    "type": "pickup"
+  },
+  {
+    "id": 126027983,
+    "abbreviation": "FC4",
+    "name": "Facilities Complex Building 4",
+    "address": "1213 East Dean Keeton Street, Austin, TX 78722",
+    "lat": 30.28429655555555,
+    "lon": -97.72361228888889,
+    "type": "pickup"
+  },
+  {
+    "id": 126027986,
+    "abbreviation": "FC5",
+    "name": "Facilities Complex Building 5",
+    "address": "1301 East Dean Keeton Street, Austin, TX 78722",
+    "lat": 30.283647780000003,
+    "lon": -97.7246458,
+    "type": "pickup"
+  },
+  {
+    "id": 126027987,
+    "abbreviation": "FC6",
+    "name": "Facilities Complex Building 6",
+    "address": "1500 Manor Road, Austin, TX 78722",
+    "lat": 30.283421444444443,
+    "lon": -97.72597955555555,
+    "type": "pickup"
+  },
+  {
+    "id": 126027990,
+    "abbreviation": "FC7",
+    "name": "Facilities Complex Building 7",
+    "address": "1300 Manor Road, Austin, TX 78722",
+    "lat": 30.28333808,
+    "lon": -97.72646978,
+    "type": "pickup"
+  },
+  {
+    "id": 126027991,
+    "abbreviation": "FC8",
+    "name": "Facilities Complex Building 8",
+    "address": "1201 East Dean Keeton Street, Austin, TX 78722",
+    "lat": 30.28540856956522,
+    "lon": -97.7239242652174,
+    "type": "pickup"
+  },
+  {
+    "id": 126027994,
+    "abbreviation": "MSB",
+    "name": "Mail Service Building",
+    "address": "2207 Comal Street, Austin, TX 78722",
+    "lat": 30.28275068,
+    "lon": -97.72573315999999,
+    "type": "pickup"
+  },
+  {
+    "id": 126027995,
+    "abbreviation": "FPC",
+    "name": "OFPC Field Staff Office",
+    "address": "1500 East Martin Luther King Jr Boulevard, Austin, TX 78702",
+    "lat": 30.279359719999995,
+    "lon": -97.72501926,
+    "type": "pickup"
+  },
+  {
+    "id": 126028000,
+    "abbreviation": "UIL",
+    "name": "University Interscholastic League",
+    "address": "1701 Manor Road, Austin, TX 78722",
+    "lat": 30.283332900000005,
+    "lon": -97.72363047142856,
+    "type": "pickup"
+  },
+  {
+    "id": 126029360,
+    "abbreviation": "RSC",
+    "name": "Recreational Sports Center",
+    "address": "2001 San Jacinto Boulevard, Austin, TX 78712",
+    "lat": 30.281447914285714,
+    "lon": -97.73245087857144,
+    "type": "pickup"
+  },
+  {
+    "id": 126029361,
+    "abbreviation": "MFH",
+    "name": "Richard Mithoff Track and Soccer Fieldhouse",
+    "address": "2011 Robert Dedman Drive, Austin, TX 78712",
+    "lat": 30.282002916666663,
+    "lon": -97.73113616111111,
+    "type": "pickup"
+  },
+  {
+    "id": 126030906,
+    "abbreviation": "BEL",
+    "name": "L. Theo Bellmont Hall",
+    "address": "2109 San Jacinto Boulevard, Austin, TX 78712",
+    "lat": 30.283764215384608,
+    "lon": -97.73355452692307,
+    "type": "pickup"
+  },
+  {
+    "id": 126030910,
+    "abbreviation": "MNC",
+    "name": "Moncrief-Neuhaus Athletic Center",
+    "address": "2015 San Jacinto Boulevard, Austin, TX 78712",
+    "lat": 30.282396015384624,
+    "lon": -97.73259019999999,
+    "type": "pickup"
+  },
+  {
+    "id": 126030913,
+    "abbreviation": "RMRZ;NEZ",
+    "name": "Red McCombs Red Zone",
+    "address": "405 DeLoss Dodds Way, Austin, TX 78712",
+    "lat": 30.28488825897436,
+    "lon": -97.73242795384616,
+    "type": "pickup"
+  },
+  {
+    "id": 126033672,
+    "abbreviation": "ART",
+    "name": "Art Building and Museum",
+    "address": "2301 San Jacinto Boulevard, Austin, TX 78705",
+    "lat": 30.286193762499995,
+    "lon": -97.73309415,
+    "type": "pickup"
+  },
+  {
+    "id": 126033673,
+    "abbreviation": "CS4",
+    "name": "Chilling Station No. 4",
+    "address": "707 East Dean Keeton Street, Austin, TX 78705",
+    "lat": 30.288698540000002,
+    "lon": -97.73250546,
+    "type": "pickup"
+  },
+  {
+    "id": 126033680,
+    "abbreviation": "JON",
+    "name": "Jesse H. Jones Hall",
+    "address": "721 East Dean Keeton Street, Austin, TX 78705",
+    "lat": 30.288605209090907,
+    "lon": -97.73163544545454,
+    "type": "pickup"
+  },
+  {
+    "id": 126033681,
+    "abbreviation": "CCJ",
+    "name": "John B. Connally Center for Justice",
+    "address": "2500 Trinity Street, Austin, TX 78705",
+    "lat": 30.28803191111111,
+    "lon": -97.73050698888888,
+    "type": "pickup"
+  },
+  {
+    "id": 126033682,
+    "abbreviation": "TMM",
+    "name": "Texas Memorial Museum",
+    "address": "2400 Trinity Street, Austin, TX 78705",
+    "lat": 30.28696816363637,
+    "lon": -97.7323354818182,
+    "type": "pickup"
+  },
+  {
+    "id": 126033684,
+    "abbreviation": "TNH",
+    "name": "Townes Hall",
+    "address": "727 East Dean Keeton Street, Austin, TX 78705",
+    "lat": 30.288571196153846,
+    "lon": -97.73080818076923,
+    "type": "pickup"
+  },
+  {
+    "id": 126134747,
+    "abbreviation": "BHD",
+    "name": "Brackenridge Hall Dormitory",
+    "address": "207 East 21st Street, Austin, TX 78705",
+    "lat": 30.2831314,
+    "lon": -97.73602756428572,
+    "type": "pickup"
+  },
+  {
+    "id": 126134749,
+    "abbreviation": "EAS",
+    "name": "Edgar A. Smith Building",
+    "address": "104 West Martin Luther King Jr Boulevard, Austin, TX 78705",
+    "lat": 30.281182024999996,
+    "lon": -97.7381814375,
+    "type": "pickup"
+  },
+  {
+    "id": 126134750,
+    "abbreviation": "SZB",
+    "name": "George I. Sanchez Building",
+    "address": "1912 Speedway, Austin, TX 78705",
+    "lat": 30.281671198181822,
+    "lon": -97.73876082545456,
+    "type": "pickup"
+  },
+  {
+    "id": 126134751,
+    "abbreviation": "PHD",
+    "name": "Prather Hall",
+    "address": "305 East 21st Street, Austin, TX 78705",
+    "lat": 30.282521781818183,
+    "lon": -97.73501499090908,
+    "type": "pickup"
+  },
+  {
+    "id": 126134752,
+    "abbreviation": "RHD",
+    "name": "Roberts Hall",
+    "address": "303 East 21st Street, Austin, TX 78705",
+    "lat": 30.283037350000004,
+    "lon": -97.73516004999999,
+    "type": "pickup"
+  },
+  {
+    "id": 126148593,
+    "abbreviation": "BTL",
+    "name": "Battle Hall",
+    "address": "302 Inner Campus Drive, Austin, TX 78705",
+    "lat": 30.285431388888885,
+    "lon": -97.74037514444444,
+    "type": "pickup"
+  },
+  {
+    "id": 126148598,
+    "abbreviation": "GSB",
+    "name": "Graduate School of Business Building",
+    "address": "100 West 21st Street, Austin, TX 78705",
+    "lat": 30.28413955,
+    "lon": -97.73831283,
+    "type": "pickup"
+  },
+  {
+    "id": 126149671,
+    "abbreviation": "POB",
+    "name": "O’Donnell Building for Applied Computational Engineering and Sciences",
+    "address": "201 East 24th Street, Austin, TX 78712",
+    "lat": 30.28683904210526,
+    "lon": -97.73659467368421,
+    "type": "pickup"
+  },
+  {
+    "id": 126149672,
+    "abbreviation": "UTX",
+    "name": "Etter-Harbin Alumni Center",
+    "address": "2110 San Jacinto Boulevard, Austin, TX 78712",
+    "lat": 30.28439441794872,
+    "lon": -97.73439297948717,
+    "type": "pickup"
+  },
+  {
+    "id": 126149673,
+    "abbreviation": "WIN",
+    "name": "F Loren Winship Drama Building",
+    "address": "300 East 23rd Street, Austin, TX 78712",
+    "lat": 30.285849585714285,
+    "lon": -97.73442475,
+    "type": "pickup"
+  },
+  {
+    "id": 126149674,
+    "abbreviation": "PPL",
+    "name": "Hal C. Weaver Power Plant",
+    "address": "301 East 24th Street, Austin, TX 78712",
+    "lat": 30.28660967333333,
+    "lon": -97.73526216666666,
+    "type": "pickup"
+  },
+  {
+    "id": 126149675,
+    "abbreviation": "PPA",
+    "name": "Hal C. Weaver Power Plant Annex",
+    "address": "325 East 24th Street, Austin, TX 78712",
+    "lat": 30.286893759999998,
+    "lon": -97.73444135999999,
+    "type": "pickup"
+  },
+  {
+    "id": 126149676,
+    "abbreviation": "PPE",
+    "name": "Hal C. Weaver Power Plant Expansion",
+    "address": "215 East 24th Street, Austin, TX 78712",
+    "lat": 30.28698104,
+    "lon": -97.73593658,
+    "type": "pickup"
+  },
+  {
+    "id": 126149677,
+    "abbreviation": "JGB",
+    "name": "Jackson Geological Sciences Building",
+    "address": "2305 Speedway, Austin, TX 78712",
+    "lat": 30.2859106,
+    "lon": -97.73573865454547,
+    "type": "pickup"
+  },
+  {
+    "id": 126149678,
+    "abbreviation": "LTH",
+    "name": "Laboratory Theatre Building",
+    "address": "303 East 24th Street, Austin, TX 78705",
+    "lat": 30.285962000000005,
+    "lon": -97.73519628,
+    "type": "pickup"
+  },
+  {
+    "id": 126149679,
+    "abbreviation": "MHD",
+    "name": "Moore-Hill Dormitory",
+    "address": "214 East 21st Street, Austin, TX 78712",
+    "lat": 30.28361714193548,
+    "lon": -97.73546957419357,
+    "type": "pickup"
+  },
+  {
+    "id": 126149680,
+    "abbreviation": "WCP",
+    "name": "William C. Powers, Jr. Student Activity Center",
+    "address": "2201 Speedway, Austin, TX 78712",
+    "lat": 30.28488847058824,
+    "lon": -97.73635331176469,
+    "type": "pickup"
+  },
+  {
+    "id": 126569514,
+    "abbreviation": "CS6",
+    "name": "Chilling Station No. 6",
+    "address": "217 East 24th Street, Austin, TX 78712",
+    "lat": 30.286431662500004,
+    "lon": -97.7358430125,
+    "type": "pickup"
+  },
+  {
+    "id": 126569520,
+    "abbreviation": "BMC",
+    "name": "Dealey Center for New Media",
+    "address": "300 West Dean Keeton Street, Austin, TX 78712",
+    "lat": 30.29016349090909,
+    "lon": -97.7407889909091,
+    "type": "pickup"
+  },
+  {
+    "id": 126569521,
+    "abbreviation": "GDC",
+    "name": "Bill and Melinda Gates Computer Science Complex",
+    "address": "2317 Speedway, Austin, TX 78705",
+    "lat": 30.28628900833333,
+    "lon": -97.73657142916666,
+    "type": "pickup"
+  },
+  {
+    "id": 129347230,
+    "abbreviation": "LDH",
+    "name": "Longhorn Dining Facility",
+    "address": "205 East 21st Street, Austin, TX 78705",
+    "lat": 30.28261785833334,
+    "lon": -97.735989125,
+    "type": "pickup"
+  },
+  {
+    "id": 129435969,
+    "abbreviation": "COM",
+    "name": "Computation Center",
+    "address": "124 Inner Campus Drive, Austin, TX 78705",
+    "lat": 30.285667659999994,
+    "lon": -97.73845623000001,
+    "type": "pickup"
+  },
+  {
+    "id": 130096286,
+    "abbreviation": "AND",
+    "name": "Andrews Dormitory",
+    "address": "2401 Whitis Avenue, Austin, TX 78705",
+    "lat": 30.288207523076924,
+    "lon": -97.73990348461538,
+    "type": "pickup"
+  },
+  {
+    "id": 130307825,
+    "abbreviation": "CT1",
+    "name": "Cooling Tower 1",
+    "address": "307 East 24th Street, Austin, TX 78712",
+    "lat": 30.28665838,
+    "lon": -97.73476855999999,
+    "type": "pickup"
+  },
+  {
+    "id": 150732420,
+    "abbreviation": "CAL",
+    "name": "Calhoun Hall",
+    "address": "204 West 21st Street, Austin, TX 78705",
+    "lat": 30.284503358823525,
+    "lon": -97.7402426,
+    "type": "pickup"
+  },
+  {
+    "id": 150732421,
+    "abbreviation": "MEZ",
+    "name": "Mezes Hall",
+    "address": "154 West 21st Street, Austin, TX 78705",
+    "lat": 30.284387560000003,
+    "lon": -97.73884204000002,
+    "type": "pickup"
+  },
+  {
+    "id": 150732422,
+    "abbreviation": "PAR",
+    "name": "Parlin Hall",
+    "address": "208 West 21st Street, Austin, TX 78705",
+    "lat": 30.284880855555556,
+    "lon": -97.74009163333332,
+    "type": "pickup"
+  },
+  {
+    "id": 150732423,
+    "abbreviation": "BAT",
+    "name": "Batts Hall",
+    "address": "158 West 21st Street, Austin, TX 78705",
+    "lat": 30.284762342857142,
+    "lon": -97.73885585714285,
+    "type": "pickup"
+  },
+  {
+    "id": 150732424,
+    "abbreviation": "BEN",
+    "name": "Benedict Hall",
+    "address": "150 West 21st Street, Austin, TX 78705",
+    "lat": 30.283970777777782,
+    "lon": -97.7390134888889,
+    "type": "pickup"
+  },
+  {
+    "id": 150732425,
+    "abbreviation": "HRH",
+    "name": "Homer Rainey Hall",
+    "address": "200 West 21st Street, Austin, TX 78705",
+    "lat": 30.284095611111113,
+    "lon": -97.74023606666667,
+    "type": "pickup"
+  },
+  {
+    "id": 172047169,
+    "abbreviation": "NMS",
+    "name": "Neural Molecular Science Building",
+    "address": "2506 Speedway, Austin, TX 78712",
+    "lat": 30.289193380952383,
+    "lon": -97.73769709047619,
+    "type": "pickup"
+  },
+  {
+    "id": 172047174,
+    "abbreviation": "BME",
+    "name": "Biomedical Engineering Building",
+    "address": "107 West Dean Keeton Street, Austin, TX 78712",
+    "lat": 30.289160183333333,
+    "lon": -97.73841115555555,
+    "type": "pickup"
+  },
+  {
+    "id": 172047175,
+    "abbreviation": "HRC",
+    "name": "Harry Ransom Center",
+    "address": "300 West 21st Street, Austin, TX 78705",
+    "lat": 30.284426500000002,
+    "lon": -97.7411482125,
+    "type": "pickup"
+  },
+  {
+    "id": 172047490,
+    "abbreviation": "UTC",
+    "name": "University Teaching Center",
+    "address": "105 East 21st Street, Austin, TX 78705",
+    "lat": 30.282998949999993,
+    "lon": -97.73870813125,
+    "type": "pickup"
+  },
+  {
+    "id": 172204434,
+    "abbreviation": "PAC",
+    "name": "College of Fine Arts Performing Arts Center",
+    "address": "510 East 23rd Street, Austin, TX 78712",
+    "lat": 30.286285468181823,
+    "lon": -97.73126105909091,
+    "type": "pickup"
+  },
+  {
+    "id": 172662518,
+    "abbreviation": "SRH",
+    "name": "Sid Richardson Hall",
+    "address": "2300 Red River Street, Austin, TX 78713",
+    "lat": 30.28491301666666,
+    "lon": -97.72894760000001,
+    "type": "pickup"
+  },
+  {
+    "id": 172662523,
+    "abbreviation": "LBJ",
+    "name": "Lyndon Baines Johnson Presidential Library and Museum",
+    "address": "2313 Red River Street, Austin, TX 78712",
+    "lat": 30.28583478,
+    "lon": -97.72926437999999,
+    "type": "pickup"
+  },
+  {
+    "id": 172665673,
+    "abbreviation": "TSC",
+    "name": "Lee and Joe Jamail Texas Swimming Center",
+    "address": "1900 Red River Street, Austin, TX 78712",
+    "lat": 30.27983209310345,
+    "lon": -97.73332513103448,
+    "type": "pickup"
+  },
+  {
+    "id": 181382909,
+    "abbreviation": "DFF",
+    "name": "UFCU Disch-Falk Field",
+    "address": "1300 East Martin Luther King Jr Boulevard, Austin, TX 78702",
+    "lat": 30.279970458333334,
+    "lon": -97.72618706666667,
+    "type": "pickup"
+  },
+  {
+    "id": 187012550,
+    "abbreviation": "ECG",
+    "name": "East Campus Garage",
+    "address": "1200 East Martin Luther King Jr. Boulevard, Austin, TX 78722",
+    "lat": 30.27968729655173,
+    "lon": -97.72776823448277,
+    "type": "pickup"
+  },
+  {
+    "id": 187012552,
+    "abbreviation": "SBS",
+    "name": "Red and Charline McCombs Field",
+    "address": "2001 Comal Street, Austin, TX 78705",
+    "lat": 30.28088371538461,
+    "lon": -97.72485803846152,
+    "type": "pickup"
+  },
+  {
+    "id": 343256275,
+    "abbreviation": "N24",
+    "name": "2400 Nueces",
+    "address": "2400 Nueces Street, Austin, TX 78705",
+    "lat": 30.288200333333332,
+    "lon": -97.74350564444445,
+    "type": "pickup"
+  },
+  {
+    "id": 381808291,
+    "abbreviation": "AF2",
+    "name": "Athletic Fields Pavilion (Eastside)",
+    "address": "2348 North Interstate Highway 35 Service Road, Austin, TX 78705",
+    "lat": 30.28488877142857,
+    "lon": -97.72651605714286,
+    "type": "pickup"
+  },
+  {
+    "id": 381808841,
+    "abbreviation": "AF1",
+    "name": "Athletic Fields Pavilion (Rehab)",
+    "address": "2513 Red River Street, Austin, TX 78705",
+    "lat": 30.286633857142853,
+    "lon": -97.72600785714283,
+    "type": "pickup"
+  },
+  {
+    "id": 381834275,
+    "abbreviation": "WAT",
+    "name": "Arthur P. Watson House",
+    "address": "500 East 18th Street, Austin, TX 78701",
+    "lat": 30.278486166666667,
+    "lon": -97.73345708333333,
+    "type": "pickup"
+  },
+  {
+    "id": 382075784,
+    "abbreviation": "CLK",
+    "name": "Caven Clark Field Support Building",
+    "address": "307 East 21st Street, Austin, TX 78712",
+    "lat": 30.2816911,
+    "lon": -97.73485653333334,
+    "type": "pickup"
+  },
+  {
+    "id": 516282867,
+    "abbreviation": "EER",
+    "name": "Engineering Education and Research Center",
+    "address": "2501 Speedway, Austin, TX 78712",
+    "lat": 30.28839927619047,
+    "lon": -97.73539912857143,
+    "type": "pickup"
+  },
+  {
+    "id": 516282874,
+    "abbreviation": "HTB",
+    "name": "Health Transformation Building",
+    "address": "1601 Trinity Street, Austin, TX 78701",
+    "lat": 30.277187383333327,
+    "lon": -97.7351691,
+    "type": "pickup"
+  },
+  {
+    "id": 516283024,
+    "abbreviation": "RRH",
+    "name": "Robert B. Rowling Hall",
+    "address": "300 West Martin Luther King Jr Boulevard, Austin, TX 78705",
+    "lat": 30.282208978571425,
+    "lon": -97.74144796428573,
+    "type": "pickup"
+  },
+  {
+    "id": 516285436,
+    "abbreviation": "HLB",
+    "name": "Health Learning Building",
+    "address": "1501 Red River Street, Austin, TX 78701",
+    "lat": 30.27548694615384,
+    "lon": -97.73338515384616,
+    "type": "pickup"
+  },
+  {
+    "id": 516285446,
+    "abbreviation": "SMC",
+    "name": "Dell Seton Medical Center at the University of Texas",
+    "address": "1500 Red River Street, Austin, TX 78701",
+    "lat": 30.27629117,
+    "lon": -97.73431498666667,
+    "type": "pickup"
+  },
+  {
+    "id": 656119772,
+    "abbreviation": "SUT",
+    "name": "Sutton Hall",
+    "address": "305 Inner Campus Drive, Austin, TX 78705",
+    "lat": 30.2849375,
+    "lon": -97.74089835999999,
+    "type": "pickup"
+  },
+  {
+    "id": 665454575,
+    "abbreviation": "MMS",
+    "name": "Mike A. Myers Stadium",
+    "address": "707 Clyde Littlefield Drive, Austin, TX 78712",
+    "lat": 30.282448647727268,
+    "lon": -97.72995297954544,
+    "type": "pickup"
+  },
+  {
+    "id": 953200132,
+    "abbreviation": "MCA",
+    "name": "Moody Center",
+    "address": "2001 Robert Dedman Drive, Austin, TX 78712",
+    "lat": 30.280933525,
+    "lon": -97.7306248333333,
+    "type": "pickup"
+  },
+  {
+    "id": 1021335881,
+    "abbreviation": "HCG",
+    "name": "Health Center Garage",
+    "address": "1601 Trinity Street, Austin, TX 78701",
+    "lat": 30.276577762499997,
+    "lon": -97.735451075,
+    "type": "pickup"
+  },
+  {
+    "id": 1054317156,
+    "abbreviation": "BBR",
+    "name": "Basketball and Rowing Training Facility",
+    "address": "533 East 20th Street, Austin, TX 78712",
+    "lat": 30.280437522222226,
+    "lon": -97.73182118888889,
+    "type": "pickup"
+  },
+  {
+    "id": 1054507728,
+    "abbreviation": "HDB",
+    "name": "Health Discovery Building",
+    "address": "1601 Trinity Street, Austin, TX 78701",
+    "lat": 30.27791528666667,
+    "lon": -97.73469663333334,
+    "type": "pickup"
+  },
+  {
+    "id": 1164983004,
+    "abbreviation": "GLT",
+    "name": "Gary L. Thomas Energy Engineering Building",
+    "address": "210 East 24th Street, Austin, TX 78712",
+    "lat": 30.287500647619048,
+    "lon": -97.73588247142858,
+    "type": "pickup"
+  },
+  {
+    "id": 1419045023,
+    "abbreviation": "SEZ",
+    "name": "South End Zone",
+    "address": "2021 San Jacinto Boulevard, Austin, TX 78712",
+    "lat": 30.28270573939393,
+    "lon": -97.73264769090908,
+    "type": "pickup"
+  }
+]

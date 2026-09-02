@@ -1,4 +1,7 @@
-import { LatLng } from "react-native-maps";
+type LatLng = {
+  latitude: number;
+  longitude: number;
+};
 
 export const pickupBoundaryPolygons: LatLng[][] = [
   [
