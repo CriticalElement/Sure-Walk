@@ -2,6 +2,10 @@ import BottomSheet, {
   BottomSheetFlatList,
   TouchableOpacity as TO,
 } from "@gorhom/bottom-sheet";
+import {
+  dropoffBoundaryPolygons,
+  pickupBoundaryPolygons,
+} from "@sure-walk/utils/boundary-info";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Location from "expo-location";
 import { router, useFocusEffect } from "expo-router";
@@ -40,10 +44,6 @@ import CheckButton from "@/src/components/check-button";
 import FontText from "@/src/components/font-text";
 import LargeButton from "@/src/components/large-button";
 import LocationMarker from "@/src/components/location-marker";
-import {
-  dropoffBoundaryPolygons,
-  pickupBoundaryPolygons,
-} from "@/src/utils/boundary-info";
 import {
   gray900,
   slate500,
