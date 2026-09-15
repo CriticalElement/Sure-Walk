@@ -1,4 +1,5 @@
 import InProgressRideState from "@sure-walk/utils/types/in-progress-ride-state";
+import Location from "@sure-walk/utils/types/location";
 import VehicleInfoShort from "@sure-walk/utils/types/vehicle-info-short";
 import {
   ExpoPushMessage,
@@ -88,13 +89,13 @@ const createVehicleInfoPayload = ({
 };
 
 const createMissedRidePayload = ({
-  pickupLocationID,
-  dropoffLocationID,
+  pickupLocation,
+  dropoffLocation,
   pushToken,
   rideID,
 }: {
-  pickupLocationID: number;
-  dropoffLocationID: number;
+  pickupLocation: Location;
+  dropoffLocation: Location;
   pushToken: string;
   rideID: string;
 }): ExpoPushMessage => {
@@ -104,8 +105,8 @@ const createMissedRidePayload = ({
 
   const data = {
     eventType: "missedRide",
-    pickupLocationID,
-    dropoffLocationID,
+    pickupLocation,
+    dropoffLocation,
   };
 
   return {
@@ -283,20 +284,20 @@ export const sendVehicleInfoNotification = async ({
 };
 
 export const sendMissedRideNotification = async ({
-  pickupLocationID,
-  dropoffLocationID,
+  pickupLocation,
+  dropoffLocation,
   pushTokens,
   rideID,
 }: {
-  pickupLocationID: number;
-  dropoffLocationID: number;
+  pickupLocation: Location;
+  dropoffLocation: Location;
   pushTokens: string[];
   rideID: string;
 }) => {
   const messages = pushTokens.map((pushToken) =>
     createMissedRidePayload({
-      pickupLocationID,
-      dropoffLocationID,
+      pickupLocation,
+      dropoffLocation,
       pushToken,
       rideID,
     }),

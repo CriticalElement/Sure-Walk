@@ -5,9 +5,7 @@ import { NextResponse } from "next/server";
 import { ensureAuthenticated } from "../auth";
 import { getDBInWorker } from "../db";
 import { accounts } from "../db/schema/accounts";
-import { Ride } from "../db/schema/rides";
 import { users } from "../db/schema/users";
-import { Vehicle } from "../db/schema/vehicles";
 import {
   getActiveRideByShareCode,
   getActiveRideByUserID,
@@ -37,9 +35,7 @@ export async function handleRideStream(request: Request, env: CloudflareEnv) {
   }
 
   let currentRide:
-    | (Ride & {
-        vehicle: Vehicle | null;
-      })
+    | Awaited<ReturnType<typeof getActiveRideByUserID>>
     | undefined = undefined;
 
   const url = new URL(request.url);
@@ -87,7 +83,10 @@ export async function handleRideStream(request: Request, env: CloudflareEnv) {
   // forward data so pulling from db is not required for the initial ws connection
   // within the Durable Object fetch handler
   const forwardedHeaders = new Headers(request.headers);
-  forwardedHeaders.append("x-current-ride", JSON.stringify(rideFullInfo));
+  forwardedHeaders.append(
+    "x-current-ride",
+    encodeURIComponent(JSON.stringify(rideFullInfo)),
+  );
 
   const doID = env.RIDE_INFO_STREAM.idFromName("global");
   const stub = env.RIDE_INFO_STREAM.get(doID);
