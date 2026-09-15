@@ -1,4 +1,4 @@
-import { int, real, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { alias, int, real, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 export const locations = sqliteTable("locations", {
   id: int("id").primaryKey(),
@@ -9,5 +9,8 @@ export const locations = sqliteTable("locations", {
   lon: real("lon").notNull(),
   type: text("type", { enum: ["pickup", "dropoff"] }).notNull(),
 });
+
+export const pickupLocations = alias(locations, "pickupLocations");
+export const dropoffLocations = alias(locations, "dropoffLocations");
 
 export type Location = typeof locations.$inferSelect;

@@ -1,9 +1,10 @@
 import GroupRideMember from "./group-ride-member";
 import InProgressRideState from "./in-progress-ride-state";
+import Location from "./location";
 
 type CurrentRideSmall = {
-  pickupLocationID: number;
-  dropoffLocationID: number;
+  pickupLocation: Location;
+  dropoffLocation: Location;
   rideState: InProgressRideState;
   leader: GroupRideMember;
   groupRide: GroupRideMember[];

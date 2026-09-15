@@ -6,6 +6,9 @@ import {
   dropoffBoundaryPolygons,
   pickupBoundaryPolygons,
 } from "@sure-walk/utils/boundary-info";
+import { getMatchingDropoffLocations } from "@sure-walk/utils/dropoff-locations";
+import { getMatchingPickupLocations } from "@sure-walk/utils/pickup-locations";
+import LocationType from "@sure-walk/utils/types/location";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Location from "expo-location";
 import { router, useFocusEffect } from "expo-router";
@@ -59,9 +62,6 @@ import { useGroupRideSession } from "@/src/utils/context/group-ride-context";
 import { usePushNotificationsContext } from "@/src/utils/context/push-notifications-context";
 import { useRideSession } from "@/src/utils/context/ride-context";
 import { useTabContext } from "@/src/utils/context/tab-context";
-import { getMatchingDropoffLocations } from "@/src/utils/locations/dropoff-locations";
-import { getMatchingPickupLocations } from "@/src/utils/locations/pickup-locations";
-import { Location as LocationType } from "@/src/utils/types/location";
 
 import MyRide from "../(my-ride)";
 

@@ -1,6 +1,5 @@
 import { router } from "expo-router";
 import { WarningIcon } from "phosphor-react-native";
-import { useEffect, useState } from "react";
 import { Modal, Pressable, View } from "react-native";
 
 import { getErrorMessage, handleNetworkFailure } from "../client";
@@ -8,9 +7,6 @@ import { api, ok } from "../client/session";
 import { UTBurntOrange } from "../utils/colors";
 import { useCurrentRideSession } from "../utils/context/current-ride-context";
 import { useToastContext } from "../utils/context/toast-context";
-import { WEST_CAMPUS_LOCATIONS } from "../utils/locations/dropoff-locations";
-import { CAMPUS_LOCATIONS } from "../utils/locations/pickup-locations";
-import Location from "../utils/types/location";
 import FontText from "./font-text";
 import LargeButton from "./large-button";
 import OutlineButton from "./outline-button";
@@ -27,13 +23,6 @@ const CancelRideModal = ({
 }) => {
   const { currentRide, setCurrentRide } = useCurrentRideSession();
   const { setToast } = useToastContext();
-
-  const [pickupLocation, setPickupLocation] = useState<Location | undefined>(
-    undefined,
-  );
-  const [dropoffLocation, setDropoffLocation] = useState<Location | undefined>(
-    undefined,
-  );
 
   const cancelRide = async () => {
     try {
@@ -64,22 +53,6 @@ const CancelRideModal = ({
       handleNetworkFailure(err, setToast);
     }
   };
-
-  useEffect(() => {
-    if (currentRide) {
-      setPickupLocation(
-        CAMPUS_LOCATIONS.find((loc) => loc.id === currentRide.pickupLocationID),
-      );
-      setDropoffLocation(
-        WEST_CAMPUS_LOCATIONS.find(
-          (loc) => loc.id === currentRide.dropoffLocationID,
-        ),
-      );
-    } else {
-      setPickupLocation(undefined);
-      setDropoffLocation(undefined);
-    }
-  }, [currentRide]);
 
   return (
     <View className="absolute inset-0 flex-1">
@@ -122,8 +95,8 @@ const CancelRideModal = ({
             </View>
             <View className="my-[-4px]">
               <PickupDropoffLocationInfo
-                pickupLocation={pickupLocation ?? null}
-                dropoffLocation={dropoffLocation ?? null}
+                pickupLocation={currentRide?.pickupLocation ?? null}
+                dropoffLocation={currentRide?.dropoffLocation ?? null}
               />
             </View>
             <View className="flex-col gap-3">

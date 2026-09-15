@@ -1,6 +1,5 @@
+import Location from "@sure-walk/utils/types/location";
 import { createContext, useContext, useState } from "react";
-
-import { Location } from "../types/location";
 
 interface RideContextType {
   pickupLocation: Location | null;

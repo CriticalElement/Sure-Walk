@@ -4,6 +4,7 @@ import BottomSheet, {
 } from "@gorhom/bottom-sheet";
 import CurrentRideSmall from "@sure-walk/utils/types/current-ride-small";
 import InProgressRideState from "@sure-walk/utils/types/in-progress-ride-state";
+import Location from "@sure-walk/utils/types/location";
 import RideEvent from "@sure-walk/utils/types/ride-event";
 import VehicleInfoShort from "@sure-walk/utils/types/vehicle-info-short";
 import * as Clipboard from "expo-clipboard";
@@ -54,10 +55,7 @@ import { usePushNotificationsContext } from "@/src/utils/context/push-notificati
 import { useRideDetailsSession } from "@/src/utils/context/ride-details-context";
 import { useTabContext } from "@/src/utils/context/tab-context";
 import { useToastContext } from "@/src/utils/context/toast-context";
-import { WEST_CAMPUS_LOCATIONS } from "@/src/utils/locations/dropoff-locations";
-import { CAMPUS_LOCATIONS } from "@/src/utils/locations/pickup-locations";
 import LoadingState from "@/src/utils/types/loading-state";
-import Location from "@/src/utils/types/location";
 
 const CurrentRideInfo = () => {
   const { setRideDetails, rideDetails } = useRideDetailsSession();
@@ -134,14 +132,8 @@ const CurrentRideInfo = () => {
           setMissedRide(data);
           animateToStep(data.rideState);
           setLoadingState("done");
-          setPickupLocation(
-            CAMPUS_LOCATIONS.find((loc) => loc.id === data.pickupLocationID),
-          );
-          setDropoffLocation(
-            WEST_CAMPUS_LOCATIONS.find(
-              (loc) => loc.id === data.dropoffLocationID,
-            ),
-          );
+          setPickupLocation(data.pickupLocation);
+          setDropoffLocation(data.dropoffLocation);
           onConnect();
           break;
         }

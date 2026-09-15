@@ -82,8 +82,8 @@ const ConfirmRide = () => {
         setDropoffLocation(null);
         setPickupLocation(null);
         setCurrentRideMini({
-          pickupLocationID: pickupLocation!.id,
-          dropoffLocationID: dropoffLocation!.id,
+          pickupLocation: pickupLocation!,
+          dropoffLocation: dropoffLocation!,
           rideState: "received",
         });
         clearMembers();

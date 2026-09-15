@@ -1,8 +1,9 @@
 import InProgressRideState from "./in-progress-ride-state";
+import Location from "./location";
 
 type CurrentRideMini = {
-  pickupLocationID: number;
-  dropoffLocationID: number;
+  pickupLocation: Location;
+  dropoffLocation: Location;
   rideState: InProgressRideState;
   eta?: string;
 };

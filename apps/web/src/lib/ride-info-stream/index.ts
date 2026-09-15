@@ -7,7 +7,7 @@ import { ExpoPushTicket } from "expo-server-sdk";
 
 import { getDBInWorker } from "../db";
 import { Ride, rides } from "../db/schema/rides";
-import { User, users } from "../db/schema/users";
+import { users } from "../db/schema/users";
 import { Vehicle, vehicles } from "../db/schema/vehicles";
 import {
   fetchPushReceipts,
@@ -17,6 +17,7 @@ import {
   sendVehicleInfoNotification,
 } from "../push-notifications";
 import {
+  getActiveRideByUserID,
   getActiveRides,
   setDropoffStopState,
   setPickupStopState,
@@ -47,16 +48,14 @@ export class RideInfoStream extends DurableObject<CloudflareEnv> {
 
   async fetch(request: Request): Promise<Response> {
     const currentRide = JSON.parse(
-      request.headers.get("x-current-ride") ?? "",
-    ) as Ride & {
-      user: User;
-      vehicle: Vehicle | null;
+      decodeURIComponent(request.headers.get("x-current-ride") ?? ""),
+    ) as Awaited<ReturnType<typeof getActiveRideByUserID>> & {
       rideState: InProgressRideState;
-      pushToken: string | null;
       isLeader: boolean;
+      pushToken: string;
     };
-    const pickupLocationID = currentRide.pickupLocationID;
-    const dropoffLocationID = currentRide.dropoffLocationID;
+    const pickupLocation = currentRide.pickupLocation;
+    const dropoffLocation = currentRide.dropoffLocation;
     const groupRide = currentRide.members;
     const rideState = currentRide.rideState;
     const shareCode = currentRide.shareCode ?? null;
@@ -87,8 +86,8 @@ export class RideInfoStream extends DurableObject<CloudflareEnv> {
         "connected",
         {
           rideState,
-          pickupLocationID,
-          dropoffLocationID,
+          pickupLocation,
+          dropoffLocation,
           groupRide,
           shareCode,
           leader,
@@ -357,7 +356,7 @@ export class RideInfoStream extends DurableObject<CloudflareEnv> {
   }
 
   async streamRouteUpdates(
-    activeRides: Ride[],
+    activeRides: Awaited<ReturnType<typeof getActiveRides>>,
     routeUpdates: Samsara.RoutesGetRoutesFeedResponseBody,
   ) {
     for (const ride of routeUpdates.data) {
@@ -554,8 +553,8 @@ export class RideInfoStream extends DurableObject<CloudflareEnv> {
                 const subscribers = this.getSubscribers(rideID);
                 if (subscribers) {
                   const res = await sendMissedRideNotification({
-                    pickupLocationID: activeRide.pickupLocationID,
-                    dropoffLocationID: activeRide.dropoffLocationID,
+                    pickupLocation: activeRide.pickupLocation,
+                    dropoffLocation: activeRide.dropoffLocation,
                     pushTokens: subscribers.pushTokens,
                     rideID,
                   });

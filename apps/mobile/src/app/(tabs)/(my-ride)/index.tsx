@@ -24,9 +24,6 @@ import { useCurrentRideSession } from "@/src/utils/context/current-ride-context"
 import { useMissedRideSession } from "@/src/utils/context/missed-ride-context";
 import { useTabContext } from "@/src/utils/context/tab-context";
 import { useToastContext } from "@/src/utils/context/toast-context";
-import { WEST_CAMPUS_LOCATIONS } from "@/src/utils/locations/dropoff-locations";
-import { CAMPUS_LOCATIONS } from "@/src/utils/locations/pickup-locations";
-import Location from "@/src/utils/types/location";
 
 const MyRide = ({ initialIndex }: { initialIndex: number }) => {
   const { height } = useWindowDimensions();
@@ -35,22 +32,11 @@ const MyRide = ({ initialIndex }: { initialIndex: number }) => {
   const { goHome } = useTabContext();
   const { currentRide, setCurrentRide, loadingState, setLoadingState } =
     useCurrentRideSession();
-  const { missedRide, showModal, setShowModal } = useMissedRideSession();
+  const { missedRide, setMissedRide, showModal, setShowModal } =
+    useMissedRideSession();
   const { setToast } = useToastContext();
 
   const [code, setCode] = useState<string>("");
-  const [pickupLocation, setPickupLocation] = useState<Location | undefined>(
-    undefined,
-  );
-  const [dropoffLocation, setDropoffLocation] = useState<Location | undefined>(
-    undefined,
-  );
-  const [missedPickupLocation, setMissedPickupLocation] = useState<
-    Location | undefined
-  >(undefined);
-  const [missedDropoffLocation, setMissedDropoffLocation] = useState<
-    Location | undefined
-  >(undefined);
 
   const sheetRef = useRef<BottomSheet>(null);
   const inputRef = useRef<TextInput>(null);
@@ -72,38 +58,6 @@ const MyRide = ({ initialIndex }: { initialIndex: number }) => {
   useEffect(() => {
     setMyRideSheetRef(sheetRef);
   }, [setMyRideSheetRef]);
-
-  useEffect(() => {
-    if (currentRide) {
-      setPickupLocation(
-        CAMPUS_LOCATIONS.find((loc) => loc.id === currentRide.pickupLocationID),
-      );
-      setDropoffLocation(
-        WEST_CAMPUS_LOCATIONS.find(
-          (loc) => loc.id === currentRide.dropoffLocationID,
-        ),
-      );
-    } else {
-      setPickupLocation(undefined);
-      setDropoffLocation(undefined);
-    }
-  }, [currentRide]);
-
-  useEffect(() => {
-    if (missedRide) {
-      setMissedPickupLocation(
-        CAMPUS_LOCATIONS.find((loc) => loc.id === missedRide.pickupLocationID),
-      );
-      setMissedDropoffLocation(
-        WEST_CAMPUS_LOCATIONS.find(
-          (loc) => loc.id === missedRide.dropoffLocationID,
-        ),
-      );
-    } else {
-      setMissedPickupLocation(undefined);
-      setMissedDropoffLocation(undefined);
-    }
-  }, [missedRide]);
 
   useEffect(() => {
     const responseListener =
@@ -158,12 +112,10 @@ const MyRide = ({ initialIndex }: { initialIndex: number }) => {
     if (data.eventType === "missedRide") {
       Notifications.clearLastNotificationResponseAsync();
       setCurrentRide(null);
-      setMissedPickupLocation(
-        CAMPUS_LOCATIONS.find((loc) => loc.id === data.pickupLocationID),
-      );
-      setMissedDropoffLocation(
-        WEST_CAMPUS_LOCATIONS.find((loc) => loc.id === data.dropoffLocationID),
-      );
+      setMissedRide({
+        pickupLocation: data.pickupLocation,
+        dropoffLocation: data.dropoffLocation,
+      });
       setTimeout(() => setShowModal(true), 300);
     }
   };
@@ -223,7 +175,7 @@ const MyRide = ({ initialIndex }: { initialIndex: number }) => {
                   <View className="pb-4 bg-slate-50 rounded-2xl border border-slate-200 flex-col mb-6 gap-2">
                     <View className="flex-row items-center gap-2 mb-2 px-5 py-1.5 bg-orange-100 rounded-t-2xl">
                       <FontText className="text-lg font-semibold color-ut-burntorange">
-                        {pickupLocation?.abbreviation}
+                        {currentRide.pickupLocation?.abbreviation}
                       </FontText>
                       <ArrowCircleRightIcon
                         weight="fill"
@@ -231,7 +183,7 @@ const MyRide = ({ initialIndex }: { initialIndex: number }) => {
                         size={24}
                       />
                       <FontText className="text-lg font-semibold color-ut-burntorange">
-                        {dropoffLocation?.name}
+                        {currentRide.dropoffLocation?.name}
                       </FontText>
                     </View>
                     {currentRide.eta && (
@@ -325,7 +277,7 @@ const MyRide = ({ initialIndex }: { initialIndex: number }) => {
                 </FontText>
                 <View className="flex-row px-5 py-4 gap-2 bg-slate-50 border border-slate-200 items-center rounded-2xl">
                   <FontText className="text-lg font-semibold">
-                    {missedPickupLocation?.abbreviation ?? ""}
+                    {missedRide?.pickupLocation?.abbreviation ?? ""}
                   </FontText>
                   <ArrowCircleRightIcon
                     color={UTBluebonnet}
@@ -333,7 +285,7 @@ const MyRide = ({ initialIndex }: { initialIndex: number }) => {
                     weight="fill"
                   />
                   <FontText className="text-lg font-semibold">
-                    {missedDropoffLocation?.name ?? ""}
+                    {missedRide?.dropoffLocation?.name ?? ""}
                   </FontText>
                 </View>
                 <View className="flex-col gap-3">

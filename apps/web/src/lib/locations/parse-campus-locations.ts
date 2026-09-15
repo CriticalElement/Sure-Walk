@@ -55,8 +55,7 @@ async function parseLocations() {
         coordinates: [[]];
       };
     }) => {
-      let address: string | undefined = undefined;
-      address = `${feature.properties["addr:housenumber"]} ${feature.properties["addr:street"]}, Austin, TX ${feature.properties["addr:postcode"]}`;
+      const address = `${feature.properties["addr:housenumber"]} ${feature.properties["addr:street"]}, Austin, TX ${feature.properties["addr:postcode"]}`;
 
       let lat = 0;
       let lon = 0;

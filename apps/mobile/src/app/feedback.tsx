@@ -14,8 +14,6 @@ import { api, ok } from "../client/session";
 import TextInputField from "../components/text-input-field";
 import { slate200, UTBurntOrange } from "../utils/colors";
 import { useToastContext } from "../utils/context/toast-context";
-import { WEST_CAMPUS_LOCATIONS } from "../utils/locations/dropoff-locations";
-import { CAMPUS_LOCATIONS } from "../utils/locations/pickup-locations";
 import LoadingState from "../utils/types/loading-state";
 
 const Feedback = () => {
@@ -52,15 +50,8 @@ const Feedback = () => {
           setLoadingState("error");
         } else {
           setSubmittedAt(data.submittedAt);
-          setPickupLocation(
-            CAMPUS_LOCATIONS.find((loc) => loc.id === data.pickupLocationID)
-              ?.name ?? "",
-          );
-          setDropoffLocation(
-            WEST_CAMPUS_LOCATIONS.find(
-              (loc) => loc.id === data.dropoffLocationID,
-            )?.name ?? "",
-          );
+          setPickupLocation(data.pickupLocation?.name ?? "");
+          setDropoffLocation(data.dropoffLocation?.name ?? "");
           setLoadingState("done");
         }
       } catch (err) {

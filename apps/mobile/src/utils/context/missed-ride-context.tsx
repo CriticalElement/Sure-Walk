@@ -1,11 +1,13 @@
-import CurrentRideMini from "@sure-walk/utils/types/current-ride-mini";
+import Location from "@sure-walk/utils/types/location";
 import React, { createContext, useContext, useEffect, useState } from "react";
 
 import { useTabContext } from "./tab-context";
 
+type MissedRide = { pickupLocation: Location; dropoffLocation: Location };
+
 interface MissedRideContextType {
-  missedRide: CurrentRideMini | null;
-  setMissedRide: React.Dispatch<React.SetStateAction<CurrentRideMini | null>>;
+  missedRide: MissedRide | null;
+  setMissedRide: React.Dispatch<React.SetStateAction<MissedRide | null>>;
   showModal: boolean;
   setShowModal: (show: boolean) => void;
 }
@@ -31,7 +33,7 @@ export const MissedRideProvider = ({
 }) => {
   const { goMyRide, activeTab } = useTabContext();
 
-  const [missedRide, setMissedRide] = useState<CurrentRideMini | null>(null);
+  const [missedRide, setMissedRide] = useState<MissedRide | null>(null);
   const [showModal, setShowModal] = useState<boolean>(false);
 
   useEffect(() => {

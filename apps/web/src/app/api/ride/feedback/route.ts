@@ -6,6 +6,7 @@ import { ensureAuthenticated } from "@/lib/auth";
 import { getDB } from "@/lib/db";
 import { accounts } from "@/lib/db/schema/accounts";
 import { feedback } from "@/lib/db/schema/feedback";
+import { dropoffLocations, pickupLocations } from "@/lib/db/schema/locations";
 import { rides } from "@/lib/db/schema/rides";
 import { User, users } from "@/lib/db/schema/users";
 
@@ -24,7 +25,20 @@ const canProvideFeedback = async (user: User, rideID: string) => {
     );
   }
 
-  const [ride] = await getDB().select().from(rides).where(eq(rides.id, rideID));
+  const ride = await getDB()
+    .select()
+    .from(rides)
+    .where(eq(rides.id, rideID))
+    .innerJoin(pickupLocations, eq(rides.pickupLocationID, pickupLocations.id))
+    .innerJoin(
+      dropoffLocations,
+      eq(rides.dropoffLocationID, dropoffLocations.id),
+    )
+    .then(([res]) => ({
+      ...res.rides,
+      pickupLocation: res.pickupLocations,
+      dropoffLocation: res.dropoffLocations,
+    }));
 
   if (!ride) {
     return NextResponse.json(
@@ -98,8 +112,8 @@ export async function GET(request: NextRequest) {
   return NextResponse.json(
     {
       submittedAt: allowed.submittedAt,
-      pickupLocationID: allowed.pickupLocationID,
-      dropoffLocationID: allowed.dropoffLocationID,
+      pickupLocation: allowed.pickupLocation,
+      dropoffLocation: allowed.dropoffLocation,
     },
     { status: 200 },
   );
