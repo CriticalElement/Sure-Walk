@@ -23,7 +23,6 @@ import { slate700 } from "@/src/utils/colors";
 import { useCurrentRideSession } from "@/src/utils/context/current-ride-context";
 import { useGroupRideSession } from "@/src/utils/context/group-ride-context";
 import { useRideSession } from "@/src/utils/context/ride-context";
-import { useTabContext } from "@/src/utils/context/tab-context";
 import { useToastContext } from "@/src/utils/context/toast-context";
 import { useSession } from "@/src/utils/context/user-context";
 
@@ -33,7 +32,6 @@ const ConfirmRide = () => {
   const { user } = useSession();
   const { firstName, lastName, userType, eid, phoneNumber } = user!;
   const { setDropoffLocation, setPickupLocation } = useRideSession();
-  const { goMyRide } = useTabContext();
   const { setCurrentRide: setCurrentRideMini, setLoadingState } =
     useCurrentRideSession();
   const { setToast } = useToastContext();
@@ -88,8 +86,8 @@ const ConfirmRide = () => {
         });
         clearMembers();
         setLoadingState("done");
-        goMyRide();
-        setTimeout(() => router.push("/home/ride-info-wrapper"), 500);
+        router.dismissTo("/home");
+        setTimeout(() => router.push("/home/current-ride-info"), 500);
       }
     } catch (err) {
       handleNetworkFailure(err, setToast);
@@ -99,7 +97,7 @@ const ConfirmRide = () => {
   };
 
   return (
-    <View className="bg-white flex-1 p-5 flex-col gap-10">
+    <View className="bg-white flex-1 p-5 flex-col gap-10 pb-safe">
       <View className="flex-row gap-4 items-center mt-safe">
         <TouchableOpacity
           className="w-12 h-12 rounded-2xl bg-slate-100 items-center justify-center"

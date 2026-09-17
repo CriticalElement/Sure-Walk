@@ -1,7 +1,5 @@
 import Location from "@sure-walk/utils/types/location";
-import React, { createContext, useContext, useEffect, useState } from "react";
-
-import { useTabContext } from "./tab-context";
+import React, { createContext, useContext, useState } from "react";
 
 type MissedRide = { pickupLocation: Location; dropoffLocation: Location };
 
@@ -31,18 +29,8 @@ export const MissedRideProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { goMyRide, activeTab } = useTabContext();
-
   const [missedRide, setMissedRide] = useState<MissedRide | null>(null);
   const [showModal, setShowModal] = useState<boolean>(false);
-
-  useEffect(() => {
-    // when a missed ride notification is pressed, make sure the tab switches
-    // to the my ride page
-    if (showModal === true && activeTab === "home") {
-      goMyRide();
-    }
-  }, [showModal, goMyRide]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <MissedRideContext.Provider

@@ -257,7 +257,7 @@ const Profile = () => {
                       </TouchableOpacity>
                       <View className="border-b border-b-[#e5e7eb] w-full" />
                     </View>
-                    <View className="pb-2 w-full mb-6">
+                    <View className="pb-2 w-full mb-safe">
                       <OutlineButton
                         title="Log Out"
                         onPress={() => logOut(pushToken ?? undefined)}
@@ -321,7 +321,7 @@ const Profile = () => {
               </ScrollView>
             </View>
             {isEditing && (
-              <View className="flex-row gap-2 mt-4">
+              <View className="flex-row gap-2 mt-4 mb-safe">
                 <View className="pb-2 flex-1">
                   <OutlineButton
                     title="Cancel"

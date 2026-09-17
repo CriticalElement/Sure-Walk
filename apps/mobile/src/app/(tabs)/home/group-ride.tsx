@@ -89,7 +89,7 @@ const GroupRide = () => {
   };
 
   return (
-    <View className={"bg-white flex-1 p-5 flex-col gap-5"}>
+    <View className="bg-white flex-1 p-5 flex-col gap-5 pb-safe">
       <View className="flex-row gap-4 items-center mt-safe">
         <TouchableOpacity
           className="w-12 h-12 rounded-2xl bg-slate-100 items-center justify-center"
