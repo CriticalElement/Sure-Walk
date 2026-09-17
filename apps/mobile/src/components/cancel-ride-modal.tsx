@@ -1,10 +1,8 @@
 import { router } from "expo-router";
-import { WarningIcon } from "phosphor-react-native";
 import { Modal, Pressable, View } from "react-native";
 
 import { getErrorMessage, handleNetworkFailure } from "../client";
 import { api, ok } from "../client/session";
-import { UTBurntOrange } from "../utils/colors";
 import { useCurrentRideSession } from "../utils/context/current-ride-context";
 import { useToastContext } from "../utils/context/toast-context";
 import FontText from "./font-text";
@@ -68,14 +66,9 @@ const CancelRideModal = ({
           className="flex-1 bg-[#00000080] items-center justify-center p-5"
           onPress={() => setModalVisible(false)}
         >
-          <Pressable className="p-4 bg-white flex-col gap-6 rounded-3xl w-full">
+          <Pressable className="py-6 px-7 bg-white flex-col gap-6 rounded-2xl w-full">
             <View className="flex-col gap-3">
-              <View className="flex-row gap-2 items-center">
-                <WarningIcon color={UTBurntOrange} size={32} />
-                <FontText className="text-2xl font-medium">
-                  Cancel Ride
-                </FontText>
-              </View>
+              <FontText className="text-2xl font-medium">Cancel Ride</FontText>
               <FontText className="text-lg">
                 {isGroupRide ? (
                   <>
@@ -86,10 +79,7 @@ const CancelRideModal = ({
                     in the ride. Are you sure?
                   </>
                 ) : (
-                  <>
-                    You will have to make a new request if you still need a
-                    ride. Are you sure?
-                  </>
+                  <>Are you sure you want to cancel the booking below:</>
                 )}
               </FontText>
             </View>

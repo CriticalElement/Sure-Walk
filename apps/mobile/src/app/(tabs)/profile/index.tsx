@@ -3,6 +3,7 @@ import { router } from "expo-router";
 import {
   ArrowUpRightIcon,
   ArrowUUpLeftIcon,
+  CaretLeftIcon,
   CaretRightIcon,
   SignOutIcon,
 } from "phosphor-react-native";
@@ -16,7 +17,7 @@ import EditProfileTextInput from "@/src/components/edit-profile-text-input";
 import FontText from "@/src/components/font-text";
 import LargeButton from "@/src/components/large-button";
 import OutlineButton from "@/src/components/outline-button";
-import { UTBluebonnet } from "@/src/utils/colors";
+import { slate700, UTBluebonnet } from "@/src/utils/colors";
 import { usePushNotificationsContext } from "@/src/utils/context/push-notifications-context";
 import { useSession } from "@/src/utils/context/user-context";
 
@@ -115,6 +116,14 @@ const Profile = () => {
       )}
       {loadingState === "done" && user && (
         <View className="flex-1">
+          <TouchableOpacity
+            className="absolute left-0 top-safe w-12 h-12 rounded-2xl items-center justify-center ms-5 z-10"
+            onPress={() => {
+              router.back();
+            }}
+          >
+            <CaretLeftIcon size={24} color={slate700} />
+          </TouchableOpacity>
           <View className="w-full bg-[#EFF6FF] pt-safe-offset-[54px]" />
           <View className="text-center w-20 h-20 rounded-full bg-ut-burntorange items-center justify-center self-center -mt-10">
             <FontText className="text-center text-white text-[24px] font-medium">

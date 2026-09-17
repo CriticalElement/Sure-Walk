@@ -77,17 +77,18 @@ const ConfirmRide = () => {
           isError: true,
         });
       } else {
-        setDropoffLocation(null);
-        setPickupLocation(null);
         setCurrentRideMini({
           pickupLocation: pickupLocation!,
           dropoffLocation: dropoffLocation!,
           rideState: "received",
         });
-        clearMembers();
-        setLoadingState("done");
-        router.dismissTo("/home");
-        setTimeout(() => router.push("/home/current-ride-info"), 500);
+        router.replace("/home/current-ride-info");
+        setTimeout(() => {
+          setDropoffLocation(null);
+          setPickupLocation(null);
+          clearMembers();
+          setLoadingState("done");
+        }, 1500);
       }
     } catch (err) {
       handleNetworkFailure(err, setToast);

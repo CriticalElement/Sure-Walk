@@ -21,13 +21,11 @@ import {
   ArrowCircleRightIcon,
   CircleIcon,
   FadersHorizontalIcon,
-  InfoIcon,
   MapPinIcon,
   NavigationArrowIcon,
   StarIcon,
   UserCircleIcon,
   UserCirclePlusIcon,
-  WarningIcon,
 } from "phosphor-react-native";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -58,6 +56,7 @@ import FontText from "@/src/components/font-text";
 import LargeButton from "@/src/components/large-button";
 import LocationMarker from "@/src/components/location-marker";
 import OutlineButton from "@/src/components/outline-button";
+import PickupDropoffLocationInfo from "@/src/components/pickup-dropoff-location-info";
 import TextInputField from "@/src/components/text-input-field";
 import {
   gray900,
@@ -95,6 +94,7 @@ const Home = () => {
   const { setToast } = useToastContext();
 
   const [code, setCode] = useState<string>("");
+  const [disabled, setDisabled] = useState<boolean>(false);
 
   const inputRef = useRef<TextInput>(null);
 
@@ -270,6 +270,8 @@ const Home = () => {
       setDestinationText("");
       setStartAddress("Select your pickup location");
       setDestinationAddress("Select your destination");
+    } else {
+      sheetRef.current?.snapToIndex(1);
     }
   }, [currentRide]);
 
@@ -572,7 +574,7 @@ const Home = () => {
         ref={sheetRef}
         snapPoints={snapPoints}
         enableDynamicSizing={false}
-        index={currentRide ? 0 : 1}
+        index={1}
         style={{
           borderRadius: 28,
           backgroundColor: "transparent",
@@ -710,24 +712,48 @@ const Home = () => {
               </View>
             )}
             {currentRide && (
-              <View className="p-4 bg-slate-50 rounded-2xl border border-slate-200 flex-col mb-safe gap-6">
-                <View className="flex-col gap-3">
-                  <View className="flex-row gap-2 items-center">
-                    <InfoIcon color={UTBurntOrange} size={32} />
-                    <FontText className="text-2xl font-medium">
-                      Ride in Progress
+              <View className="flex-col gap-4 mb-safe">
+                <View className="pb-4 bg-slate-50 rounded-2xl border border-slate-200 flex-col gap-2">
+                  <View className="flex-row items-center gap-2 mb-2 px-5 py-1.5 bg-orange-100 rounded-t-2xl">
+                    <FontText className="text-lg font-semibold color-ut-burntorange">
+                      {currentRide.pickupLocation?.abbreviation}
+                    </FontText>
+                    <ArrowCircleRightIcon
+                      weight="fill"
+                      color={UTBurntOrange}
+                      size={24}
+                    />
+                    <FontText className="text-lg font-semibold color-ut-burntorange">
+                      {currentRide.dropoffLocation?.name}
                     </FontText>
                   </View>
-                  <FontText className="text-lg">
-                    You currently have a Sure Walk booked.
+                  {currentRide.eta && (
+                    <FontText className="text-lg font-semibold px-5">
+                      ETA:{" "}
+                      <FontText className="text-lg font-regular">
+                        {currentRide.eta ?? ""}
+                      </FontText>
+                    </FontText>
+                  )}
+                  <FontText className="text-lg font-semibold px-5">
+                    Status:{" "}
+                    <FontText className="text-lg font-regular">
+                      {`${currentRide.rideState.at(0)?.toUpperCase()}${currentRide.rideState.slice(1)}`}
+                    </FontText>
                   </FontText>
                 </View>
-                <View className="flex-col gap-3">
-                  <LargeButton
-                    title="View Ride"
-                    onPress={() => router.navigate("/home/current-ride-info")}
-                  />
-                </View>
+                <LargeButton
+                  title="View Live Tracking"
+                  onPress={() => {
+                    setDisabled(true);
+                    setTimeout(
+                      () => router.push("/home/current-ride-info"),
+                      300,
+                    );
+                    setTimeout(() => setDisabled(false), 1000);
+                  }}
+                  disabled={disabled}
+                />
               </View>
             )}
           </View>
@@ -879,42 +905,22 @@ const Home = () => {
             className="flex-1 bg-[#00000080] items-center justify-center p-5"
             onPress={() => setShowModal(false)}
           >
-            <Pressable className="p-4 bg-white flex-col gap-4 rounded-3xl w-full">
-              <View className="flex-row gap-2 items-center mb-2">
-                <WarningIcon color={UTBurntOrange} size={32} />
-                <FontText className="text-2xl font-medium">
-                  Missed Ride
-                </FontText>
-              </View>
-              <View className="flex-col gap-4">
+            <Pressable className="py-6 px-7 bg-white flex-col gap-4 rounded-3xl w-full">
+              <FontText className="text-2xl font-medium">Missed Ride</FontText>
+              <View className="flex-col gap-3">
                 <FontText className="text-lg">
                   You have missed the following ride:
                 </FontText>
-                <View className="flex-row px-5 py-4 gap-2 bg-slate-50 border border-slate-200 items-center rounded-2xl">
-                  <FontText className="text-lg font-semibold">
-                    {missedRide?.pickupLocation?.abbreviation ?? ""}
-                  </FontText>
-                  <ArrowCircleRightIcon
-                    color={UTBluebonnet}
-                    size={24}
-                    weight="fill"
-                  />
-                  <FontText className="text-lg font-semibold">
-                    {missedRide?.dropoffLocation?.name ?? ""}
-                  </FontText>
-                </View>
-                <View className="flex-col gap-3">
-                  <LargeButton
-                    title="Book a New Ride"
-                    onPress={() => {
-                      setShowModal(false);
-                    }}
-                  />
-                  <OutlineButton
-                    title="Return"
-                    onPress={() => setShowModal(false)}
+                <View className="mb-3">
+                  <PickupDropoffLocationInfo
+                    pickupLocation={missedRide?.pickupLocation ?? null}
+                    dropoffLocation={missedRide?.dropoffLocation ?? null}
                   />
                 </View>
+                <OutlineButton
+                  title="Book a New Ride"
+                  onPress={() => setShowModal(false)}
+                />
               </View>
             </Pressable>
           </Pressable>

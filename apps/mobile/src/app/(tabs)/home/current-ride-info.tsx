@@ -349,7 +349,7 @@ const CurrentRideInfo = () => {
   };
 
   const TwoMinuteWarning = () => (
-    <View className="pb-2" onLayout={handleLayout0}>
+    <View className="mb-2" onLayout={handleLayout0}>
       <View className="flex-row items-center gap-4 px-4 py-2.5 border border-ut-burntorange rounded-xl mt-1 mb-2">
         <WarningCircleIcon color={UTBurntOrange} size={24} />
         <View className="flex-col">
@@ -370,7 +370,7 @@ const CurrentRideInfo = () => {
         <TouchableOpacity
           className="w-12 h-12 rounded-2xl bg-slate-100 items-center justify-center"
           onPress={() => {
-            router.back();
+            router.dismissTo("/home");
           }}
         >
           <CaretLeftIcon size={24} color={slate700} />
