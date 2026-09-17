@@ -17,27 +17,19 @@ import {
   RelativePathString,
   router,
   SplashScreen,
-  Tabs,
-  useSegments,
+  Stack,
 } from "expo-router";
-import {
-  CarIcon,
-  HouseIcon,
-  UserCircleIcon,
-  WifiXIcon,
-} from "phosphor-react-native";
+import { WifiXIcon } from "phosphor-react-native";
 import { useEffect } from "react";
-import { ActivityIndicator, Platform, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { ActivityIndicator, View } from "react-native";
 
-import { slate200, slate900, UTBurntOrange } from "../utils/colors";
+import { UTBurntOrange } from "../utils/colors";
 import { useCurrentRideSession } from "../utils/context/current-ride-context";
 import { GroupRideProvider } from "../utils/context/group-ride-context";
 import { MissedRideProvider } from "../utils/context/missed-ride-context";
 import { usePushNotificationsContext } from "../utils/context/push-notifications-context";
 import { RideProvider } from "../utils/context/ride-context";
 import { RideDetailsProvider } from "../utils/context/ride-details-context";
-import { useTabContext } from "../utils/context/tab-context";
 import { useSession } from "../utils/context/user-context";
 import FontText from "./font-text";
 import LargeButton from "./large-button";
@@ -46,15 +38,12 @@ const TabScreens = () => {
   const { loadingState, user, guidelinesAccepted, fetchUserInfo } =
     useSession();
   const { loadingState: rideLoadingState } = useCurrentRideSession();
-  const { goHome, goMyRide, activeTab } = useTabContext();
   const {
     loadingState: notificationsLoadingState,
     registerForPushNotificationsAsync,
   } = usePushNotificationsContext();
 
-  const segments = useSegments();
   const lastNotificationResponse = Notifications.useLastNotificationResponse();
-  let paddingBottom: number = useSafeAreaInsets().bottom;
 
   const [loaded, error] = useFonts({
     Geist_100Thin,
@@ -77,7 +66,7 @@ const TabScreens = () => {
       const data: RideUpdateNotification = response.notification.request.content
         .data as unknown as RideUpdateNotification;
       // @ts-ignore
-      if ((!segments.includes("home") || activeTab === "home") && data.route) {
+      if (data.route) {
         router.push(data.route as unknown as RelativePathString);
       }
     }
@@ -172,101 +161,7 @@ const TabScreens = () => {
       <MissedRideProvider>
         <RideProvider>
           <GroupRideProvider>
-            <Tabs
-              screenOptions={{
-                tabBarStyle: {
-                  paddingTop: 8,
-                  minHeight:
-                    Platform.OS !== "ios" ? 64 + paddingBottom : undefined,
-                  paddingBottom: paddingBottom,
-                  boxShadow: "none",
-                  borderTopColor: slate200,
-                  borderTopWidth: 1,
-                },
-                tabBarLabelStyle: {
-                  fontFamily: "Geist_400Regular",
-                  fontSize: 12,
-                  paddingTop: 2,
-                  color: slate900,
-                },
-                tabBarIconStyle: {
-                  color: slate900,
-                },
-              }}
-              screenListeners={{
-                tabPress: (e) => {
-                  // don't show animation when currently on profile tab
-                  let instant = false;
-                  // @ts-ignore
-                  if (segments.includes("profile")) {
-                    instant = true;
-                  }
-
-                  if (e.target?.startsWith("home-")) {
-                    goHome(instant);
-                  }
-
-                  if (e.target?.includes("my-ride")) {
-                    e.preventDefault();
-                    goMyRide(instant);
-                  }
-                },
-              }}
-            >
-              <Tabs.Screen
-                name="home"
-                options={{
-                  headerShown: false,
-                  tabBarLabel: "Home",
-                  tabBarIcon: () => (
-                    <HouseIcon
-                      size={32}
-                      weight={
-                        // @ts-ignore
-                        segments.includes("home") && activeTab === "home"
-                          ? "fill"
-                          : "regular"
-                      }
-                    />
-                  ),
-                }}
-              />
-              <Tabs.Screen
-                name="(my-ride)/index"
-                options={{
-                  headerShown: false,
-                  tabBarLabel: "My Ride",
-                  tabBarIcon: () => (
-                    <CarIcon
-                      size={32}
-                      weight={
-                        // @ts-ignore
-                        segments.includes("home") && activeTab === "my-ride"
-                          ? "fill"
-                          : "regular"
-                      }
-                    />
-                  ),
-                }}
-              />
-              <Tabs.Screen
-                name="profile"
-                options={{
-                  headerShown: false,
-                  tabBarLabel: "Profile",
-                  tabBarIcon: ({ focused }) => (
-                    <UserCircleIcon
-                      size={32}
-                      weight={focused ? "fill" : "regular"}
-                    />
-                  ),
-                }}
-              />
-              <Tabs.Screen
-                name="(my-ride)/current-ride-info"
-                options={{ href: null }}
-              />
-            </Tabs>
+            <Stack screenOptions={{ headerShown: false }} />
           </GroupRideProvider>
         </RideProvider>
       </MissedRideProvider>

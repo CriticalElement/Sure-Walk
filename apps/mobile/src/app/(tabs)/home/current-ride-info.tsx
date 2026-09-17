@@ -53,7 +53,6 @@ import { useCurrentRideSession } from "@/src/utils/context/current-ride-context"
 import { useMissedRideSession } from "@/src/utils/context/missed-ride-context";
 import { usePushNotificationsContext } from "@/src/utils/context/push-notifications-context";
 import { useRideDetailsSession } from "@/src/utils/context/ride-details-context";
-import { useTabContext } from "@/src/utils/context/tab-context";
 import { useToastContext } from "@/src/utils/context/toast-context";
 import LoadingState from "@/src/utils/types/loading-state";
 
@@ -63,7 +62,6 @@ const CurrentRideInfo = () => {
   const { setMissedRide, setShowModal } = useMissedRideSession();
   const { setToast } = useToastContext();
   const { pushToken } = usePushNotificationsContext();
-  const { homeSheetRef, myRideSheetRef, setActiveTab } = useTabContext();
 
   // shareCode is for viewing group rides
   const params = useSearchParams();
@@ -102,11 +100,6 @@ const CurrentRideInfo = () => {
   ) as SharedValue<(string | number)[]>;
 
   const connect = (onConnect = () => {}) => {
-    // when clicking on a notification, make sure the tab sheets get switched
-    setActiveTab("my-ride");
-    homeSheetRef.current?.close();
-    myRideSheetRef.current?.snapToIndex(1);
-
     const wsURL = new URL(API_URL.replace("http", "ws"));
     const accessToken = SecureStore.getItem("accessToken");
     wsURL.pathname = "/api/ride/events";
@@ -328,7 +321,7 @@ const CurrentRideInfo = () => {
     if (height === 0) {
       height = 36;
     }
-    snap0.set(height + 48);
+    snap0.set(height + 64);
   };
 
   const handleLayout1 = (event: LayoutChangeEvent) => {
@@ -336,7 +329,7 @@ const CurrentRideInfo = () => {
     if (height === 0) {
       height = 76;
     }
-    snap1.set(height + 48);
+    snap1.set(height + 36);
   };
 
   useAnimatedReaction(
@@ -583,7 +576,7 @@ const CurrentRideInfo = () => {
                     Booking details
                   </FontText>
                 </View>
-                <View className="mt-2">
+                <View className="mt-2 mb-6">
                   {pickupLocation && dropoffLocation && (
                     <PickupDropoffLocationInfo
                       pickupLocation={pickupLocation}
@@ -594,7 +587,7 @@ const CurrentRideInfo = () => {
               </View>
               {rideDetails.groupRide.length !== 0 && (
                 <>
-                  <FontText className="text-xl font-medium pt-6 pb-4">
+                  <FontText className="text-xl font-medium pb-4">
                     Share group ride
                   </FontText>
                   <View className="bg-slate-50 rounded-lg border border-slate-200 flex-row items-center justify-between px-4 py-2.5">
@@ -607,7 +600,7 @@ const CurrentRideInfo = () => {
                   </View>
                 </>
               )}
-              <View className="flex-row items-center justify-between w-full pt-6 pb-4">
+              <View className="flex-row items-center justify-between w-full pb-4">
                 <FontText className="text-xl font-medium">
                   Ride members
                 </FontText>
@@ -637,7 +630,7 @@ const CurrentRideInfo = () => {
               {!shareCode &&
                 rideDetails.rideState !== "in progress" &&
                 rideDetails.rideState !== "dropped off" && (
-                  <View className="flex-row pb-6">
+                  <View className="flex-row pb-safe">
                     <OutlineButton
                       title="Cancel booking"
                       onPress={() => setModalVisible(true)}

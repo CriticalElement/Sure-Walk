@@ -86,7 +86,7 @@ const FAQs = () => {
             ItemSeparatorComponent={() => (
               <View className="my-4 mx-8 h-[1px] bg-gray-300" />
             )}
-            ListFooterComponent={<View className="h-5" />}
+            ListFooterComponent={<View className="mb-safe" />}
           />
         </View>
       </View>
