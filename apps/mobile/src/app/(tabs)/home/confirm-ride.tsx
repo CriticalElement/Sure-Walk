@@ -1,25 +1,20 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import * as SecureStore from "expo-secure-store";
-import { CaretLeftIcon, CrownSimpleIcon } from "phosphor-react-native";
+import { CrownSimpleIcon } from "phosphor-react-native";
 import { useState } from "react";
-import {
-  NativeScrollEvent,
-  NativeSyntheticEvent,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { NativeScrollEvent, NativeSyntheticEvent, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 
 import { getErrorMessage, handleNetworkFailure } from "@/src/client";
 import { api, ok } from "@/src/client/session";
+import BackButton from "@/src/components/back-button";
 import FontText from "@/src/components/font-text";
 import { GuidelinesListShort } from "@/src/components/guidelines-list";
 import LargeButton from "@/src/components/large-button";
 import OutlineButton from "@/src/components/outline-button";
 import PickupDropoffLocationInfo from "@/src/components/pickup-dropoff-location-info";
 import RiderCard from "@/src/components/rider-card";
-import { slate700 } from "@/src/utils/colors";
 import { useCurrentRideSession } from "@/src/utils/context/current-ride-context";
 import { useGroupRideSession } from "@/src/utils/context/group-ride-context";
 import { useRideSession } from "@/src/utils/context/ride-context";
@@ -100,16 +95,9 @@ const ConfirmRide = () => {
   return (
     <View className="bg-white flex-1 p-5 flex-col gap-10 pb-safe">
       <View className="flex-row gap-4 items-center mt-safe">
-        <TouchableOpacity
-          className="w-12 h-12 rounded-2xl bg-slate-100 items-center justify-center"
-          onPress={() => {
-            router.back();
-          }}
-        >
-          <CaretLeftIcon size={24} color={slate700} />
-        </TouchableOpacity>
+        <BackButton />
         <FontText className="font-medium text-2xl">
-          Confirm your booking
+          Confirm Your Booking
         </FontText>
       </View>
       <View className="relative mt-[-16px] z-5 flex-1 mx-[-20px]">
@@ -142,7 +130,7 @@ const ConfirmRide = () => {
           <View className="flex-col gap-6 flex-1 mt-4">
             <View className="flex-col gap-4">
               <View className="flex-row w-full justify-between items-center">
-                <FontText className="text-xl font-semibold">
+                <FontText className="text-xl font-medium">
                   Pick-up and drop-off
                 </FontText>
                 <OutlineButton
@@ -156,24 +144,16 @@ const ConfirmRide = () => {
                 dropoffLocation={dropoffLocation}
               />
             </View>
-            <View className="h-[1px] bg-gray-200 w-full" />
-            <View className="flex-col gap-4">
-              <FontText className="text-xl font-semibold">Guidelines</FontText>
-              <GuidelinesListShort />
-            </View>
-            <View className="h-[1px] bg-gray-200 w-full" />
             <View className="flex-col gap-4">
               <View className="flex-row w-full justify-between items-center">
-                <FontText className="text-xl font-semibold">
-                  Ride members ({members.length + 1})
-                </FontText>
+                <FontText className="text-xl font-medium">People</FontText>
                 <OutlineButton
                   title="Edit"
                   onPress={() => router.navigate("/home/group-ride")}
                   small
                 />
               </View>
-              <View className="flex-col gap-4 pb-4">
+              <View className="flex-col gap-4">
                 <RiderCard
                   member={{ firstName, lastName, userType, eid, phoneNumber }}
                   actionComponent={
@@ -184,6 +164,10 @@ const ConfirmRide = () => {
                   <RiderCard key={index} member={member} />
                 ))}
               </View>
+            </View>
+            <View className="flex-col gap-4 pb-4">
+              <FontText className="text-xl font-medium">Guidelines</FontText>
+              <GuidelinesListShort />
             </View>
           </View>
         </ScrollView>

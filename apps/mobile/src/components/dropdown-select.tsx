@@ -21,12 +21,12 @@ const DropdownSelect = ({
 
   return (
     <View className="flex flex-col gap-2 w-full bg-white z-10">
-      <FontText className="font-medium text-md">{label}</FontText>
+      <FontText className="font-medium text-lg">{label}</FontText>
       <TouchableOpacity
         className="flex-row justify-between "
         onPress={() => setOpen(!open)}
       >
-        <FontText className="text-md mt-2">
+        <FontText className="text-lg mt-2">
           {selected ? selected.label : "Select an option"}
         </FontText>
         <CaretDownIcon size={24} />

@@ -90,10 +90,16 @@ const CancelRideModal = ({
               />
             </View>
             <View className="flex-col gap-3">
-              <OutlineButton title="Yes, cancel" red onPress={cancelRide} />
+              <OutlineButton
+                title="Yes, cancel"
+                red
+                onPress={cancelRide}
+                medium
+              />
               <LargeButton
                 title="No, never mind"
                 onPress={() => setModalVisible(false)}
+                medium
               />
             </View>
           </Pressable>

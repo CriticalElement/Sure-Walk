@@ -3,7 +3,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { useSearchParams } from "expo-router/build/hooks";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, View } from "react-native";
+import { ActivityIndicator, Platform, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 
 import FontText from "@/src/components/font-text";
@@ -178,8 +178,7 @@ const Feedback = () => {
                     onValueChange={setRating}
                     minimumTrackTintColor={UTBurntOrange}
                     maximumTrackTintColor={slate200}
-                    thumbSize={16}
-                    style={{ height: 16 }}
+                    thumbSize={Platform.OS === "android" ? 20 : undefined}
                   />
                   <View className="mt-1 flex-row justify-between">
                     {Array.from({ length: 5 }, (_, i) => i + 1).map((i) => (

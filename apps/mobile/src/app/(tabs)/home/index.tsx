@@ -57,6 +57,7 @@ import LargeButton from "@/src/components/large-button";
 import LocationMarker from "@/src/components/location-marker";
 import OutlineButton from "@/src/components/outline-button";
 import PickupDropoffLocationInfo from "@/src/components/pickup-dropoff-location-info";
+import TertiaryButton from "@/src/components/tertiary-button";
 import TextInputField from "@/src/components/text-input-field";
 import {
   gray900,
@@ -601,12 +602,11 @@ const Home = () => {
                   {currentRide ? "Ride in Progress" : "Book a ride"}
                 </FontText>
                 {!currentRide && (
-                  <TO onPress={() => router.navigate("/home/group-ride")}>
-                    <View className="flex-row gap-1 p-3 items-center bg-slate-50 rounded-[32px] border border-slate-200">
-                      <UserCirclePlusIcon color={slate700} size="24" />
-                      <FontText className="font-medium">{`${members.length === 0 ? "Add" : members.length + 1} Riders`}</FontText>
-                    </View>
-                  </TO>
+                  <TertiaryButton
+                    title={`${members.length === 0 ? "Add" : members.length + 1} Riders`}
+                    icon={<UserCirclePlusIcon color={slate700} size="24" />}
+                    onPress={() => router.navigate("/home/group-ride")}
+                  />
                 )}
               </View>
             </View>
@@ -920,6 +920,7 @@ const Home = () => {
                 <OutlineButton
                   title="Book a New Ride"
                   onPress={() => setShowModal(false)}
+                  medium
                 />
               </View>
             </Pressable>

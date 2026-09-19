@@ -1,11 +1,9 @@
 import { LinearGradient } from "expo-linear-gradient";
-import { router } from "expo-router";
-import { CaretLeftIcon } from "phosphor-react-native";
-import { FlatList, TouchableOpacity, View } from "react-native";
+import { FlatList, View } from "react-native";
 
 import Accordion from "@/src/components/accordion";
+import BackButton from "@/src/components/back-button";
 import FontText from "@/src/components/font-text";
-import { slate700 } from "@/src/utils/colors";
 
 const FAQs = () => {
   const faqs: { title: string; body: string }[] = [
@@ -43,14 +41,9 @@ const FAQs = () => {
   return (
     <View className="flex-1 flex-col bg-white">
       <View className="flex-col bg-white flex-1 pt-[34px] mt-safe">
-        <TouchableOpacity
-          className="w-12 h-12 rounded-2xl bg-slate-100 items-center justify-center ms-5"
-          onPress={() => {
-            router.back();
-          }}
-        >
-          <CaretLeftIcon size={24} color={slate700} />
-        </TouchableOpacity>
+        <View className="px-5">
+          <BackButton />
+        </View>
         <View className="pb-2 pt-8">
           <FontText className="text-2xl font-medium px-5 z-100">FAQs</FontText>
         </View>
