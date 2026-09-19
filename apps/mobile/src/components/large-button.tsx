@@ -10,24 +10,28 @@ const LargeButton = ({
   onPress,
   disabled = false,
   blue = false,
+  small = false,
+  medium = false,
 }: {
   title: string;
   onPress: () => void;
   disabled?: boolean;
   blue?: boolean;
+  small?: boolean;
+  medium?: boolean;
 }) => {
   let color = blue ? "bg-ut-bluebonnet" : "bg-ut-burntorange";
 
   return (
     <AnimatedTouchable
-      className={`h-[56px] px-4 rounded-full flex-col transition-colors ${color} disabled:bg-slate-200 justify-center`}
+      className={`${small ? "h-[40px]" : medium ? "h-[48px]" : "h-[56px]"} px-5 rounded-full flex-col transition-colors ${color} disabled:bg-slate-200 justify-center`}
       onPress={onPress}
       disabled={disabled}
       accessibilityRole="button"
       accessibilityState={{ disabled }}
     >
       <FontText
-        className={`${disabled ? "text-slate-500" : "text-white"} text-center text-xl font-medium`}
+        className={`${disabled ? "text-slate-500" : "text-white"} text-center ${small ? "text-lg" : "text-xl"} font-medium`}
       >
         {title}
       </FontText>

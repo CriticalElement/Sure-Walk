@@ -14,7 +14,6 @@ import { router } from "expo-router";
 import { useSearchParams } from "expo-router/build/hooks";
 import * as SecureStore from "expo-secure-store";
 import {
-  CaretLeftIcon,
   CarSimpleIcon,
   CircleIcon,
   CopyIcon,
@@ -38,6 +37,7 @@ import Animated, {
 
 import { API_URL } from "@/src/client/auth";
 import { api } from "@/src/client/session";
+import BackButton from "@/src/components/back-button";
 import CancelRideModal from "@/src/components/cancel-ride-modal";
 import FontText from "@/src/components/font-text";
 import { GuidelinesListShort } from "@/src/components/guidelines-list";
@@ -48,7 +48,7 @@ import RideStateStep, {
   RideStateStepDivider,
 } from "@/src/components/ride-state-step";
 import RiderCard from "@/src/components/rider-card";
-import { slate700, UTBluebonnet, UTBurntOrange } from "@/src/utils/colors";
+import { UTBluebonnet, UTBurntOrange } from "@/src/utils/colors";
 import { useCurrentRideSession } from "@/src/utils/context/current-ride-context";
 import { useMissedRideSession } from "@/src/utils/context/missed-ride-context";
 import { usePushNotificationsContext } from "@/src/utils/context/push-notifications-context";
@@ -350,7 +350,7 @@ const CurrentRideInfo = () => {
 
   const TwoMinuteWarning = () => (
     <View className="mb-2" onLayout={handleLayout0}>
-      <View className="flex-row items-center gap-4 px-4 py-2.5 border border-ut-burntorange rounded-xl mt-1 mb-2">
+      <View className="flex-row items-center gap-4 px-4 py-2.5 border border-ut-burntorange rounded-xl mt-1">
         <WarningCircleIcon color={UTBurntOrange} size={24} />
         <View className="flex-col">
           <FontText className="color-ut-burntorange text-lg">
@@ -367,15 +367,8 @@ const CurrentRideInfo = () => {
   return (
     <View className="bg-white flex-1 pt-5 flex-col">
       <View className="flex-row gap-4 px-5 items-center mt-safe mb-6">
-        <TouchableOpacity
-          className="w-12 h-12 rounded-2xl bg-slate-100 items-center justify-center"
-          onPress={() => {
-            router.dismissTo("/home");
-          }}
-        >
-          <CaretLeftIcon size={24} color={slate700} />
-        </TouchableOpacity>
-        <FontText className="font-medium text-2xl">Your ride details</FontText>
+        <BackButton action={() => router.dismissTo("/home")} />
+        <FontText className="font-medium text-2xl">Your Ride Details</FontText>
       </View>
       <View className="relative w-full mb-8">
         <LinearGradient
@@ -561,7 +554,6 @@ const CurrentRideInfo = () => {
                         )}
                       </View>
                     </View>
-                    <View className="bg-blue-200 rounded-xl flex-1 h-full"></View>
                   </View>
                 </View>
               )}
@@ -590,7 +582,7 @@ const CurrentRideInfo = () => {
                   <FontText className="text-xl font-medium pb-4">
                     Share group ride
                   </FontText>
-                  <View className="bg-slate-50 rounded-lg border border-slate-200 flex-row items-center justify-between px-4 py-2.5">
+                  <View className="bg-slate-50 rounded-lg border border-slate-200 flex-row items-center justify-between px-4 py-2.5 mb-6">
                     <FontText className="text-lg">
                       {rideDetails.shareCode}
                     </FontText>

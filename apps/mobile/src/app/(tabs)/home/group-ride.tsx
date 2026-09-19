@@ -3,21 +3,23 @@ import UserType from "@sure-walk/utils/types/user-type";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import {
-  CaretLeftIcon,
+  ClockClockwiseIcon,
   CrownSimpleIcon,
   MinusCircleIcon,
-  UserPlusIcon,
+  UserCirclePlusIcon,
 } from "phosphor-react-native";
 import { useEffect, useMemo, useState } from "react";
 import { Platform, TouchableOpacity, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 
+import BackButton from "@/src/components/back-button";
 import FontText from "@/src/components/font-text";
 import LargeButton from "@/src/components/large-button";
 import OutlineButton from "@/src/components/outline-button";
 import RiderCard from "@/src/components/rider-card";
+import TertiaryButton from "@/src/components/tertiary-button";
 import TextInputField from "@/src/components/text-input-field";
-import { red500, slate500, slate700, UTBluebonnet } from "@/src/utils/colors";
+import { red500, slate700 } from "@/src/utils/colors";
 import { useGroupRideSession } from "@/src/utils/context/group-ride-context";
 import { useSession } from "@/src/utils/context/user-context";
 
@@ -91,15 +93,8 @@ const GroupRide = () => {
   return (
     <View className="bg-white flex-1 p-5 flex-col gap-5 pb-safe">
       <View className="flex-row gap-4 items-center mt-safe">
-        <TouchableOpacity
-          className="w-12 h-12 rounded-2xl bg-slate-100 items-center justify-center"
-          onPress={() => {
-            router.back();
-          }}
-        >
-          <CaretLeftIcon size={24} color={slate700} />
-        </TouchableOpacity>
-        <FontText className="font-medium text-2xl">Your group ride</FontText>
+        <BackButton />
+        <FontText className="font-medium text-2xl">Your Group Ride</FontText>
       </View>
       <View className="relative flex-1 mx-[-20px]">
         <LinearGradient
@@ -214,47 +209,40 @@ const GroupRide = () => {
                   For day-of-ride updates only
                 </FontText>
               </View>
-              <View className="flex-row gap-2">
-                <View className="flex-1">
-                  <OutlineButton
-                    title="Cancel"
-                    onPress={() => {
-                      setAdding(false);
-                      clearFields();
-                    }}
-                  />
-                </View>
-                <View className="flex-1">
-                  <OutlineButton
-                    title="Add"
-                    onPress={() => addRider()}
-                    icon={
-                      <UserPlusIcon
-                        size={32}
-                        color={isValid ? UTBluebonnet : slate500}
-                      />
-                    }
-                    disabled={!isValid}
-                  />
-                </View>
+              <View className="flex-row gap-2 justify-end">
+                <OutlineButton
+                  title="Cancel"
+                  onPress={() => {
+                    setAdding(false);
+                    clearFields();
+                  }}
+                  small
+                />
+                <LargeButton
+                  title="Save"
+                  onPress={() => addRider()}
+                  disabled={!isValid}
+                  blue
+                  small
+                />
               </View>
             </View>
           )}
           <View className="flex-col gap-4">
             {!isAdding && !isFull && (
-              <OutlineButton
+              <TertiaryButton
                 title="Add Riders"
                 onPress={() => setAdding(true)}
-                icon={<UserPlusIcon size={32} color={UTBluebonnet} />}
+                icon={<UserCirclePlusIcon size={24} color={slate700} />}
               />
             )}
             {!isAdding &&
               members.length === 0 &&
               lastRideMembers.length > 0 && (
-                <LargeButton
+                <TertiaryButton
                   title="Restore Last Group Ride"
                   onPress={() => setMembers(lastRideMembers)}
-                  blue
+                  icon={<ClockClockwiseIcon size={24} color={slate700} />}
                 />
               )}
           </View>

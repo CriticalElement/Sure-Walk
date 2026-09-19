@@ -12,6 +12,7 @@ const OutlineButton = ({
   icon,
   disabled = false,
   small = false,
+  medium = false,
   red = false,
 }: {
   title: string;
@@ -19,18 +20,19 @@ const OutlineButton = ({
   icon?: React.ReactNode;
   disabled?: boolean;
   small?: boolean;
+  medium?: boolean;
   red?: boolean;
 }) => {
   return (
     <AnimatedTouchable
-      className={`border-[2px] ${red ? "border-red-700" : "border-ut-bluebonnet"} disabled:border-slate-500 disabled:bg-slate-100 transition-colors rounded-full px-5 py-3 flex-row gap-2 align-center justify-center`}
+      className={`border-[2px] ${red ? "border-red-700" : "border-ut-bluebonnet"} disabled:border-slate-500 disabled:bg-slate-100 transition-colors rounded-full ${small ? "h-[40px]" : medium ? "h-[48px]" : "py-3"} px-5 flex-row gap-2 items-center justify-center`}
       onPress={() => onPress()}
       disabled={disabled}
     >
       {icon && <View className="items-center justify-center">{icon}</View>}
       <View className={`items-center justify-center`}>
         <FontText
-          className={`${small ? "text-lg my-[-4px]" : "text-xl/10"} font-medium ${disabled ? "color-slate-500" : red ? "color-red-700" : "color-ut-bluebonnet"}`}
+          className={`${small ? "text-lg" : "text-xl/10"} font-medium ${disabled ? "color-slate-500" : red ? "color-red-700" : "color-ut-bluebonnet"}`}
         >
           {title}
         </FontText>
