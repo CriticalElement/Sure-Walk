@@ -6,7 +6,6 @@ import {
   CaretLeftIcon,
   CaretRightIcon,
   PencilIcon,
-  SignOutIcon,
 } from "phosphor-react-native";
 import { useEffect, useState } from "react";
 import { Linking, ScrollView, TouchableOpacity, View } from "react-native";
@@ -270,11 +269,10 @@ const Profile = () => {
                       </TouchableOpacity>
                       <View className="border-b border-b-[#e5e7eb] w-full" />
                     </View>
-                    <View className="pb-2 w-full mb-safe">
+                    <View className="pb-2 pt-6 w-full mb-safe">
                       <OutlineButton
                         title="Log Out"
                         onPress={() => logOut(pushToken ?? undefined)}
-                        icon={<SignOutIcon color={UTBluebonnet} size={32} />}
                       />
                     </View>
                   </View>

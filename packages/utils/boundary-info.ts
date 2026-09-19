@@ -298,3 +298,52 @@ export const dropoffBoundaryPolygons: LatLng[][] = [
     { latitude: 30.2827804, longitude: -97.7451471 },
   ],
 ];
+
+export const dropoffBoundaryHoles = [
+  [
+    [
+      {
+        latitude: 30.289121 + 0.00001,
+        longitude: -97.7429238 - 0.00001,
+      },
+      {
+        latitude: 30.2883058 - 0.00001,
+        longitude: -97.7430042 - 0.00001,
+      },
+      {
+        latitude: 30.2882641 - 0.00001,
+        longitude: -97.7423873 + 0.00001,
+      },
+      {
+        latitude: 30.2890701 + 0.00001,
+        longitude: -97.7423283 + 0.00001,
+      },
+      {
+        latitude: 30.289121 + 0.00001,
+        longitude: -97.7429238 - 0.00001,
+      },
+    ],
+    [
+      {
+        latitude: 30.2888591 + 0.00001,
+        longitude: -97.7437415 - 0.00001,
+      },
+      {
+        latitude: 30.287935 - 0.00001,
+        longitude: -97.743838 - 0.00001,
+      },
+      {
+        latitude: 30.2878887 - 0.00001,
+        longitude: -97.7431889 + 0.00001,
+      },
+      {
+        latitude: 30.288822 + 0.00001,
+        longitude: -97.7430897 + 0.00001,
+      },
+      {
+        latitude: 30.2888591 + 0.00001,
+        longitude: -97.7437415 - 0.00001,
+      },
+    ],
+  ],
+];

@@ -1,7 +1,10 @@
 import Location from "@sure-walk/utils/types/location";
 import React, { createContext, useContext, useState } from "react";
 
-type MissedRide = { pickupLocation: Location; dropoffLocation: Location };
+export type MissedRide = {
+  pickupLocation: Location;
+  dropoffLocation: Location;
+};
 
 interface MissedRideContextType {
   missedRide: MissedRide | null;

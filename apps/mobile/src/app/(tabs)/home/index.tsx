@@ -7,6 +7,7 @@ import BottomSheet, {
   TouchableOpacity as TO,
 } from "@gorhom/bottom-sheet";
 import {
+  dropoffBoundaryHoles,
   dropoffBoundaryPolygons,
   pickupBoundaryPolygons,
 } from "@sure-walk/utils/boundary-info";
@@ -30,7 +31,6 @@ import {
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   LayoutChangeEvent,
-  Modal,
   Platform,
   Pressable,
   StyleProp,
@@ -42,8 +42,10 @@ import {
 import MapView, { Polygon } from "react-native-maps";
 import Animated, {
   Easing,
+  FadeIn,
   FadeInDown,
   FadeInUp,
+  FadeOut,
   FadeOutDown,
   FadeOutUp,
   useDerivedValue,
@@ -55,8 +57,7 @@ import CheckButton from "@/src/components/check-button";
 import FontText from "@/src/components/font-text";
 import LargeButton from "@/src/components/large-button";
 import LocationMarker from "@/src/components/location-marker";
-import OutlineButton from "@/src/components/outline-button";
-import PickupDropoffLocationInfo from "@/src/components/pickup-dropoff-location-info";
+import MissedRideModal from "@/src/components/missed-ride-modal";
 import TertiaryButton from "@/src/components/tertiary-button";
 import TextInputField from "@/src/components/text-input-field";
 import {
@@ -75,10 +76,12 @@ import { usePushNotificationsContext } from "@/src/utils/context/push-notificati
 import { useRideSession } from "@/src/utils/context/ride-context";
 import { useToastContext } from "@/src/utils/context/toast-context";
 
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
 const Home = () => {
   let _style: StyleProp<TextStyle> = { fontSize: 16 };
   if (Platform.OS === "ios") {
-    _style.lineHeight = 0;
+    _style.lineHeight = 0; // fix line height jitter bug on iOS
   }
 
   const { members } = useGroupRideSession();
@@ -94,28 +97,26 @@ const Home = () => {
   const { registerForPushNotificationsAsync } = usePushNotificationsContext();
   const { setToast } = useToastContext();
 
-  const [code, setCode] = useState<string>("");
-  const [disabled, setDisabled] = useState<boolean>(false);
-
-  const inputRef = useRef<TextInput>(null);
-
+  const codeInputRef = useRef<TextInput>(null);
   const sheetRef = useRef<BottomSheet>(null);
   const mapRef = useRef<MapView>(null);
   const startLocationRef = useRef<TextInput>(null);
   const destinationRef = useRef<TextInput>(null);
   const rideCodeSheetRef = useRef<BottomSheetModal>(null);
 
-  const snap0 = useSharedValue<number>(92);
-  const snap1 = useSharedValue<number>(290);
+  const snap0 = useSharedValue<number>(92); // minimum botton sheet snapping height
+  const snap1 = useSharedValue<number>(290); // medium botton sheet snapping height
   const snapPoints = useDerivedValue(
     () => [
       snap0.value + 24, // compensate for screen safe area
       snap1.value + snap0.value,
-      ...(!currentRide ? ["80.5%"] : []),
+      ...(!currentRide ? ["80.5%"] : []), // maximum sheet snapping height
     ],
     [snap0, snap1, currentRide],
   );
 
+  const [code, setCode] = useState<string>("");
+  const [viewRideDisabled, setViewRideDisabled] = useState<boolean>(false);
   const [snapIndex, setSnapIndex] = useState<number>(1);
   const [legendOpen, setLegendOpen] = useState<boolean>(false);
   const [showPickupBoundary, setPickupBoundary] = useState<boolean>(true);
@@ -125,10 +126,10 @@ const Home = () => {
   );
   const [userLocationLabel, setUserLocationLabel] =
     useState<string>("Loading...");
-  const [startLocationText, setStartLocationText] = useState<string>(
+  const [pickupLocationText, setPickupLocationText] = useState<string>(
     pickupLocation?.name ?? "",
   );
-  const [destinationText, setDestinationText] = useState<string>(
+  const [dropoffText, setDropoffText] = useState<string>(
     dropoffLocation?.name ?? "",
   );
   const [focusedInput, setFocusedInput] = useState<"pickup" | "dropoff">(
@@ -140,9 +141,11 @@ const Home = () => {
   const [startLocationAddress, setStartAddress] = useState<string>(
     pickupLocation?.address ?? "Select your pickup location",
   );
-  const [destinationAddress, setDestinationAddress] = useState<string>(
+  const [dropoffAddress, setDropoffAddress] = useState<string>(
     dropoffLocation?.address ?? "Select your destination",
   );
+
+  const lastNotificationResponse = Notifications.useLastNotificationResponse();
 
   const centerMapOnLocation = (location: Location.LocationObject) => {
     setTimeout(() => {
@@ -155,172 +158,105 @@ const Home = () => {
     }, 1000);
   };
 
-  useEffect(() => {
-    async function requestLocationPermissions() {
-      let { status: currentStatus } =
-        await Location.getForegroundPermissionsAsync();
-      let finalStatus = currentStatus;
-      if (currentStatus !== "granted") {
-        let { status } = await Location.requestForegroundPermissionsAsync();
-        finalStatus = status;
-      }
-
-      mapRef.current?.animateToRegion(
-        {
-          latitude: 30.282962,
-          longitude: -97.737224,
-          latitudeDelta: 0.02,
-          longitudeDelta: 0.02,
-        },
-        0,
-      );
-
-      if (finalStatus !== "granted") {
-        console.error("location denied");
-        return;
-      } else {
-        let location = await Location.getCurrentPositionAsync({
-          accuracy: Location.Accuracy.BestForNavigation,
-        });
-        setLocation(location);
-        centerMapOnLocation(location);
-
-        const userLat = location.coords.latitude;
-        const userLon = location.coords.longitude;
-        console.log("[Location] GPS coordinates:", userLat, userLon);
-
-        const haversine = (
-          lat1: number,
-          lon1: number,
-          lat2: number,
-          lon2: number,
-        ) => {
-          const toRad = (v: number) => (v * Math.PI) / 180;
-          const dLat = toRad(lat2 - lat1);
-          const dLon = toRad(lon2 - lon1);
-          const a =
-            Math.sin(dLat / 2) ** 2 +
-            Math.cos(toRad(lat1)) *
-              Math.cos(toRad(lat2)) *
-              Math.sin(dLon / 2) ** 2;
-          return Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        };
-
-        const allPickupLocations = getMatchingPickupLocations("");
-        if (allPickupLocations.length > 0) {
-          const nearest = allPickupLocations.reduce((closest, loc) =>
-            haversine(userLat, userLon, loc.lat, loc.lon) <
-            haversine(userLat, userLon, closest.lat, closest.lon)
-              ? loc
-              : closest,
-          );
-          const { latitude, longitude } = location.coords;
-          const dist = Math.hypot(
-            latitude - nearest.lat,
-            longitude - nearest.lon,
-          );
-          if (dist > 0.001) {
-            setUserLocationLabel("Off-Campus");
-            return;
-          }
-          console.log(
-            "[Location] Selected nearest:",
-            nearest.name,
-            `(id=${nearest.id})`,
-          );
-          if (startLocationText === "") {
-            // if the user has started editing ignore this
-            setStartLocationText(nearest.name);
-            setStartAddress(nearest.address);
-            setPickupLocation(nearest);
-            setUserLocationLabel(nearest.name);
-            setFocusedInput("dropoff");
-          }
-        }
-      }
+  const requestLocationPermissions = async () => {
+    let { status: currentStatus } =
+      await Location.getForegroundPermissionsAsync();
+    let finalStatus = currentStatus;
+    if (currentStatus !== "granted") {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      finalStatus = status;
     }
 
-    registerForPushNotificationsAsync();
-    requestLocationPermissions();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    mapRef.current?.animateToRegion(
+      {
+        latitude: 30.282962,
+        longitude: -97.737224,
+        latitudeDelta: 0.02,
+        longitudeDelta: 0.02,
+      },
+      0,
+    );
 
-  useEffect(() => {
-    setPickupList(getMatchingPickupLocations(startLocationText));
-  }, [startLocationText]);
-
-  useEffect(() => {
-    setDropoffList(getMatchingDropoffLocations(destinationText));
-  }, [destinationText]);
-
-  useFocusEffect(
-    useCallback(() => {
-      if (pickupLocation) {
-        setStartLocationText(pickupLocation.name);
-        setStartAddress(pickupLocation.address);
-      }
-      if (dropoffLocation) {
-        setDestinationText(dropoffLocation.name);
-        setDestinationAddress(dropoffLocation.address);
-      }
-    }, [pickupLocation, dropoffLocation]),
-  );
-
-  useEffect(() => {
-    if (!currentRide) {
-      setStartLocationText("");
-      setDestinationText("");
-      setStartAddress("Select your pickup location");
-      setDestinationAddress("Select your destination");
+    if (finalStatus !== "granted") {
+      console.error("location denied");
+      return;
     } else {
-      sheetRef.current?.snapToIndex(1);
-    }
-  }, [currentRide]);
+      let location = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.BestForNavigation,
+      });
+      setLocation(location);
+      centerMapOnLocation(location);
 
-  const lastNotificationResponse = Notifications.useLastNotificationResponse();
-  useEffect(() => {
-    const responseListener =
-      Notifications.addNotificationResponseReceivedListener(
-        handleMissedRideNotificationResponse,
-      );
+      const userLat = location.coords.latitude;
+      const userLon = location.coords.longitude;
+      console.log("[Location] GPS coordinates:", userLat, userLon);
 
-    return () => {
-      responseListener.remove();
-    };
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+      const haversine = (
+        lat1: number,
+        lon1: number,
+        lat2: number,
+        lon2: number,
+      ) => {
+        const toRad = (v: number) => (v * Math.PI) / 180;
+        const dLat = toRad(lat2 - lat1);
+        const dLon = toRad(lon2 - lon1);
+        const a =
+          Math.sin(dLat / 2) ** 2 +
+          Math.cos(toRad(lat1)) *
+            Math.cos(toRad(lat2)) *
+            Math.sin(dLon / 2) ** 2;
+        return Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      };
 
-  useEffect(() => {
-    if (
-      lastNotificationResponse &&
-      lastNotificationResponse.notification.request.content.data.route &&
-      lastNotificationResponse.actionIdentifier ===
-        Notifications.DEFAULT_ACTION_IDENTIFIER
-    ) {
-      handleMissedRideNotificationResponse(lastNotificationResponse);
-    }
-  }, [lastNotificationResponse]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
-    const fetchCurrentRide = async () => {
-      try {
-        const res = await api.get("/ride");
-        if (res.status === 204) {
-          setCurrentRide(null);
-        } else if (res.status === 200) {
-          setCurrentRide(res.data);
-        } else {
-          throw new Error("Could not fetch current ride details.");
+      const allPickupLocations = getMatchingPickupLocations("");
+      if (allPickupLocations.length > 0) {
+        const nearest = allPickupLocations.reduce((closest, loc) =>
+          haversine(userLat, userLon, loc.lat, loc.lon) <
+          haversine(userLat, userLon, closest.lat, closest.lon)
+            ? loc
+            : closest,
+        );
+        const { latitude, longitude } = location.coords;
+        const dist = Math.hypot(
+          latitude - nearest.lat,
+          longitude - nearest.lon,
+        );
+        if (dist > 0.001) {
+          setUserLocationLabel("Off-Campus");
+          return;
         }
-      } catch (err) {
-        // ignore error, could be because app minimized
-        console.log(err);
+        console.log(
+          "[Location] Selected nearest:",
+          nearest.name,
+          `(id=${nearest.id})`,
+        );
+        if (pickupLocationText === "") {
+          // if the user has started editing ignore this
+          setPickupLocationText(nearest.name);
+          setStartAddress(nearest.address);
+          setPickupLocation(nearest);
+          setUserLocationLabel(nearest.name);
+          setFocusedInput("dropoff");
+        }
       }
-    };
+    }
+  };
 
-    const interval = setInterval(fetchCurrentRide, 30 * 1000);
-    return () => {
-      clearInterval(interval);
-    };
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  const fetchCurrentRide = async () => {
+    try {
+      const res = await api.get("/ride");
+      if (res.status === 204) {
+        setCurrentRide(null);
+      } else if (res.status === 200) {
+        setCurrentRide(res.data);
+      } else {
+        throw new Error("Could not fetch current ride details.");
+      }
+    } catch (err) {
+      // ignore error, could be because app minimized
+      console.log(err);
+    }
+  };
 
   const handleMissedRideNotificationResponse = (
     response: Notifications.NotificationResponse,
@@ -336,6 +272,65 @@ const Home = () => {
       setTimeout(() => setShowModal(true), 300);
     }
   };
+
+  useEffect(() => {
+    registerForPushNotificationsAsync();
+    requestLocationPermissions();
+    const responseListener =
+      Notifications.addNotificationResponseReceivedListener(
+        handleMissedRideNotificationResponse,
+      );
+    const interval = setInterval(fetchCurrentRide, 30 * 1000);
+
+    return () => {
+      clearInterval(interval);
+      responseListener.remove();
+    };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    setPickupList(getMatchingPickupLocations(pickupLocationText));
+  }, [pickupLocationText]);
+
+  useEffect(() => {
+    setDropoffList(getMatchingDropoffLocations(dropoffText));
+  }, [dropoffText]);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (pickupLocation) {
+        setPickupLocationText(pickupLocation.name);
+        setStartAddress(pickupLocation.address);
+      }
+      if (dropoffLocation) {
+        setDropoffText(dropoffLocation.name);
+        setDropoffAddress(dropoffLocation.address);
+      }
+    }, [pickupLocation, dropoffLocation]),
+  );
+
+  useEffect(() => {
+    if (!currentRide) {
+      setPickupLocationText("");
+      setDropoffText("");
+      setStartAddress("Select your pickup location");
+      setDropoffAddress("Select your destination");
+    } else {
+      // when a user submits a ride minimize the sheet
+      sheetRef.current?.snapToIndex(1);
+    }
+  }, [currentRide]);
+
+  useEffect(() => {
+    if (
+      lastNotificationResponse &&
+      lastNotificationResponse.notification.request.content.data.route &&
+      lastNotificationResponse.actionIdentifier ===
+        Notifications.DEFAULT_ACTION_IDENTIFIER
+    ) {
+      handleMissedRideNotificationResponse(lastNotificationResponse);
+    }
+  }, [lastNotificationResponse]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const calcMinimizedSheetHeight = (event: LayoutChangeEvent) => {
     let height = event.nativeEvent.layout.height;
@@ -356,22 +351,8 @@ const Home = () => {
     snap1.set(height);
   };
 
-  // const resetMapView = (location: LocationType) => {
-  //   setPickupList([]);
-  //   setDropoffList([]);
-  //   mapRef.current?.animateToRegion(
-  //     {
-  //       latitude: location.lat,
-  //       longitude: location.lon,
-  //       latitudeDelta: 0.02,
-  //       longitudeDelta: 0.02,
-  //     },
-  //     500,
-  //   );
-  // };
-
   const clickedPickupLocation = (location: LocationType) => () => {
-    setStartLocationText(location.name);
+    setPickupLocationText(location.name);
     setStartAddress(location.address);
     setPickupLocation(location);
     setFocusedInput("dropoff");
@@ -384,8 +365,8 @@ const Home = () => {
   };
 
   const clickedDropoffLocation = (location: LocationType) => () => {
-    setDestinationText(location.name);
-    setDestinationAddress(location.address);
+    setDropoffText(location.name);
+    setDropoffAddress(location.address);
     setDropoffLocation(location);
     destinationRef.current?.blur();
     if (pickupLocation) {
@@ -396,6 +377,7 @@ const Home = () => {
   return (
     <View className="bg-white flex-1 flex-col items-center pt-safe">
       <View className="relative pt-3 pb-8 px-5 w-full">
+        {/* current location display */}
         <View className="flex-col items-center justify-center gap-1">
           <View className="flex-row justify-center items-center gap-1">
             <NavigationArrowIcon
@@ -412,6 +394,8 @@ const Home = () => {
             {userLocationLabel}
           </FontText>
         </View>
+
+        {/* map legend and profile page buttons */}
         <TouchableOpacity
           className="absolute left-5 top-3 p-3 items-center justify-center rounded-2xl bg-slate-100"
           onPress={() => {
@@ -430,6 +414,8 @@ const Home = () => {
           <UserCircleIcon color={slate700} size="24" />
         </TouchableOpacity>
       </View>
+
+      {/* map view */}
       <View className="relative flex-1 w-full">
         <View className="w-full h-full mt-[-10px] items-center justify-center">
           <MapView
@@ -465,56 +451,7 @@ const Home = () => {
             {dropoffBoundaryPolygons.map((coords, index) => (
               <Polygon
                 coordinates={coords}
-                holes={
-                  index === 0
-                    ? [
-                        [
-                          {
-                            latitude: 30.289121 + 0.00001,
-                            longitude: -97.7429238 - 0.00001,
-                          },
-                          {
-                            latitude: 30.2883058 - 0.00001,
-                            longitude: -97.7430042 - 0.00001,
-                          },
-                          {
-                            latitude: 30.2882641 - 0.00001,
-                            longitude: -97.7423873 + 0.00001,
-                          },
-                          {
-                            latitude: 30.2890701 + 0.00001,
-                            longitude: -97.7423283 + 0.00001,
-                          },
-                          {
-                            latitude: 30.289121 + 0.00001,
-                            longitude: -97.7429238 - 0.00001,
-                          },
-                        ],
-                        [
-                          {
-                            latitude: 30.2888591 + 0.00001,
-                            longitude: -97.7437415 - 0.00001,
-                          },
-                          {
-                            latitude: 30.287935 - 0.00001,
-                            longitude: -97.743838 - 0.00001,
-                          },
-                          {
-                            latitude: 30.2878887 - 0.00001,
-                            longitude: -97.7431889 + 0.00001,
-                          },
-                          {
-                            latitude: 30.288822 + 0.00001,
-                            longitude: -97.7430897 + 0.00001,
-                          },
-                          {
-                            latitude: 30.2888591 + 0.00001,
-                            longitude: -97.7437415 - 0.00001,
-                          },
-                        ],
-                      ]
-                    : undefined
-                }
+                holes={dropoffBoundaryHoles[index]}
                 key={index}
                 fillColor={
                   showDropoffBoundary ? `${UTTurquoise}30` : "#00000000"
@@ -539,6 +476,7 @@ const Home = () => {
         />
         {legendOpen && (
           <>
+            {/* legend buttons */}
             <Animated.View
               className="absolute top-[28px] right-5 px-4 py-2 bg-white rounded-full border border-slate-200 flex-row justify-end"
               entering={FadeInUp.duration(150).easing(Easing.out(Easing.cubic))}
@@ -571,6 +509,7 @@ const Home = () => {
         )}
       </View>
 
+      {/* main bottom sheet */}
       <BottomSheet
         ref={sheetRef}
         snapPoints={snapPoints}
@@ -618,6 +557,7 @@ const Home = () => {
           flexDirection: "column",
         }}
       >
+        {/* continue button */}
         {pickupLocation && dropoffLocation && !currentRide && (
           <Animated.View
             className="absolute bottom-0 w-full z-10 px-5 mb-safe pb-[80px]"
@@ -632,8 +572,11 @@ const Home = () => {
             />
           </Animated.View>
         )}
+
+        {/* pickup / dropoff location selector or current ride details */}
         <View className="flex-col mb-[-24px]" onLayout={calcMediumSheetHeight}>
           <View className="flex-col bg-white pt-4 px-5">
+            {/* location selector */}
             {!currentRide && (
               <View className="flex-col rounded-lg">
                 <Pressable
@@ -656,13 +599,13 @@ const Home = () => {
                       placeholder="Where from?"
                       placeholderTextColor={gray900}
                       onChangeText={(text) => {
-                        setStartLocationText(text);
+                        setPickupLocationText(text);
                         if (!startLocationAddress.startsWith("Select")) {
                           setStartAddress("Select your pickup location");
                           setPickupLocation(null);
                         }
                       }}
-                      value={startLocationText}
+                      value={pickupLocationText}
                       style={_style}
                     />
                     <FontText className="text-lg color-[#333F48]">
@@ -690,17 +633,17 @@ const Home = () => {
                       placeholder="Where to?"
                       placeholderTextColor={gray900}
                       onChangeText={(text) => {
-                        setDestinationText(text);
-                        if (!destinationAddress.startsWith("Select")) {
-                          setDestinationAddress("Select your destination");
+                        setDropoffText(text);
+                        if (!dropoffAddress.startsWith("Select")) {
+                          setDropoffAddress("Select your destination");
                           setDropoffLocation(null);
                         }
                       }}
-                      value={destinationText}
+                      value={dropoffText}
                       style={_style}
                     />
                     <FontText className="text-lg color-[#333F48]">
-                      {destinationAddress}
+                      {dropoffAddress}
                     </FontText>
                   </View>
                 </Pressable>
@@ -711,6 +654,8 @@ const Home = () => {
                 </TO>
               </View>
             )}
+
+            {/* current ride details */}
             {currentRide && (
               <View className="flex-col gap-4 mb-safe">
                 <View className="pb-4 bg-slate-50 rounded-2xl border border-slate-200 flex-col gap-2">
@@ -745,14 +690,14 @@ const Home = () => {
                 <LargeButton
                   title="View Live Tracking"
                   onPress={() => {
-                    setDisabled(true);
+                    setViewRideDisabled(true);
                     setTimeout(
                       () => router.push("/home/current-ride-info"),
                       300,
                     );
-                    setTimeout(() => setDisabled(false), 1000);
+                    setTimeout(() => setViewRideDisabled(false), 1000);
                   }}
-                  disabled={disabled}
+                  disabled={viewRideDisabled}
                 />
               </View>
             )}
@@ -768,6 +713,8 @@ const Home = () => {
             />
           )}
         </View>
+
+        {/* search results */}
         {!currentRide && (
           <BottomSheetFlatList
             overScrollMode={"always"}
@@ -775,10 +722,9 @@ const Home = () => {
               Platform.OS === "android" ? snapIndex === 2 : undefined
             }
             data={
-              focusedInput === "pickup" && startLocationText.trim().length >= 1
+              focusedInput === "pickup" && pickupLocationText.trim().length >= 1
                 ? pickupList
-                : focusedInput === "dropoff" &&
-                    destinationText.trim().length >= 1
+                : focusedInput === "dropoff" && dropoffText.trim().length >= 1
                   ? dropoffList
                   : []
             }
@@ -813,17 +759,17 @@ const Home = () => {
             )}
             ListFooterComponent={
               (((focusedInput === "pickup" &&
-                startLocationText.trim().length >= 1) ||
+                pickupLocationText.trim().length >= 1) ||
                 (focusedInput === "dropoff" &&
-                  destinationText.trim().length >= 1)) && (
+                  dropoffText.trim().length >= 1)) && (
                 <TouchableOpacity
                   onPress={() =>
                     focusedInput === "pickup"
-                      ? (setStartLocationText(""),
+                      ? (setPickupLocationText(""),
                         setStartAddress("Select your pickup location"),
                         setPickupLocation(null))
-                      : (setDestinationText(""),
-                        setDestinationAddress("Select your destination"),
+                      : (setDropoffText(""),
+                        setDropoffAddress("Select your destination"),
                         setDropoffLocation(null))
                   }
                 >
@@ -848,6 +794,7 @@ const Home = () => {
         )}
       </BottomSheet>
 
+      {/* ride code bottom sheet modal */}
       <BottomSheetModalProvider>
         <BottomSheetModal
           ref={rideCodeSheetRef}
@@ -857,9 +804,11 @@ const Home = () => {
             </View>
           )}
           backdropComponent={() => (
-            <Pressable
+            <AnimatedPressable
               className="absolute inset-0 bg-[#00000080]"
               onPress={() => rideCodeSheetRef.current?.dismiss()}
+              entering={FadeIn.duration(200)}
+              exiting={FadeOut.duration(200)}
             />
           )}
         >
@@ -873,7 +822,7 @@ const Home = () => {
               autoCapitalize={"characters"}
               value={code}
               onChangeText={(text) => setCode(text.toUpperCase())}
-              inputRef={inputRef}
+              inputRef={codeInputRef}
               returnKeyType="go"
               onSubmitEditing={() => {
                 if (code.length !== 7) {
@@ -888,45 +837,14 @@ const Home = () => {
                 router.push(`/home/current-ride-info?shareCode=${code}`);
               }}
               InputComponent={BottomSheetTextInput}
+              styleProps={{ textTransform: "uppercase" }}
             />
           </BottomSheetView>
         </BottomSheetModal>
       </BottomSheetModalProvider>
-      <View className="absolute inset-0 flex-1">
-        <Modal
-          animationType="fade"
-          transparent
-          visible={showModal}
-          statusBarTranslucent={true}
-          onRequestClose={() => setShowModal(false)}
-          className="z-1000"
-        >
-          <Pressable
-            className="flex-1 bg-[#00000080] items-center justify-center p-5"
-            onPress={() => setShowModal(false)}
-          >
-            <Pressable className="py-6 px-7 bg-white flex-col gap-4 rounded-3xl w-full">
-              <FontText className="text-2xl font-medium">Missed Ride</FontText>
-              <View className="flex-col gap-3">
-                <FontText className="text-lg">
-                  You have missed the following ride:
-                </FontText>
-                <View className="mb-3">
-                  <PickupDropoffLocationInfo
-                    pickupLocation={missedRide?.pickupLocation ?? null}
-                    dropoffLocation={missedRide?.dropoffLocation ?? null}
-                  />
-                </View>
-                <OutlineButton
-                  title="Book a New Ride"
-                  onPress={() => setShowModal(false)}
-                  medium
-                />
-              </View>
-            </Pressable>
-          </Pressable>
-        </Modal>
-      </View>
+
+      {/* missed ride modal */}
+      <MissedRideModal {...{ showModal, setShowModal, missedRide }} />
     </View>
   );
 };
