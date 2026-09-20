@@ -1,3 +1,5 @@
+import { randomInt } from "node:crypto";
+
 import { Samsara, SamsaraClient, SamsaraError } from "@samsarahq/samsara";
 import GroupRideMember from "@sure-walk/utils/types/group-ride-member";
 import { eq } from "drizzle-orm";
@@ -125,7 +127,7 @@ const createRoute = async ({
     const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
     const charsLen = chars.length;
     for (let i = 0; i < 7; i++) {
-      rideCode += chars.charAt(Math.floor(Math.random() * charsLen));
+      rideCode += chars.charAt(randomInt(charsLen));
     }
   }
 

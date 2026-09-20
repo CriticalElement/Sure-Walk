@@ -22,7 +22,7 @@ import { usePushNotificationsContext } from "@/src/utils/context/push-notificati
 import { useSession } from "@/src/utils/context/user-context";
 
 const Profile = () => {
-  const { user, loadingState, logOut, setUser } = useSession();
+  const { user, logOut, setUser } = useSession();
   const { pushToken } = usePushNotificationsContext();
 
   const [isEditing, setIsEditing] = useState(false);
@@ -108,13 +108,7 @@ const Profile = () => {
 
   return (
     <View className="bg-white flex-1">
-      {loadingState === "loading" && (
-        <FontText className="mt-4">Loading...</FontText>
-      )}
-      {loadingState === "error" && (
-        <FontText className="mt-4">Error loading user info</FontText>
-      )}
-      {loadingState === "done" && user && (
+      {user && (
         <View className="flex-1">
           <TouchableOpacity
             className="absolute left-0 top-safe w-12 h-12 rounded-2xl items-center justify-center ms-5 z-10"
