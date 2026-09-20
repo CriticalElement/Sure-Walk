@@ -72,7 +72,7 @@ jobs:
       - name: Add keys
         run: echo "GOOGLE_MAPS_SDK_API_KEY=$GOOGLE_MAPS_SDK_API_KEY" >> apps/mobile/android/local.properties
       - name: Add google-services.json
-        run: echo $GOOGLE_SERVICES_JSON > apps/mobile/android/app/google-services.json
+        run: echo "$GOOGLE_SERVICES_JSON" | base64 --decode > apps/mobile/android/app/google-services.json
       - name: Grant execute permission for gradlew
         run: chmod +x apps/mobile/android/gradlew
       - name: Build debug APK
