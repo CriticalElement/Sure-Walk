@@ -94,12 +94,15 @@ const ConfirmRide = () => {
 
   return (
     <View className="bg-white flex-1 p-5 flex-col gap-10 pb-safe">
+      {/* header */}
       <View className="flex-row gap-4 items-center mt-safe">
         <BackButton />
         <FontText className="font-medium text-2xl">
           Confirm Your Booking
         </FontText>
       </View>
+
+      {/* main content */}
       <View className="relative mt-[-16px] z-5 flex-1 mx-[-20px]">
         <LinearGradient
           colors={["#ffffffff", "#ffffff00"]}
@@ -128,6 +131,7 @@ const ConfirmRide = () => {
           onMomentumScrollEnd={handleScroll}
         >
           <View className="flex-col gap-6 flex-1 mt-4">
+            {/* location info */}
             <View className="flex-col gap-4">
               <View className="flex-row w-full justify-between items-center">
                 <FontText className="text-xl font-medium">
@@ -144,6 +148,8 @@ const ConfirmRide = () => {
                 dropoffLocation={dropoffLocation}
               />
             </View>
+
+            {/* ride members */}
             <View className="flex-col gap-4">
               <View className="flex-row w-full justify-between items-center">
                 <FontText className="text-xl font-medium">People</FontText>
@@ -165,6 +171,8 @@ const ConfirmRide = () => {
                 ))}
               </View>
             </View>
+
+            {/* guidelines */}
             <View className="flex-col gap-4 pb-4">
               <FontText className="text-xl font-medium">Guidelines</FontText>
               <GuidelinesListShort />

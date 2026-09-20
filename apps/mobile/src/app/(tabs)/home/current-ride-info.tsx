@@ -106,7 +106,6 @@ const CurrentRideInfo = () => {
     if (shareCode) {
       wsURL.searchParams.append("shareCode", shareCode);
     }
-    console.log("abc", pushToken);
     if (pushToken) {
       wsURL.searchParams.append("pushToken", pushToken);
     }

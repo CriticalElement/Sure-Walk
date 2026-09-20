@@ -92,10 +92,13 @@ const GroupRide = () => {
 
   return (
     <View className="bg-white flex-1 p-5 flex-col gap-5 pb-safe">
+      {/* header */}
       <View className="flex-row gap-4 items-center mt-safe">
         <BackButton />
         <FontText className="font-medium text-2xl">Your Group Ride</FontText>
       </View>
+
+      {/* main content */}
       <View className="relative flex-1 mx-[-20px]">
         <LinearGradient
           colors={["#ffffffff", "#ffffff00"]}
@@ -125,6 +128,7 @@ const GroupRide = () => {
           contentContainerStyle={{ paddingBottom: 20 }}
           bottomOffset={120}
         >
+          {/* group leader */}
           <FontText className="text-xl font-semibold mt-5 transition-all mb-4">
             Group Leader
           </FontText>
@@ -134,6 +138,8 @@ const GroupRide = () => {
               <CrownSimpleIcon color="#FFD600" size={24} weight="fill" />
             }
           />
+
+          {/* riders or add rider form */}
           <View className="flex-row gap-4 mt-6 justify-between mb-6">
             <FontText className="text-xl font-semibold">Group Members</FontText>
             <FontText className="text-xl font-semibold color-ut-bluebonnet">
@@ -156,6 +162,8 @@ const GroupRide = () => {
               ))}
             </View>
           )}
+
+          {/* add rider form */}
           {isAdding && (
             <View className="flex-col gap-4">
               {addingUserType === "ut-affiliated" && (
@@ -228,6 +236,8 @@ const GroupRide = () => {
               </View>
             </View>
           )}
+
+          {/* main buttons */}
           <View className="flex-col gap-4">
             {!isAdding && !isFull && (
               <TertiaryButton
