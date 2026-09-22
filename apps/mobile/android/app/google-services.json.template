@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "857267087251",
+    "project_id": "longhorn-lifts",
+    "storage_bucket": "longhorn-lifts.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:857267087251:android:aa03f29b6f2655dd7cea66",
+        "android_client_info": {
+          "package_name": "dev.longhorns.LonghornLifts"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "blahblahblahblah"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
