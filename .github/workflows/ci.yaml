@@ -72,7 +72,7 @@ jobs:
       - name: Add keys
         env:
           GOOGLE_MAPS_SDK_API_KEY: ${{ secrets.GOOGLE_MAPS_SDK_API_KEY }}
-        run: echo "GOOGLE_MAPS_SDK_API_KEY=$GOOGLE_MAPS_SDK_API_KEY" >> apps/mobile/android/local.properties
+        run: echo "GOOGLE_MAPS_SDK_API_KEY=blahblahblahblahasdfasdf" >> apps/mobile/android/local.properties
       - name: Add google-services.json
         #        env:
         #          GOOGLE_SERVICES_JSON_FILE: ${{ secrets.GOOGLE_SERVICES_JSON }}
