@@ -6,6 +6,7 @@ import BottomSheet, {
   BottomSheetView,
   TouchableOpacity as TO,
 } from "@gorhom/bottom-sheet";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   dropoffBoundaryHoles,
   dropoffBoundaryPolygons,
@@ -135,7 +136,7 @@ const Home = () => {
   const [focusedInput, setFocusedInput] = useState<"pickup" | "dropoff">(
     "pickup",
   );
-  const [, setIsInputFocused] = useState<boolean>(false);
+  const [isInputFocused, setIsInputFocused] = useState<boolean>(false);
   const [pickupList, setPickupList] = useState<LocationType[]>([]);
   const [dropoffList, setDropoffList] = useState<LocationType[]>([]);
   const [startLocationAddress, setStartAddress] = useState<string>(
@@ -143,6 +144,9 @@ const Home = () => {
   );
   const [dropoffAddress, setDropoffAddress] = useState<string>(
     dropoffLocation?.address ?? "Select your destination",
+  );
+  const [favoriteLocations, setFavoriteLocations] = useState<LocationType[]>(
+    [],
   );
 
   const lastNotificationResponse = Notifications.useLastNotificationResponse();
@@ -289,6 +293,18 @@ const Home = () => {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
+    const loadFavorites = async () => {
+      const stored = await AsyncStorage.getItem("favoriteLocations");
+      try {
+        setFavoriteLocations(JSON.parse(stored ?? "[]"));
+      } catch {
+        await AsyncStorage.removeItem("favoriteLocations");
+      }
+    };
+    loadFavorites();
+  }, []);
+
+  useEffect(() => {
     setPickupList(getMatchingPickupLocations(pickupLocationText));
   }, [pickupLocationText]);
 
@@ -373,6 +389,28 @@ const Home = () => {
       router.navigate("/home/confirm-ride");
     }
   };
+
+  const toggleFavorite = (location: LocationType) => {
+    setFavoriteLocations((prev) => {
+      const isAlreadyFavorited = prev.some((fav) => fav.id === location.id);
+      const updated = isAlreadyFavorited
+        ? prev.filter((fav) => fav.id !== location.id)
+        : [...prev, location];
+      AsyncStorage.setItem("favoriteLocations", JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const displayedList =
+    focusedInput === "pickup" && pickupLocationText.trim().length >= 1
+      ? pickupList
+      : focusedInput === "dropoff" && dropoffText.trim().length >= 1
+        ? dropoffList
+        : isInputFocused && focusedInput === "dropoff"
+          ? favoriteLocations
+          : isInputFocused
+            ? favoriteLocations.filter((fav) => fav.type === "pickup")
+            : [];
 
   return (
     <View className="bg-white flex-1 flex-col items-center pt-safe">
@@ -721,13 +759,7 @@ const Home = () => {
             scrollEnabled={
               Platform.OS === "android" ? snapIndex === 2 : undefined
             }
-            data={
-              focusedInput === "pickup" && pickupLocationText.trim().length >= 1
-                ? pickupList
-                : focusedInput === "dropoff" && dropoffText.trim().length >= 1
-                  ? dropoffList
-                  : []
-            }
+            data={displayedList}
             keyboardShouldPersistTaps="handled"
             renderItem={({ index, item }) => (
               <TouchableOpacity
@@ -740,7 +772,7 @@ const Home = () => {
               >
                 <View
                   key={index}
-                  className={`flex-col ${index === (focusedInput === "pickup" ? pickupList : dropoffList).length - 1 ? "" : "border-b"} border-gray-200 pb-4 pt-2`}
+                  className={`flex-col ${index === displayedList.length - 1 ? "" : "border-b"} border-gray-200 pb-4 pt-2`}
                 >
                   <View className="flex-row gap-2 items-center">
                     <MapPinIcon color={slate900} size="24" />
@@ -752,7 +784,23 @@ const Home = () => {
                         {item.address}
                       </FontText>
                     </View>
-                    <StarIcon color={slate900} size="24" />
+                    <TouchableOpacity
+                      onPress={(e) => {
+                        e.stopPropagation();
+                        toggleFavorite(item);
+                      }}
+                      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                    >
+                      <StarIcon
+                        color={slate900}
+                        size="24"
+                        weight={
+                          favoriteLocations.some((fav) => fav.id === item.id)
+                            ? "fill"
+                            : "regular"
+                        }
+                      />
+                    </TouchableOpacity>
                   </View>
                 </View>
               </TouchableOpacity>
