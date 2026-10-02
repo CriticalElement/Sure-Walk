@@ -3,27 +3,30 @@ import UserType from "@sure-walk/utils/types/user-type";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import {
-  CaretLeftIcon,
+  ClockClockwiseIcon,
   CrownSimpleIcon,
   MinusCircleIcon,
-  UserPlusIcon,
+  UserCirclePlusIcon,
 } from "phosphor-react-native";
 import { useEffect, useMemo, useState } from "react";
 import { Platform, TouchableOpacity, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 
+import BackButton from "@/src/components/back-button";
 import FontText from "@/src/components/font-text";
 import LargeButton from "@/src/components/large-button";
 import OutlineButton from "@/src/components/outline-button";
 import RiderCard from "@/src/components/rider-card";
+import TertiaryButton from "@/src/components/tertiary-button";
 import TextInputField from "@/src/components/text-input-field";
-import { red500, slate500, slate700, UTBluebonnet } from "@/src/utils/colors";
+import { red500, slate700 } from "@/src/utils/colors";
 import { useGroupRideSession } from "@/src/utils/context/group-ride-context";
 import { useSession } from "@/src/utils/context/user-context";
 
 const GroupRide = () => {
   const { user } = useSession();
-  const { members, addMember, removeMember } = useGroupRideSession();
+  const { members, addMember, removeMember, lastRideMembers, setMembers } =
+    useGroupRideSession();
 
   const [isAdding, setAdding] = useState<boolean>(false);
   const [addingUserType, setAddingUserType] =
@@ -88,18 +91,14 @@ const GroupRide = () => {
   };
 
   return (
-    <View className={"bg-white flex-1 p-5 flex-col gap-5"}>
+    <View className="bg-white flex-1 p-5 flex-col gap-5 pb-safe">
+      {/* header */}
       <View className="flex-row gap-4 items-center mt-safe">
-        <TouchableOpacity
-          className="w-12 h-12 rounded-2xl bg-slate-100 items-center justify-center"
-          onPress={() => {
-            router.back();
-          }}
-        >
-          <CaretLeftIcon size={24} color={slate700} />
-        </TouchableOpacity>
-        <FontText className="font-medium text-2xl">Your group ride</FontText>
+        <BackButton />
+        <FontText className="font-medium text-2xl">Your Group Ride</FontText>
       </View>
+
+      {/* main content */}
       <View className="relative flex-1 mx-[-20px]">
         <LinearGradient
           colors={["#ffffffff", "#ffffff00"]}
@@ -129,6 +128,7 @@ const GroupRide = () => {
           contentContainerStyle={{ paddingBottom: 20 }}
           bottomOffset={120}
         >
+          {/* group leader */}
           <FontText className="text-xl font-semibold mt-5 transition-all mb-4">
             Group Leader
           </FontText>
@@ -138,6 +138,8 @@ const GroupRide = () => {
               <CrownSimpleIcon color="#FFD600" size={24} weight="fill" />
             }
           />
+
+          {/* riders or add rider form */}
           <View className="flex-row gap-4 mt-6 justify-between mb-6">
             <FontText className="text-xl font-semibold">Group Members</FontText>
             <FontText className="text-xl font-semibold color-ut-bluebonnet">
@@ -160,6 +162,8 @@ const GroupRide = () => {
               ))}
             </View>
           )}
+
+          {/* add rider form */}
           {isAdding && (
             <View className="flex-col gap-4">
               {addingUserType === "ut-affiliated" && (
@@ -213,39 +217,45 @@ const GroupRide = () => {
                   For day-of-ride updates only
                 </FontText>
               </View>
-              <View className="flex-row gap-2">
-                <View className="flex-1">
-                  <OutlineButton
-                    title="Cancel"
-                    onPress={() => {
-                      setAdding(false);
-                      clearFields();
-                    }}
-                  />
-                </View>
-                <View className="flex-1">
-                  <OutlineButton
-                    title="Add"
-                    onPress={() => addRider()}
-                    icon={
-                      <UserPlusIcon
-                        size={32}
-                        color={isValid ? UTBluebonnet : slate500}
-                      />
-                    }
-                    disabled={!isValid}
-                  />
-                </View>
+              <View className="flex-row gap-2 justify-end">
+                <OutlineButton
+                  title="Cancel"
+                  onPress={() => {
+                    setAdding(false);
+                    clearFields();
+                  }}
+                  small
+                />
+                <LargeButton
+                  title="Save"
+                  onPress={() => addRider()}
+                  disabled={!isValid}
+                  blue
+                  small
+                />
               </View>
             </View>
           )}
-          {!isAdding && !isFull && (
-            <OutlineButton
-              title="Add Riders"
-              onPress={() => setAdding(true)}
-              icon={<UserPlusIcon size={32} color={UTBluebonnet} />}
-            />
-          )}
+
+          {/* main buttons */}
+          <View className="flex-col gap-4">
+            {!isAdding && !isFull && (
+              <TertiaryButton
+                title="Add Riders"
+                onPress={() => setAdding(true)}
+                icon={<UserCirclePlusIcon size={24} color={slate700} />}
+              />
+            )}
+            {!isAdding &&
+              members.length === 0 &&
+              lastRideMembers.length > 0 && (
+                <TertiaryButton
+                  title="Restore Last Group Ride"
+                  onPress={() => setMembers(lastRideMembers)}
+                  icon={<ClockClockwiseIcon size={24} color={slate700} />}
+                />
+              )}
+          </View>
         </KeyboardAwareScrollView>
       </View>
       <LargeButton

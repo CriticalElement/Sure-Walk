@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Platform,
   TextInput,
@@ -9,19 +10,23 @@ import {
 import { gray500 } from "../utils/colors";
 import FontText from "./font-text";
 
+type InputRef = React.Ref<any>;
+
 const TextInputField = ({
   fieldName,
   optionalPressableText,
   optionalPressableCallback,
   styleProps,
   inputRef,
+  InputComponent = TextInput,
   ...props
 }: {
   fieldName?: string;
   optionalPressableText?: string;
   optionalPressableCallback?: () => void;
   styleProps?: TextStyle;
-  inputRef?: React.RefObject<TextInput>;
+  inputRef?: InputRef;
+  InputComponent?: React.ComponentType<any>;
 } & React.ComponentPropsWithoutRef<typeof TextInput>) => {
   let _style: TextStyle = styleProps ?? {};
   if (Platform.OS === "ios") {
@@ -50,7 +55,7 @@ const TextInputField = ({
           )}
         </View>
       )}
-      <TextInput
+      <InputComponent
         className="bg-gray-50 border border-gray-200 text-gray-900 text-lg font-regular rounded-lg transition-colors focus:ring-ut-bluebonnet focus:border-ut-bluebonnet block w-full p-4"
         ref={inputRef}
         {...props}

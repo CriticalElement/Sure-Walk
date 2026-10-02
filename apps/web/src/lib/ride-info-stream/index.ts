@@ -3,12 +3,21 @@ import InProgressRideState from "@sure-walk/utils/types/in-progress-ride-state";
 import VehicleInfoShort from "@sure-walk/utils/types/vehicle-info-short";
 import { DurableObject } from "cloudflare:workers";
 import { eq } from "drizzle-orm";
+import { ExpoPushTicket } from "expo-server-sdk";
 
 import { getDBInWorker } from "../db";
 import { Ride, rides } from "../db/schema/rides";
-import { User, users } from "../db/schema/users";
+import { users } from "../db/schema/users";
 import { Vehicle, vehicles } from "../db/schema/vehicles";
 import {
+  fetchPushReceipts,
+  sendMissedRideNotification,
+  sendRideFeedbackNotification,
+  sendRouteUpdateNotification,
+  sendVehicleInfoNotification,
+} from "../push-notifications";
+import {
+  getActiveRideByUserID,
   getActiveRides,
   setDropoffStopState,
   setPickupStopState,
@@ -27,27 +36,33 @@ import {
 export class RideInfoStream extends DurableObject<CloudflareEnv> {
   // { rideID: [all clients] }
   streams: Map<string, WebSocket[]>;
+  sql: SqlStorage;
 
   constructor(state: DurableObjectState, env: CloudflareEnv) {
     super(state, env);
     this.streams = new Map();
+    this.sql = state.storage.sql;
+
+    this.initializeDB();
   }
 
   async fetch(request: Request): Promise<Response> {
     const currentRide = JSON.parse(
-      request.headers.get("x-current-ride") ?? "",
-    ) as Ride & {
-      user: User;
-      vehicle: Vehicle | null;
+      decodeURIComponent(request.headers.get("x-current-ride") ?? ""),
+    ) as Awaited<ReturnType<typeof getActiveRideByUserID>> & {
       rideState: InProgressRideState;
+      isLeader: boolean;
+      pushToken: string;
     };
-    const pickupLocationID = currentRide.pickupLocationID;
-    const dropoffLocationID = currentRide.dropoffLocationID;
+    const pickupLocation = currentRide.pickupLocation;
+    const dropoffLocation = currentRide.dropoffLocation;
     const groupRide = currentRide.members;
     const rideState = currentRide.rideState;
-    const shareCode = currentRide.shareCode ?? undefined;
+    const shareCode = currentRide.shareCode ?? null;
     const vehicleInfo = currentRide.vehicle;
     const leader = currentRide.user;
+    const isLeader = currentRide.isLeader;
+    const pushToken = currentRide.pushToken;
 
     const websocketPair = new WebSocketPair();
     const [client, server] = Object.values(websocketPair);
@@ -57,15 +72,12 @@ export class RideInfoStream extends DurableObject<CloudflareEnv> {
       ...(this.streams.get(currentRide.id) ?? []),
       server,
     ]);
+    if (pushToken) {
+      this.subscribePushToken(pushToken, currentRide.id, isLeader, shareCode);
+    }
 
     server.addEventListener("close", () => {
       server.close(1000, "Closing normally.");
-      this.deleteSocket(server, currentRide.id);
-    });
-
-    server.addEventListener("error", (error) => {
-      console.log(error);
-      server.close(4000, "Disconnected.");
       this.deleteSocket(server, currentRide.id);
     });
 
@@ -74,8 +86,8 @@ export class RideInfoStream extends DurableObject<CloudflareEnv> {
         "connected",
         {
           rideState,
-          pickupLocationID,
-          dropoffLocationID,
+          pickupLocation,
+          dropoffLocation,
           groupRide,
           shareCode,
           leader,
@@ -101,6 +113,127 @@ export class RideInfoStream extends DurableObject<CloudflareEnv> {
       status: 101,
       webSocket: client,
     });
+  }
+
+  initializeDB() {
+    this.sql.exec(`CREATE TABLE IF NOT EXISTS pushTokens(
+      pushToken text PRIMARY KEY,
+      rideID text NOT NULL,
+      isLeader INTEGER NOT NULL,
+      shareCode text
+    ) STRICT;
+    
+    CREATE TABLE IF NOT EXISTS pushTickets(
+      ticketID text PRIMARY KEY,
+      submittedAt INTEGER DEFAULT (unixepoch())
+    ) STRICT;`);
+  }
+
+  subscribePushToken(
+    pushToken: string,
+    rideID: string,
+    isLeader: boolean,
+    shareCode: string | null,
+  ) {
+    if (!pushToken) {
+      return;
+    }
+
+    this.sql.exec(
+      `INSERT OR REPLACE INTO pushTokens (pushToken, rideID, isLeader, shareCode) 
+      VALUES (?, ?, ?, ?);`,
+      pushToken,
+      rideID,
+      isLeader ? 1 : 0,
+      shareCode,
+    );
+  }
+
+  clearSubscribers(rideID: string) {
+    this.sql.exec(`DELETE FROM pushTokens WHERE rideID = ?;`, rideID);
+  }
+
+  removeSubscriber(pushToken: string) {
+    this.sql.exec(`DELETE FROM pushTokens where pushToken = ?`, pushToken);
+  }
+
+  getSubscribers(rideID: string) {
+    const res = this.sql
+      .exec(`SELECT * FROM pushTokens where rideID = ?;`, rideID)
+      .toArray();
+    if (res.length === 0) {
+      return;
+    }
+
+    const shareCode = res[0].shareCode as string | null;
+    const pushTokens = res.map((value) => value.pushToken as string);
+    const isLeader = res.map((value) => (value.isLeader as number) === 1);
+    return {
+      pushTokens,
+      shareCode,
+      isLeader,
+    };
+  }
+
+  addPushTickets(pushTickets: ExpoPushTicket[]) {
+    const addIds: string[] = [];
+    pushTickets.forEach((pushTicket) => {
+      if (pushTicket.status === "ok") {
+        addIds.push(pushTicket.id);
+      } else {
+        if (pushTicket.details?.error === "DeviceNotRegistered") {
+          this.sql.exec(
+            `DELETE FROM pushTokens WHERE pushToken = ?`,
+            pushTicket.details.expoPushToken,
+          );
+        } else {
+          // unexpected error
+          console.error("unexpected error from Expo API: ", pushTicket);
+        }
+      }
+    });
+    if (addIds.length > 0) {
+      const template = addIds.map(() => "(?)").join(",\n");
+      this.sql.exec(
+        `INSERT INTO pushTickets (ticketID) VALUES ${template};`,
+        ...addIds,
+      );
+    }
+  }
+
+  async fetchPushReceipts() {
+    const res = this.sql
+      .exec(
+        `SELECT ticketID FROM pushTickets ORDER BY submittedAt ASC LIMIT 1000`,
+      )
+      .toArray();
+    if (res.length === 0) {
+      return;
+    }
+
+    const ticketIDs = res.map((row) => row.ticketID as string);
+    const pushReceipts = await fetchPushReceipts(ticketIDs);
+    const removeIDs: string[] = [];
+    Object.entries(pushReceipts).forEach(([ticketID, pushReceipt]) => {
+      removeIDs.push(ticketID);
+      if (pushReceipt.status === "error") {
+        if (pushReceipt.details?.error === "DeviceNotRegistered") {
+          this.sql.exec(
+            `DELETE FROM pushTokens WHERE pushToken = ?`,
+            pushReceipt.details.expoPushToken,
+          );
+        } else {
+          console.error("unexpected error from Expo API: ", pushReceipt);
+        }
+      }
+    });
+    if (removeIDs.length > 0) {
+      const template = removeIDs.map(() => "?").join(", ");
+      this.sql.exec(
+        `DELETE FROM pushTickets WHERE ticketID IN (${template});`,
+        ...removeIDs,
+      );
+    }
   }
 
   deleteSocket(ws: WebSocket, rideID: string) {
@@ -175,7 +308,18 @@ export class RideInfoStream extends DurableObject<CloudflareEnv> {
         if (route?.vehicle || route?.driver) {
           await setPickupStopState(ride.pickupStopID, "scheduled", this.env);
           await setDropoffStopState(ride.dropoffStopID, "scheduled", this.env);
-          await this.sendRouteUpdate(ride.id, "assigned");
+          this.sendRouteUpdate(ride.id, "assigned");
+          const subscribers = this.getSubscribers(ride.id);
+          if (subscribers) {
+            const res = await sendRouteUpdateNotification({
+              rideState: "assigned",
+              pushTokens: subscribers.pushTokens,
+              rideID: ride.id,
+              shareCode: subscribers.shareCode,
+              isLeader: subscribers.isLeader,
+            });
+            this.addPushTickets(res);
+          }
         }
       }
     }
@@ -212,7 +356,7 @@ export class RideInfoStream extends DurableObject<CloudflareEnv> {
   }
 
   async streamRouteUpdates(
-    activeRides: Ride[],
+    activeRides: Awaited<ReturnType<typeof getActiveRides>>,
     routeUpdates: Samsara.RoutesGetRoutesFeedResponseBody,
   ) {
     for (const ride of routeUpdates.data) {
@@ -237,13 +381,24 @@ export class RideInfoStream extends DurableObject<CloudflareEnv> {
           if (rideID) {
             if (stopState === "scheduled") {
               // already done in streamAssignmentChanges
-              // await this.sendRouteUpdate(rideID, "assigned");
+              // this.sendRouteUpdate(rideID, "assigned");
             }
             if (stopState === "en route") {
               // if the stop becomes en route, that means the driver / vehicle
               // has been finalized and is now currently driving towards the
               // user's pickup location directly
-              await this.sendRouteUpdate(rideID, "en route");
+              this.sendRouteUpdate(rideID, "en route");
+              const subscribers = this.getSubscribers(rideID);
+              if (subscribers) {
+                const res = await sendRouteUpdateNotification({
+                  rideState: "en route",
+                  pushTokens: subscribers.pushTokens,
+                  rideID: rideID,
+                  shareCode: subscribers.shareCode,
+                  isLeader: subscribers.isLeader,
+                });
+                this.addPushTickets(res);
+              }
 
               // we can now fetch and deliver the finalized vehicle information
               let vehicleID = ride.route.vehicle?.id;
@@ -323,13 +478,33 @@ export class RideInfoStream extends DurableObject<CloudflareEnv> {
                   .set({ vehicleID: vehicleID })
                   .where(eq(rides.samsaraID, ride.route.id));
 
-                await this.sendVehicleInfo(rideID, vehicle);
+                this.sendVehicleInfo(rideID, vehicle);
+                if (subscribers) {
+                  const res = await sendVehicleInfoNotification({
+                    vehicleInfo: this.vehicleInfoShort(vehicle),
+                    pushTokens: subscribers.pushTokens,
+                    rideID,
+                    shareCode: subscribers.shareCode,
+                    isLeader: subscribers.isLeader,
+                  });
+                  this.addPushTickets(res);
+                }
               }
             }
             if (stopState === "arrived") {
               // the user will now have 2 minutes to board the vehicle
-
-              await this.sendRouteUpdate(rideID, "arrived");
+              this.sendRouteUpdate(rideID, "arrived");
+              const subscribers = this.getSubscribers(rideID);
+              if (subscribers) {
+                const res = await sendRouteUpdateNotification({
+                  rideState: "arrived",
+                  pushTokens: subscribers.pushTokens,
+                  rideID: rideID,
+                  shareCode: subscribers.shareCode,
+                  isLeader: subscribers.isLeader,
+                });
+                this.addPushTickets(res);
+              }
               await getDBInWorker(this.env)
                 .update(rides)
                 .set({ actualPickupTime: stop.actualArrivalTime })
@@ -370,16 +545,28 @@ export class RideInfoStream extends DurableObject<CloudflareEnv> {
                   .where(eq(users.id, activeRide.userID));
                 // update samsara route, unassign driver / vehicle
                 await missRide(activeRide, user);
+
                 this.streams
                   .get(rideID)
                   ?.forEach((ws) => ws.close(1000, "Missed pickup."));
                 this.streams.delete(rideID);
+                const subscribers = this.getSubscribers(rideID);
+                if (subscribers) {
+                  const res = await sendMissedRideNotification({
+                    pickupLocation: activeRide.pickupLocation,
+                    dropoffLocation: activeRide.dropoffLocation,
+                    pushTokens: subscribers.pushTokens,
+                    rideID,
+                  });
+                  this.addPushTickets(res);
+                }
+                this.clearSubscribers(rideID);
               } else {
                 await getDBInWorker(this.env)
                   .update(rides)
                   .set({ numPickedUp })
                   .where(eq(rides.id, rideID));
-                await this.sendRouteUpdate(rideID, "in progress");
+                this.sendRouteUpdate(rideID, "in progress");
               }
             }
           }
@@ -391,15 +578,22 @@ export class RideInfoStream extends DurableObject<CloudflareEnv> {
           if (rideID) {
             if (stopState === "arrived") {
               // the end of the ride, record time for metrics
-
-              await this.sendRouteUpdate(rideID, "dropped off");
+              this.sendRouteUpdate(rideID, "dropped off");
               await getDBInWorker(this.env)
                 .update(rides)
                 .set({ actualDropoffTime: stop.actualArrivalTime })
                 .where(eq(rides.dropoffStopID, stopID));
             }
             if (stopState === "departed") {
-              // send feedback notification?
+              // send feedback notification
+              const subscribers = this.getSubscribers(rideID);
+              if (subscribers) {
+                const res = await sendRideFeedbackNotification({
+                  pushTokens: subscribers.pushTokens,
+                  rideID,
+                });
+                this.addPushTickets(res);
+              }
 
               await getDBInWorker(this.env)
                 .update(rides)
@@ -409,6 +603,7 @@ export class RideInfoStream extends DurableObject<CloudflareEnv> {
                 .get(rideID)
                 ?.forEach((ws) => ws.close(1000, `Complete: ${rideID}`));
               this.streams.delete(rideID);
+              this.clearSubscribers(rideID);
             }
           }
         }
@@ -416,9 +611,7 @@ export class RideInfoStream extends DurableObject<CloudflareEnv> {
     }
   }
 
-  async sendRouteUpdate(rideID: string, rideState: InProgressRideState) {
-    // send push notification (TODO)
-
+  sendRouteUpdate(rideID: string, rideState: InProgressRideState) {
     this.sendEvent("routeUpdate", { rideState }, rideID);
   }
 
@@ -439,11 +632,8 @@ export class RideInfoStream extends DurableObject<CloudflareEnv> {
     return vehicleInfo;
   }
 
-  async sendVehicleInfo(rideID: string, vehicle: Vehicle) {
+  sendVehicleInfo(rideID: string, vehicle: Vehicle) {
     const vehicleInfo = this.vehicleInfoShort(vehicle);
-
-    // send push notification (TODO)
-
     this.sendEvent("vehicleInfo", vehicleInfo, rideID);
   }
 
@@ -480,5 +670,6 @@ export class RideInfoStream extends DurableObject<CloudflareEnv> {
       .get(rideID)
       ?.forEach((ws) => ws.close(1000, "Ride cancelled."));
     this.streams.delete(rideID);
+    this.clearSubscribers(rideID);
   }
 }

@@ -38,6 +38,7 @@ const rideStateToStepNum = {
   arrived: 3,
   "in progress": 4,
   "dropped off": 5,
+  loading: NaN,
 };
 
 export function withAnimated<Props extends object>(
@@ -77,12 +78,9 @@ const RideStateStep = ({
 }) => {
   const { rideDetails } = useRideDetailsSession();
 
-  const currentRideState = rideDetails?.rideState ?? "received";
+  const currentRideState = rideDetails?.rideState ?? "loading";
   const highlighted = useSharedValue<boolean>(
     rideStateToStepNum[currentRideState]! >= rideStateToStepNum[rideState]!,
-  );
-  const highlightFirst = useSharedValue<boolean>(
-    currentRideState !== "received",
   );
 
   let titleText = (rideState as string).replace(/\b\w/g, (char) =>
@@ -153,26 +151,7 @@ const RideStateStep = ({
       );
     });
   }
-  animProgress[0] = useDerivedValue(() => {
-    return highlightFirst.value && highlighted.value
-      ? withTiming(1, { duration: 300 })
-      : withTiming(0, { duration: 300 });
-  }, [highlighted, highlightFirst]);
-  altAnimProgress[0] = useDerivedValue(() => {
-    return highlightFirst.value && highlighted.value
-      ? withTiming(1, { duration: 2300 })
-      : withTiming(0, { duration: 300 });
-  }, [highlighted, highlightFirst]);
-  iconAnimProgress[0] = useDerivedValue(() => {
-    return highlightFirst.value && highlighted.value
-      ? withTiming(1, { duration: 1300 })
-      : withTiming(0, { duration: 300 });
-  }, [highlighted, highlightFirst]);
   /* eslint-enable react-hooks/rules-of-hooks */
-
-  useEffect(() => {
-    setTimeout(() => (highlightFirst.value = true), 1150);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <View className={`w-[${width}px]`}>

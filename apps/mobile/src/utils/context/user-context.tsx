@@ -13,10 +13,11 @@ import { useToastContext } from "./toast-context";
 interface UserContextType {
   user: User | null;
   setUser: (user: User) => void;
-  logOut: () => void;
+  logOut: (pushToken: string | undefined) => void;
   loadingState: LoadingState;
   guidelinesAccepted: boolean;
   acceptGuidelines: () => Promise<void>;
+  fetchUserInfo: () => Promise<void>;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -36,49 +37,57 @@ export const SessionProvider = ({ children }: PropsWithChildren) => {
   const [userInfo, setUserInfo] = useState<User | null>(null);
   const [guidelinesAccepted, setGuidelinesAccepted] = useState<boolean>(false);
 
+  const fetchUserInfo = async () => {
+    const guidelinesAcceptedValue =
+      await SecureStore.getItemAsync("guidelinesAccepted");
+    setGuidelinesAccepted(guidelinesAcceptedValue === "true");
+
+    const accessToken = await SecureStore.getItemAsync("accessToken");
+    if (!accessToken) {
+      // no login credentials
+      setLoadingState("done");
+      return;
+    }
+
+    try {
+      const userInfoReponse = await api.get("/me");
+      if (!ok(userInfoReponse)) {
+        throw new Error("Failed to fetch user info");
+      }
+      const parsedUserData: User = userInfoReponse.data;
+      setUserInfo(parsedUserData);
+      setLoadingState("done");
+    } catch (error) {
+      if (
+        axios.isAxiosError(error) &&
+        (error.code === "ECONNABORTED" || error.code === "ERR_NETWORK")
+      ) {
+        if (loadingState === "error") {
+          // retry failed
+          setToast({
+            title: "Connection failed",
+            description: "There was a problem connecting to the server.",
+            onDismiss: () => setToast(null),
+            isError: true,
+          });
+        }
+        setLoadingState("error");
+        return;
+      }
+      // assume user is logged out
+      setToast({
+        title: "There was a problem with your login.",
+        description: "Please sign in again.",
+        onDismiss: () => setToast(null),
+        isError: true,
+      });
+      await SecureStore.deleteItemAsync("guidelinesAccepted");
+      setLoadingState("done");
+      return;
+    }
+  };
+
   useEffect(() => {
-    const fetchUserInfo = async () => {
-      const guidelinesAcceptedValue =
-        await SecureStore.getItemAsync("guidelinesAccepted");
-      setGuidelinesAccepted(guidelinesAcceptedValue === "true");
-
-      const accessToken = await SecureStore.getItemAsync("accessToken");
-      if (!accessToken) {
-        // no login credentials
-        setLoadingState("done");
-        return;
-      }
-
-      try {
-        const userInfoReponse = await api.get("/me");
-        if (!ok(userInfoReponse)) {
-          throw new Error("Failed to fetch user info");
-        }
-        const parsedUserData: User = userInfoReponse.data;
-        setUserInfo(parsedUserData);
-        setLoadingState("done");
-      } catch (error) {
-        if (
-          axios.isAxiosError(error) &&
-          (error.code === "ECONNABORTED" || error.code === "ERR_NETWORK")
-        ) {
-          console.error("Could not establish a connection.");
-          setLoadingState("error");
-          return;
-        }
-        // assume user is logged out
-        setToast({
-          title: "There was a problem with your login.",
-          description: "Please sign in again.",
-          onDismiss: () => setToast(null),
-          isError: true,
-        });
-        await SecureStore.deleteItemAsync("guidelinesAccepted");
-        setLoadingState("done");
-        return;
-      }
-    };
-
     fetchUserInfo();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -87,14 +96,17 @@ export const SessionProvider = ({ children }: PropsWithChildren) => {
       value={{
         user: userInfo,
         setUser: setUserInfo,
-        logOut: async () => {
+        logOut: async (pushToken: string | undefined) => {
           try {
-            await logout();
+            await logout(pushToken);
           } catch (error) {
             console.error("Error occurred while logging out, ignoring:", error);
           }
           setUserInfo(null);
+          await SecureStore.deleteItemAsync("accessToken");
+          await SecureStore.deleteItemAsync("refreshToken");
           await SecureStore.deleteItemAsync("guidelinesAccepted");
+          await SecureStore.deleteItemAsync("lastGroupRide");
         },
         loadingState: loadingState,
         guidelinesAccepted,
@@ -102,6 +114,7 @@ export const SessionProvider = ({ children }: PropsWithChildren) => {
           setGuidelinesAccepted(true);
           await SecureStore.setItemAsync("guidelinesAccepted", "true");
         },
+        fetchUserInfo,
       }}
     >
       {children}

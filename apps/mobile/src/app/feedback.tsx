@@ -3,7 +3,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { useSearchParams } from "expo-router/build/hooks";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, View } from "react-native";
+import { ActivityIndicator, Platform, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 
 import FontText from "@/src/components/font-text";
@@ -14,8 +14,6 @@ import { api, ok } from "../client/session";
 import TextInputField from "../components/text-input-field";
 import { slate200, UTBurntOrange } from "../utils/colors";
 import { useToastContext } from "../utils/context/toast-context";
-import { WEST_CAMPUS_LOCATIONS } from "../utils/locations/dropoff-locations";
-import { CAMPUS_LOCATIONS } from "../utils/locations/pickup-locations";
 import LoadingState from "../utils/types/loading-state";
 
 const Feedback = () => {
@@ -52,15 +50,8 @@ const Feedback = () => {
           setLoadingState("error");
         } else {
           setSubmittedAt(data.submittedAt);
-          setPickupLocation(
-            CAMPUS_LOCATIONS.find((loc) => loc.id === data.pickupLocationID)
-              ?.name ?? "",
-          );
-          setDropoffLocation(
-            WEST_CAMPUS_LOCATIONS.find(
-              (loc) => loc.id === data.dropoffLocationID,
-            )?.name ?? "",
-          );
+          setPickupLocation(data.pickupLocation?.name ?? "");
+          setDropoffLocation(data.dropoffLocation?.name ?? "");
           setLoadingState("done");
         }
       } catch (err) {
@@ -77,6 +68,11 @@ const Feedback = () => {
   }, [feedback]);
 
   const submit = async () => {
+    if (loadingState === "error") {
+      router.back();
+      return;
+    }
+
     setSubmitting(true);
     try {
       const res = await api.post("/ride/feedback", {
@@ -178,10 +174,11 @@ const Feedback = () => {
                     minimumValue={1}
                     maximumValue={5}
                     step={1}
-                    value={rating}
+                    value={5}
                     onValueChange={setRating}
                     minimumTrackTintColor={UTBurntOrange}
                     maximumTrackTintColor={slate200}
+                    thumbSize={Platform.OS === "android" ? 20 : undefined}
                   />
                   <View className="mt-1 flex-row justify-between">
                     {Array.from({ length: 5 }, (_, i) => i + 1).map((i) => (

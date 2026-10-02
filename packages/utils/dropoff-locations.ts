@@ -1,8 +1,8 @@
-import { Location } from "../types/location";
-import { CAMPUS_LOCATIONS } from "./pickup-locations";
+import Location from "./types/location";
+import { PICKUP_LOCATIONS } from "./pickup-locations";
 
-export const WEST_CAMPUS_LOCATIONS: Location[] = [
-  ...CAMPUS_LOCATIONS,
+export const DROPOFF_LOCATIONS: Location[] = [
+  ...PICKUP_LOCATIONS,
   // ─── UNION / HIGH-RISE CORE ────────────────────────────────────────────────
   {
     id: 1100,
@@ -11,7 +11,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "701 W 24th St, Austin, TX 78705",
     lat: 30.2887,
     lon: -97.7455,
-    category: "housing",
+    type: "dropoff",
   },
   {
     id: 1101,
@@ -20,7 +20,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "2100 San Antonio St, Austin, TX 78705",
     lat: 30.2848,
     lon: -97.7429,
-    category: "housing",
+    type: "dropoff",
   },
   {
     id: 1102,
@@ -29,7 +29,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "2400 San Antonio St, Austin, TX 78705",
     lat: 30.2895,
     lon: -97.744,
-    category: "housing",
+    type: "dropoff",
   },
 
   {
@@ -39,7 +39,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "1912 Speedway, Austin, TX 78705",
     lat: 30.283,
     lon: -97.7365,
-    category: "housing",
+    type: "dropoff",
   },
   {
     id: 1104,
@@ -48,7 +48,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "2415 San Gabriel St, Austin, TX 78705",
     lat: 30.2896,
     lon: -97.7462,
-    category: "housing",
+    type: "dropoff",
   },
   {
     id: 1105,
@@ -57,7 +57,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "2200 Guadalupe St, Austin, TX 78705",
     lat: 30.285,
     lon: -97.7415,
-    category: "housing",
+    type: "dropoff",
   },
   {
     id: 1283,
@@ -66,7 +66,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "2020 Nueces Street, Austin, TX, 78705",
     lat: 30.2839,
     lon: -97.7442,
-    category: "housing",
+    type: "dropoff",
   },
   {
     id: 1107,
@@ -75,7 +75,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "2500 San Gabriel St, Austin, TX 78705",
     lat: 30.2903,
     lon: -97.7465,
-    category: "housing",
+    type: "dropoff",
   },
   {
     id: 1108,
@@ -84,7 +84,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "2223 Rio Grande St, Austin, TX 78705",
     lat: 30.2862,
     lon: -97.7467,
-    category: "housing",
+    type: "dropoff",
   },
 
   // ─── YUGO PROPERTIES ───────────────────────────────────────────────────────
@@ -95,7 +95,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "2150 Nueces St, Austin, TX 78705",
     lat: 30.2855,
     lon: -97.7448,
-    category: "housing",
+    type: "dropoff",
   },
   {
     id: 1111,
@@ -104,7 +104,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "620 W 24th St, Austin, TX 78705",
     lat: 30.2883,
     lon: -97.7443,
-    category: "housing",
+    type: "dropoff",
   },
   {
     id: 1112,
@@ -113,7 +113,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "1900 Nueces St, Austin, TX 78705",
     lat: 30.2829,
     lon: -97.7445,
-    category: "housing",
+    type: "dropoff",
   },
   {
     id: 1113,
@@ -122,7 +122,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "2400 Seton Ave, Austin, TX 78705",
     lat: 30.2888,
     lon: -97.7455,
-    category: "housing",
+    type: "dropoff",
   },
 
   // ─── MAJOR STUDENT APARTMENTS ──────────────────────────────────────────────
@@ -133,7 +133,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "715 W 23rd St, Austin, TX 78705",
     lat: 30.2861,
     lon: -97.7453,
-    category: "housing",
+    type: "dropoff",
   },
   {
     id: 1121,
@@ -142,7 +142,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "1000 W 26th St, Austin, TX 78705",
     lat: 30.292,
     lon: -97.7475,
-    category: "housing",
+    type: "dropoff",
   },
   {
     id: 1122,
@@ -151,7 +151,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "2215 Rio Grande St, Austin, TX 78705",
     lat: 30.2858,
     lon: -97.7466,
-    category: "housing",
+    type: "dropoff",
   },
   {
     id: 1123,
@@ -160,7 +160,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "2110 Rio Grande St, Austin, TX 78705",
     lat: 30.2845,
     lon: -97.7465,
-    category: "housing",
+    type: "dropoff",
   },
   {
     id: 1124,
@@ -169,7 +169,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "2222 Rio Grande St, Austin, TX 78705",
     lat: 30.2865,
     lon: -97.7464,
-    category: "housing",
+    type: "dropoff",
   },
   {
     id: 1125,
@@ -178,7 +178,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "2100 San Antonio St, Austin, TX 78705",
     lat: 30.2849,
     lon: -97.7428,
-    category: "housing",
+    type: "dropoff",
   },
   {
     id: 1126,
@@ -187,7 +187,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "2021 Guadalupe St, Austin, TX 78705",
     lat: 30.2835,
     lon: -97.7417,
-    category: "housing",
+    type: "dropoff",
   },
   {
     id: 1127,
@@ -196,7 +196,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "911 West 21st Street, Austin, TX, 78705",
     lat: 30.2845,
     lon: -97.7472,
-    category: "housing",
+    type: "dropoff",
   },
 
   // ─── BLOCK / QUARTERS / LEGACY GROUP ───────────────────────────────────────
@@ -207,7 +207,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "2111 Rio Grande St, Austin, TX 78705",
     lat: 30.2847,
     lon: -97.7468,
-    category: "housing",
+    type: "dropoff",
   },
   {
     id: 1131,
@@ -216,7 +216,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "2400 Leon St, Austin, TX 78705",
     lat: 30.2898,
     lon: -97.7482,
-    category: "housing",
+    type: "dropoff",
   },
   {
     id: 1132,
@@ -225,7 +225,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "2200 San Gabriel St, Austin, TX 78705",
     lat: 30.2863,
     lon: -97.7458,
-    category: "housing",
+    type: "dropoff",
   },
   {
     id: 1133,
@@ -234,7 +234,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "2707 Rio Grande St, Austin, TX 78705",
     lat: 30.2925,
     lon: -97.7472,
-    category: "housing",
+    type: "dropoff",
   },
 
   // ─── MID-RISES / POPULAR ───────────────────────────────────────────────────
@@ -245,7 +245,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "2414 San Gabriel St, Austin, TX 78705",
     lat: 30.2895,
     lon: -97.746,
-    category: "housing",
+    type: "dropoff",
   },
   {
     id: 1141,
@@ -254,7 +254,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "2323 San Antonio St, Austin, TX 78705",
     lat: 30.2878,
     lon: -97.7439,
-    category: "housing",
+    type: "dropoff",
   },
   {
     id: 1142,
@@ -263,7 +263,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "2400 Seton Ave, Austin, TX 78705",
     lat: 30.2888,
     lon: -97.7455,
-    category: "housing",
+    type: "dropoff",
   },
   {
     id: 1143,
@@ -272,7 +272,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "2400 Longview St, Austin, TX 78705",
     lat: 30.2892,
     lon: -97.7485,
-    category: "housing",
+    type: "dropoff",
   },
   {
     id: 1144,
@@ -281,7 +281,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "807 W 24th St, Austin, TX 78705",
     lat: 30.2851,
     lon: -97.7485,
-    category: "housing",
+    type: "dropoff",
   },
 
   // ─── CONDOS (COMMON STUDENT ONES) ──────────────────────────────────────────
@@ -292,7 +292,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "2529 Rio Grande St, Austin, TX 78705",
     lat: 30.2908,
     lon: -97.7474,
-    category: "housing",
+    type: "dropoff",
   },
   {
     id: 1151,
@@ -301,7 +301,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "501 W 26th St, Austin, TX 78705",
     lat: 30.2915,
     lon: -97.7436,
-    category: "housing",
+    type: "dropoff",
   },
 
   // ─── EXTRA COMMON BUILDS YOU MENTIONED / MISSED ────────────────────────────
@@ -312,7 +312,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "2513 Seton Ave, Austin, TX 78705",
     lat: 30.2905,
     lon: -97.7431,
-    category: "housing",
+    type: "dropoff",
   },
   {
     id: 1161,
@@ -321,7 +321,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "2101 Rio Grande St, Austin, TX 78705",
     lat: 30.2845,
     lon: -97.7449,
-    category: "housing",
+    type: "dropoff",
   },
   {
     id: 1163,
@@ -330,7 +330,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "2400 Nueces St, Austin, TX 78705",
     lat: 30.2883,
     lon: -97.7431,
-    category: "housing",
+    type: "dropoff",
   },
   {
     id: 1164,
@@ -339,7 +339,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "2810 Salado St, Austin, TX 78705",
     lat: 30.2948,
     lon: -97.7456,
-    category: "housing",
+    type: "dropoff",
   },
 
   // --- EXTRA FROM OSM ---------------------------
@@ -350,7 +350,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "702 W 25th St Austin, TX 78705",
     lat: 30.2896,
     lon: -97.7456,
-    category: "housing",
+    type: "dropoff",
   },
   {
     id: 1166,
@@ -359,7 +359,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "1901 Rio Grande Street, Austin, TX, 78705",
     lat: 30.283,
     lon: -97.7449,
-    category: "housing",
+    type: "dropoff",
   },
   {
     id: 1167,
@@ -368,7 +368,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "704 W 21st St, Austin, TX 78705",
     lat: 30.2845,
     lon: -97.7458,
-    category: "housing",
+    type: "dropoff",
   },
   {
     id: 1168,
@@ -377,7 +377,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "2207 Nueces St, Austin, TX 78705",
     lat: 30.286,
     lon: -97.74364,
-    category: "housing",
+    type: "dropoff",
   },
   {
     id: 1169,
@@ -386,7 +386,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "2714 Nueces St, Austin, TX 78705",
     lat: 30.2932,
     lon: -97.7432,
-    category: "housing",
+    type: "dropoff",
   },
   {
     id: 1170,
@@ -395,7 +395,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "707 W 21st St, Austin, TX 78705",
     lat: 30.2841,
     lon: -97.7459,
-    category: "housing",
+    type: "dropoff",
   },
   {
     id: 1175,
@@ -404,7 +404,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "2420 Nueces Street, Austin, TX, 78705",
     lat: 30.289,
     lon: -97.7433,
-    category: "housing",
+    type: "dropoff",
   },
   {
     id: 1188,
@@ -413,7 +413,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "2108 San Gabriel Street, Austin, TX, 78705",
     lat: 30.2852,
     lon: -97.7484,
-    category: "housing",
+    type: "dropoff",
   },
   {
     id: 1190,
@@ -422,7 +422,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "1911 San Gabriel Street, Austin, TX, 78705",
     lat: 30.2845,
     lon: -97.7479,
-    category: "housing",
+    type: "dropoff",
   },
   {
     id: 1214,
@@ -431,7 +431,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "4409 Duval Street, Austin, TX, 78751",
     lat: 30.3064,
     lon: -97.7246,
-    category: "housing",
+    type: "dropoff",
   },
   {
     id: 1228,
@@ -440,7 +440,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "3703 Harmon Avenue, Austin, TX, 78705",
     lat: 30.2941,
     lon: -97.7211,
-    category: "housing",
+    type: "dropoff",
   },
   {
     id: 1246,
@@ -449,7 +449,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "3408 Speedway, Austin, TX, 78705",
     lat: 30.299,
     lon: -97.7351,
-    category: "housing",
+    type: "dropoff",
   },
   {
     id: 1250,
@@ -458,7 +458,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "2500 Nueces Street, Austin, TX",
     lat: 30.2894,
     lon: -97.7433,
-    category: "housing",
+    type: "dropoff",
   },
   {
     id: 1268,
@@ -467,7 +467,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "2812 Rio Grande Street, Austin, TX, 78705",
     lat: 30.2946,
     lon: -97.7444,
-    category: "housing",
+    type: "dropoff",
   },
   {
     id: 1275,
@@ -476,7 +476,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "910 West 26th Street, Austin, TX, 78705",
     lat: 30.2913,
     lon: -97.7469,
-    category: "housing",
+    type: "dropoff",
   },
   {
     id: 1284,
@@ -485,7 +485,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "1909 Rio Grande Street, Austin, TX, 78705",
     lat: 30.2837,
     lon: -97.7448,
-    category: "housing",
+    type: "dropoff",
   },
   {
     id: 1297,
@@ -494,7 +494,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "1009 West 26th Street, Austin, TX",
     lat: 30.2908,
     lon: -97.748,
-    category: "housing",
+    type: "dropoff",
   },
   {
     id: 1325,
@@ -503,7 +503,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "4504 Speedway, Austin, TX 78751",
     lat: 30.30928,
     lon: -97.7286,
-    category: "housing",
+    type: "dropoff",
   },
   {
     id: 1337,
@@ -512,7 +512,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "2502 Leon Street, Austin, TX 78705",
     lat: 30.29,
     lon: -97.7493,
-    category: "housing",
+    type: "dropoff",
   },
   {
     id: 1338,
@@ -521,7 +521,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "2401 Leon St, Austin, TX 78705",
     lat: 30.2886,
     lon: -97.74886,
-    category: "housing",
+    type: "dropoff",
   },
   {
     id: 1342,
@@ -530,7 +530,7 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "4600 W Guadalupe St, Austin, TX 78751",
     lat: 30.313,
     lon: -97.733,
-    category: "housing",
+    type: "dropoff",
   },
   {
     id: 1345,
@@ -539,15 +539,19 @@ export const WEST_CAMPUS_LOCATIONS: Location[] = [
     address: "4527 North Lamar Boulevard, Austin, TX, 78751",
     lat: 30.3146,
     lon: -97.7361,
-    category: "housing",
+    type: "dropoff",
   },
 ];
 
 export const getMatchingDropoffLocations = (query: string): Location[] => {
   const lowerQuery = query.toLowerCase();
-  return WEST_CAMPUS_LOCATIONS.filter(
+  return DROPOFF_LOCATIONS.filter(
     (loc) =>
       loc.name.toLowerCase().includes(lowerQuery) ||
-      loc.abbreviation.toLowerCase().includes(lowerQuery),
+      (loc.abbreviation ?? "").toLowerCase().includes(lowerQuery),
   );
+};
+
+export const getLocationByID = (id: number) => {
+  return DROPOFF_LOCATIONS.find((loc) => loc.id === id);
 };

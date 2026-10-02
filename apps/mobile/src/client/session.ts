@@ -4,6 +4,8 @@ import * as SecureStore from "expo-secure-store";
 
 import { API_URL } from "./auth";
 
+axios.defaults.timeout = 15000;
+
 export const api = axios.create({
   baseURL: API_URL,
   validateStatus: (status) => status !== 401,
@@ -72,6 +74,7 @@ api.interceptors.response.use(
           ) {
             await SecureStore.deleteItemAsync("accessToken");
             await SecureStore.deleteItemAsync("refreshToken");
+            await SecureStore.deleteItemAsync("guidelinesAccepted");
             setTimeout(() => router.replace("/login"), 1000);
           }
           processQueue(refreshError, null);

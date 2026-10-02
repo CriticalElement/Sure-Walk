@@ -9,11 +9,14 @@ import { getDB } from "@/lib/db";
 import { accounts } from "@/lib/db/schema/accounts";
 import { locations } from "@/lib/db/schema/locations";
 import { users } from "@/lib/db/schema/users";
+import { addLocations } from "@/lib/locations";
 import {
   getActiveRideByUserID,
   getInProgressRideStateFromRide,
 } from "@/lib/ride-info-stream/ride-helper";
 import { cancelRide, createRoute } from "@/lib/ride-info-stream/samsara-utils";
+
+let initialized = false;
 
 const groupRideMember = z.object({
   firstName: z
@@ -44,6 +47,13 @@ export async function POST(request: NextRequest) {
   const authResponse = ensureAuthenticated(request);
   if (!authResponse.success) {
     return authResponse.failResponse!;
+  }
+
+  if (!initialized) {
+    initialized = true;
+
+    // add / update location information in DB on startup
+    await addLocations();
   }
 
   const data = await request.json();
@@ -145,8 +155,8 @@ export async function GET(request: NextRequest) {
   }
 
   const currentRideMini: CurrentRideMini = {
-    pickupLocationID: currentRide.pickupLocationID,
-    dropoffLocationID: currentRide.dropoffLocationID,
+    pickupLocation: currentRide.pickupLocation,
+    dropoffLocation: currentRide.dropoffLocation,
     rideState: getInProgressRideStateFromRide(currentRide),
   };
 

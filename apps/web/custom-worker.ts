@@ -8,7 +8,7 @@ export default {
   async fetch(
     request: Request,
     env: CloudflareEnv,
-    ctx: unknown,
+    ctx: ExecutionContext,
   ): Promise<Response> {
     const url = new URL(request.url);
     // this is required becuase .fetch on a Durable Object from a Next.js worker context
@@ -19,6 +19,12 @@ export default {
 
     // otherwise just use the regular Next.js worker
     return handler.fetch(request, env, ctx);
+  },
+  async scheduled(_controller: ScheduledController, env: CloudflareEnv) {
+    const doID = env.RIDE_INFO_STREAM.idFromName("global");
+    const stub = env.RIDE_INFO_STREAM.get(doID);
+    await stub.fetchPushReceipts();
+    console.log("fetched push receipts");
   },
 } satisfies ExportedHandler<CloudflareEnv>;
 

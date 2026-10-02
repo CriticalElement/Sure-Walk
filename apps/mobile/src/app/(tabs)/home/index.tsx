@@ -1,17 +1,31 @@
 import BottomSheet, {
   BottomSheetFlatList,
+  BottomSheetModal,
+  BottomSheetModalProvider,
+  BottomSheetTextInput,
+  BottomSheetView,
   TouchableOpacity as TO,
 } from "@gorhom/bottom-sheet";
+import {
+  dropoffBoundaryHoles,
+  dropoffBoundaryPolygons,
+  pickupBoundaryPolygons,
+} from "@sure-walk/utils/boundary-info";
+import { getMatchingDropoffLocations } from "@sure-walk/utils/dropoff-locations";
+import { getMatchingPickupLocations } from "@sure-walk/utils/pickup-locations";
+import LocationType from "@sure-walk/utils/types/location";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Location from "expo-location";
+import * as Notifications from "expo-notifications";
 import { router, useFocusEffect } from "expo-router";
 import {
+  ArrowCircleRightIcon,
   CircleIcon,
   FadersHorizontalIcon,
-  InfoIcon,
   MapPinIcon,
   NavigationArrowIcon,
   StarIcon,
+  UserCircleIcon,
   UserCirclePlusIcon,
 } from "phosphor-react-native";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -25,30 +39,29 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import MapView, { Marker, Polygon } from "react-native-maps";
+import MapView, { Polygon } from "react-native-maps";
 import Animated, {
   Easing,
+  FadeIn,
   FadeInDown,
   FadeInUp,
+  FadeOut,
   FadeOutDown,
   FadeOutUp,
   useDerivedValue,
   useSharedValue,
-  withRepeat,
-  withSequence,
-  withTiming,
 } from "react-native-reanimated";
 
+import { api } from "@/src/client/session";
 import CheckButton from "@/src/components/check-button";
 import FontText from "@/src/components/font-text";
 import LargeButton from "@/src/components/large-button";
-import {
-  dropoffBoundaryPolygons,
-  pickupBoundaryPolygons,
-} from "@/src/utils/boundary-info";
+import LocationMarker from "@/src/components/location-marker";
+import MissedRideModal from "@/src/components/missed-ride-modal";
+import TertiaryButton from "@/src/components/tertiary-button";
+import TextInputField from "@/src/components/text-input-field";
 import {
   gray900,
-  slate500,
   slate700,
   slate900,
   UTBluebonnet,
@@ -58,21 +71,19 @@ import {
 } from "@/src/utils/colors";
 import { useCurrentRideSession } from "@/src/utils/context/current-ride-context";
 import { useGroupRideSession } from "@/src/utils/context/group-ride-context";
+import { useMissedRideSession } from "@/src/utils/context/missed-ride-context";
+import { usePushNotificationsContext } from "@/src/utils/context/push-notifications-context";
 import { useRideSession } from "@/src/utils/context/ride-context";
-import { useTabContext } from "@/src/utils/context/tab-context";
-import { getMatchingDropoffLocations } from "@/src/utils/locations/dropoff-locations";
-import { getMatchingPickupLocations } from "@/src/utils/locations/pickup-locations";
-import { Location as LocationType } from "@/src/utils/types/location";
+import { useToastContext } from "@/src/utils/context/toast-context";
 
-import MyRide from "../(my-ride)";
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 const Home = () => {
-  let _style: StyleProp<TextStyle> = {};
+  let _style: StyleProp<TextStyle> = { fontSize: 16 };
   if (Platform.OS === "ios") {
-    _style.lineHeight = 0;
+    _style.lineHeight = 0; // fix line height jitter bug on iOS
   }
 
-  const { goMyRide, setActiveTab } = useTabContext();
   const { members } = useGroupRideSession();
   const {
     pickupLocation,
@@ -80,25 +91,32 @@ const Home = () => {
     dropoffLocation,
     setDropoffLocation,
   } = useRideSession();
-  const { setHomeSheetRef } = useTabContext();
-  const { currentRide } = useCurrentRideSession();
+  const { currentRide, setCurrentRide } = useCurrentRideSession();
+  const { missedRide, setMissedRide, showModal, setShowModal } =
+    useMissedRideSession();
+  const { registerForPushNotificationsAsync } = usePushNotificationsContext();
+  const { setToast } = useToastContext();
 
+  const codeInputRef = useRef<TextInput>(null);
   const sheetRef = useRef<BottomSheet>(null);
   const mapRef = useRef<MapView>(null);
   const startLocationRef = useRef<TextInput>(null);
   const destinationRef = useRef<TextInput>(null);
+  const rideCodeSheetRef = useRef<BottomSheetModal>(null);
 
-  const snap0 = useSharedValue<number>(92);
-  const snap1 = useSharedValue<number>(290);
+  const snap0 = useSharedValue<number>(92); // minimum botton sheet snapping height
+  const snap1 = useSharedValue<number>(290); // medium botton sheet snapping height
   const snapPoints = useDerivedValue(
     () => [
-      snap0.value,
+      snap0.value + 24, // compensate for screen safe area
       snap1.value + snap0.value,
-      ...(!currentRide ? ["80.5%"] : []),
+      ...(!currentRide ? ["80.5%"] : []), // maximum sheet snapping height
     ],
     [snap0, snap1, currentRide],
   );
 
+  const [code, setCode] = useState<string>("");
+  const [viewRideDisabled, setViewRideDisabled] = useState<boolean>(false);
   const [snapIndex, setSnapIndex] = useState<number>(1);
   const [legendOpen, setLegendOpen] = useState<boolean>(false);
   const [showPickupBoundary, setPickupBoundary] = useState<boolean>(true);
@@ -106,13 +124,12 @@ const Home = () => {
   const [location, setLocation] = useState<Location.LocationObject | null>(
     null,
   );
-  const [markerReady, setMarkerReady] = useState(false);
   const [userLocationLabel, setUserLocationLabel] =
     useState<string>("Loading...");
-  const [startLocationText, setStartLocationText] = useState<string>(
+  const [pickupLocationText, setPickupLocationText] = useState<string>(
     pickupLocation?.name ?? "",
   );
-  const [destinationText, setDestinationText] = useState<string>(
+  const [dropoffText, setDropoffText] = useState<string>(
     dropoffLocation?.name ?? "",
   );
   const [focusedInput, setFocusedInput] = useState<"pickup" | "dropoff">(
@@ -124,40 +141,11 @@ const Home = () => {
   const [startLocationAddress, setStartAddress] = useState<string>(
     pickupLocation?.address ?? "Select your pickup location",
   );
-  const [destinationAddress, setDestinationAddress] = useState<string>(
+  const [dropoffAddress, setDropoffAddress] = useState<string>(
     dropoffLocation?.address ?? "Select your destination",
   );
-  const [showHome, setShowHome] = useState<boolean>(false);
-  const [showMyRide, setShowMyRide] = useState<boolean>(false);
 
-  useEffect(() => {
-    if (currentRide) {
-      setShowMyRide(true);
-      setShowHome(false);
-      setActiveTab("my-ride");
-    } else {
-      setShowHome(true);
-      setShowMyRide(false);
-    }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const pulseScale = useSharedValue(1);
-  useEffect(() => {
-    pulseScale.value = withRepeat(
-      withSequence(
-        withTiming(18 / 16, {
-          duration: 1400,
-          easing: Easing.inOut(Easing.ease),
-        }),
-        withTiming(1, { duration: 1400, easing: Easing.inOut(Easing.ease) }),
-      ),
-      -1,
-      false,
-    );
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-  // const _pulseStyle = useAnimatedStyle(() => ({
-  //   transform: [{ scale: pulseScale.value }],
-  // }));
+  const lastNotificationResponse = Notifications.useLastNotificationResponse();
 
   const centerMapOnLocation = (location: Location.LocationObject) => {
     setTimeout(() => {
@@ -170,137 +158,189 @@ const Home = () => {
     }, 1000);
   };
 
-  useEffect(() => {
-    async function requestLocationPermissions() {
-      let { status: currentStatus } =
-        await Location.getForegroundPermissionsAsync();
-      let finalStatus = currentStatus;
-      if (currentStatus !== "granted") {
-        let { status } = await Location.requestForegroundPermissionsAsync();
-        finalStatus = status;
-      }
+  const requestLocationPermissions = async () => {
+    let { status: currentStatus } =
+      await Location.getForegroundPermissionsAsync();
+    let finalStatus = currentStatus;
+    if (currentStatus !== "granted") {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      finalStatus = status;
+    }
 
-      mapRef.current?.animateToRegion(
-        {
-          latitude: 30.282962,
-          longitude: -97.737224,
-          latitudeDelta: 0.02,
-          longitudeDelta: 0.02,
-        },
-        0,
-      );
+    mapRef.current?.animateToRegion(
+      {
+        latitude: 30.282962,
+        longitude: -97.737224,
+        latitudeDelta: 0.02,
+        longitudeDelta: 0.02,
+      },
+      0,
+    );
 
-      if (finalStatus !== "granted") {
-        console.error("location denied");
-        return;
-      } else {
-        let location = await Location.getCurrentPositionAsync({
-          accuracy: Location.Accuracy.BestForNavigation,
-        });
-        setLocation(location);
-        centerMapOnLocation(location);
+    if (finalStatus !== "granted") {
+      console.error("location denied");
+      return;
+    } else {
+      let location = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.BestForNavigation,
+      });
+      setLocation(location);
+      centerMapOnLocation(location);
 
-        const userLat = location.coords.latitude;
-        const userLon = location.coords.longitude;
-        console.log("[Location] GPS coordinates:", userLat, userLon);
+      const userLat = location.coords.latitude;
+      const userLon = location.coords.longitude;
+      console.log("[Location] GPS coordinates:", userLat, userLon);
 
-        const haversine = (
-          lat1: number,
-          lon1: number,
-          lat2: number,
-          lon2: number,
-        ) => {
-          const toRad = (v: number) => (v * Math.PI) / 180;
-          const dLat = toRad(lat2 - lat1);
-          const dLon = toRad(lon2 - lon1);
-          const a =
-            Math.sin(dLat / 2) ** 2 +
-            Math.cos(toRad(lat1)) *
-              Math.cos(toRad(lat2)) *
-              Math.sin(dLon / 2) ** 2;
-          return Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        };
+      const haversine = (
+        lat1: number,
+        lon1: number,
+        lat2: number,
+        lon2: number,
+      ) => {
+        const toRad = (v: number) => (v * Math.PI) / 180;
+        const dLat = toRad(lat2 - lat1);
+        const dLon = toRad(lon2 - lon1);
+        const a =
+          Math.sin(dLat / 2) ** 2 +
+          Math.cos(toRad(lat1)) *
+            Math.cos(toRad(lat2)) *
+            Math.sin(dLon / 2) ** 2;
+        return Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      };
 
-        const allPickupLocations = getMatchingPickupLocations("");
-        if (allPickupLocations.length > 0) {
-          const nearest = allPickupLocations.reduce((closest, loc) =>
-            haversine(userLat, userLon, loc.lat, loc.lon) <
-            haversine(userLat, userLon, closest.lat, closest.lon)
-              ? loc
-              : closest,
-          );
-          const { latitude, longitude } = location.coords;
-          const dist = Math.hypot(
-            latitude - nearest.lat,
-            longitude - nearest.lon,
-          );
-          if (dist > 0.001) {
-            setUserLocationLabel("Off-Campus");
-            return;
-          }
-          console.log(
-            "[Location] Selected nearest:",
-            nearest.name,
-            `(id=${nearest.id})`,
-          );
-          if (startLocationText === "") {
-            // if the user has started editing ignore this
-            setStartLocationText(nearest.name);
-            setStartAddress(nearest.address);
-            setPickupLocation(nearest);
-            setUserLocationLabel(nearest.name);
-            setFocusedInput("dropoff");
-          }
+      const allPickupLocations = getMatchingPickupLocations("");
+      if (allPickupLocations.length > 0) {
+        const nearest = allPickupLocations.reduce((closest, loc) =>
+          haversine(userLat, userLon, loc.lat, loc.lon) <
+          haversine(userLat, userLon, closest.lat, closest.lon)
+            ? loc
+            : closest,
+        );
+        const { latitude, longitude } = location.coords;
+        const dist = Math.hypot(
+          latitude - nearest.lat,
+          longitude - nearest.lon,
+        );
+        if (dist > 0.001) {
+          setUserLocationLabel("Off-Campus");
+          return;
+        }
+        console.log(
+          "[Location] Selected nearest:",
+          nearest.name,
+          `(id=${nearest.id})`,
+        );
+        if (pickupLocationText === "") {
+          // if the user has started editing ignore this
+          setPickupLocationText(nearest.name);
+          setStartAddress(nearest.address);
+          setPickupLocation(nearest);
+          setUserLocationLabel(nearest.name);
+          setFocusedInput("dropoff");
         }
       }
     }
+  };
 
+  const fetchCurrentRide = async () => {
+    try {
+      const res = await api.get("/ride");
+      if (res.status === 204) {
+        setCurrentRide(null);
+      } else if (res.status === 200) {
+        setCurrentRide(res.data);
+      } else {
+        throw new Error("Could not fetch current ride details.");
+      }
+    } catch (err) {
+      // ignore error, could be because app minimized
+      console.log(err);
+    }
+  };
+
+  const handleMissedRideNotificationResponse = (
+    response: Notifications.NotificationResponse,
+  ) => {
+    const data = response.notification.request.content.data;
+    if (data.eventType === "missedRide") {
+      Notifications.clearLastNotificationResponseAsync();
+      setCurrentRide(null);
+      setMissedRide({
+        pickupLocation: data.pickupLocation,
+        dropoffLocation: data.dropoffLocation,
+      });
+      setTimeout(() => setShowModal(true), 300);
+    }
+  };
+
+  useEffect(() => {
+    registerForPushNotificationsAsync();
     requestLocationPermissions();
+    const responseListener =
+      Notifications.addNotificationResponseReceivedListener(
+        handleMissedRideNotificationResponse,
+      );
+    const interval = setInterval(fetchCurrentRide, 30 * 1000);
+
+    return () => {
+      clearInterval(interval);
+      responseListener.remove();
+    };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    setPickupList(getMatchingPickupLocations(startLocationText));
-  }, [startLocationText]);
+    setPickupList(getMatchingPickupLocations(pickupLocationText));
+  }, [pickupLocationText]);
 
   useEffect(() => {
-    setDropoffList(getMatchingDropoffLocations(destinationText));
-  }, [destinationText]);
-
-  useEffect(() => {
-    setHomeSheetRef(sheetRef);
-  }, [setHomeSheetRef]);
+    setDropoffList(getMatchingDropoffLocations(dropoffText));
+  }, [dropoffText]);
 
   useFocusEffect(
     useCallback(() => {
       if (pickupLocation) {
-        setStartLocationText(pickupLocation.name);
+        setPickupLocationText(pickupLocation.name);
         setStartAddress(pickupLocation.address);
       }
       if (dropoffLocation) {
-        setDestinationText(dropoffLocation.name);
-        setDestinationAddress(dropoffLocation.address);
+        setDropoffText(dropoffLocation.name);
+        setDropoffAddress(dropoffLocation.address);
       }
     }, [pickupLocation, dropoffLocation]),
   );
 
   useEffect(() => {
     if (!currentRide) {
-      setStartLocationText("");
-      setDestinationText("");
+      setPickupLocationText("");
+      setDropoffText("");
       setStartAddress("Select your pickup location");
-      setDestinationAddress("Select your destination");
+      setDropoffAddress("Select your destination");
+    } else {
+      // when a user submits a ride minimize the sheet
+      sheetRef.current?.snapToIndex(1);
     }
   }, [currentRide]);
 
-  const handleLayout1 = (event: LayoutChangeEvent) => {
+  useEffect(() => {
+    if (
+      lastNotificationResponse &&
+      lastNotificationResponse.notification.request.content.data.route &&
+      lastNotificationResponse.actionIdentifier ===
+        Notifications.DEFAULT_ACTION_IDENTIFIER
+    ) {
+      handleMissedRideNotificationResponse(lastNotificationResponse);
+    }
+  }, [lastNotificationResponse]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const calcMinimizedSheetHeight = (event: LayoutChangeEvent) => {
     let height = event.nativeEvent.layout.height;
     if (height === 0) {
       height = 92;
     }
-    snap0.set(height + 8);
+    snap0.set(height);
   };
 
-  const handleLayout2 = (event: LayoutChangeEvent) => {
+  const calcMediumSheetHeight = (event: LayoutChangeEvent) => {
     let height = event.nativeEvent.layout.height;
     if (height === 0) {
       height = 290;
@@ -311,22 +351,8 @@ const Home = () => {
     snap1.set(height);
   };
 
-  // const resetMapView = (location: LocationType) => {
-  //   setPickupList([]);
-  //   setDropoffList([]);
-  //   mapRef.current?.animateToRegion(
-  //     {
-  //       latitude: location.lat,
-  //       longitude: location.lon,
-  //       latitudeDelta: 0.02,
-  //       longitudeDelta: 0.02,
-  //     },
-  //     500,
-  //   );
-  // };
-
   const clickedPickupLocation = (location: LocationType) => () => {
-    setStartLocationText(location.name);
+    setPickupLocationText(location.name);
     setStartAddress(location.address);
     setPickupLocation(location);
     setFocusedInput("dropoff");
@@ -339,8 +365,8 @@ const Home = () => {
   };
 
   const clickedDropoffLocation = (location: LocationType) => () => {
-    setDestinationText(location.name);
-    setDestinationAddress(location.address);
+    setDropoffText(location.name);
+    setDropoffAddress(location.address);
     setDropoffLocation(location);
     destinationRef.current?.blur();
     if (pickupLocation) {
@@ -350,7 +376,8 @@ const Home = () => {
 
   return (
     <View className="bg-white flex-1 flex-col items-center pt-safe">
-      <View className="relative flex-col items-center justify-center pt-3 pb-8 px-5 w-full">
+      <View className="relative pt-3 pb-8 px-5 w-full">
+        {/* current location display */}
         <View className="flex-col items-center justify-center gap-1">
           <View className="flex-row justify-center items-center gap-1">
             <NavigationArrowIcon
@@ -367,8 +394,10 @@ const Home = () => {
             {userLocationLabel}
           </FontText>
         </View>
+
+        {/* map legend and profile page buttons */}
         <TouchableOpacity
-          className="absolute right-5 top-3 p-3 items-center justify-center rounded-2xl bg-slate-100"
+          className="absolute left-5 top-3 p-3 items-center justify-center rounded-2xl bg-slate-100"
           onPress={() => {
             if (snapIndex === 2) sheetRef.current?.snapToIndex(1);
             setLegendOpen(!legendOpen);
@@ -376,7 +405,17 @@ const Home = () => {
         >
           <FadersHorizontalIcon color={slate700} size="24" />
         </TouchableOpacity>
+        <TouchableOpacity
+          className="absolute right-5 top-3 p-3 items-center justify-center rounded-2xl bg-slate-100"
+          onPress={() => {
+            router.navigate("/profile");
+          }}
+        >
+          <UserCircleIcon color={slate700} size="24" />
+        </TouchableOpacity>
       </View>
+
+      {/* map view */}
       <View className="relative flex-1 w-full">
         <View className="w-full h-full mt-[-10px] items-center justify-center">
           <MapView
@@ -390,11 +429,12 @@ const Home = () => {
             }}
             mapPadding={{
               bottom: 92,
-              top: legendOpen ? 128 : 20,
+              top: 20,
               left: 0,
               right: 0,
             }}
             tintColor={UTBurntOrange}
+            userInterfaceStyle="light"
           >
             {pickupBoundaryPolygons.map((coords, index) => (
               <Polygon
@@ -411,56 +451,7 @@ const Home = () => {
             {dropoffBoundaryPolygons.map((coords, index) => (
               <Polygon
                 coordinates={coords}
-                holes={
-                  index === 0
-                    ? [
-                        [
-                          {
-                            latitude: 30.289121 + 0.00001,
-                            longitude: -97.7429238 - 0.00001,
-                          },
-                          {
-                            latitude: 30.2883058 - 0.00001,
-                            longitude: -97.7430042 - 0.00001,
-                          },
-                          {
-                            latitude: 30.2882641 - 0.00001,
-                            longitude: -97.7423873 + 0.00001,
-                          },
-                          {
-                            latitude: 30.2890701 + 0.00001,
-                            longitude: -97.7423283 + 0.00001,
-                          },
-                          {
-                            latitude: 30.289121 + 0.00001,
-                            longitude: -97.7429238 - 0.00001,
-                          },
-                        ],
-                        [
-                          {
-                            latitude: 30.2888591 + 0.00001,
-                            longitude: -97.7437415 - 0.00001,
-                          },
-                          {
-                            latitude: 30.287935 - 0.00001,
-                            longitude: -97.743838 - 0.00001,
-                          },
-                          {
-                            latitude: 30.2878887 - 0.00001,
-                            longitude: -97.7431889 + 0.00001,
-                          },
-                          {
-                            latitude: 30.288822 + 0.00001,
-                            longitude: -97.7430897 + 0.00001,
-                          },
-                          {
-                            latitude: 30.2888591 + 0.00001,
-                            longitude: -97.7437415 - 0.00001,
-                          },
-                        ],
-                      ]
-                    : undefined
-                }
+                holes={dropoffBoundaryHoles[index]}
                 key={index}
                 fillColor={
                   showDropoffBoundary ? `${UTTurquoise}30` : "#00000000"
@@ -470,41 +461,7 @@ const Home = () => {
                 }
               />
             ))}
-            {location && (
-              <Marker
-                coordinate={{
-                  latitude: location.coords.latitude,
-                  longitude: location.coords.longitude,
-                }}
-                tracksViewChanges={!markerReady}
-              >
-                <View
-                  onLayout={() => setMarkerReady(true)}
-                  style={{
-                    width: 24,
-                    height: 24,
-                    borderRadius: 12,
-                    backgroundColor: "white",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    shadowColor: "#000",
-                    shadowOffset: { width: 0, height: 2 },
-                    shadowOpacity: 0.2,
-                    shadowRadius: 4,
-                    elevation: 4,
-                  }}
-                >
-                  <View
-                    style={{
-                      width: 16,
-                      height: 16,
-                      borderRadius: 8,
-                      backgroundColor: UTBurntOrange,
-                    }}
-                  />
-                </View>
-              </Marker>
-            )}
+            <LocationMarker location={location} />
           </MapView>
         </View>
         <LinearGradient
@@ -519,6 +476,7 @@ const Home = () => {
         />
         {legendOpen && (
           <>
+            {/* legend buttons */}
             <Animated.View
               className="absolute top-[28px] right-5 px-4 py-2 bg-white rounded-full border border-slate-200 flex-row justify-end"
               entering={FadeInUp.duration(150).easing(Easing.out(Easing.cubic))}
@@ -550,281 +508,343 @@ const Home = () => {
           </>
         )}
       </View>
-      {(showHome || showMyRide) && (
-        <>
-          <BottomSheet
-            ref={sheetRef}
-            snapPoints={snapPoints}
-            enableDynamicSizing={false}
-            index={showHome ? 1 : -1}
-            style={{
-              borderRadius: 28,
-              backgroundColor: "transparent",
-              zIndex: 150,
-            }}
-            onChange={(index) => {
-              if (index !== 2) {
-                startLocationRef.current?.blur();
-                destinationRef.current?.blur();
-              }
-              setSnapIndex(index);
-            }}
-            handleComponent={() => (
-              <View
-                className="relative flex-col rounded-t-[28px]"
-                onLayout={handleLayout1}
-              >
-                <View className="rounded-t-[28px] flex-col items-center py-4">
-                  <View className="bg-slate-300 rounded w-8 h-1" />
-                </View>
-                <View className="flex-col gap-5 px-5 pb-1">
-                  <View className="flex-row w-full justify-between items-center">
-                    <FontText className="text-2xl font-medium">
-                      Book a ride
-                    </FontText>
-                    {!currentRide && (
-                      <TO onPress={() => router.navigate("/home/group-ride")}>
-                        <View className="flex-row gap-1 p-3 items-center bg-slate-50 rounded-[32px] border border-slate-200">
-                          <UserCirclePlusIcon color={slate700} size="24" />
-                          <FontText className="font-medium">{`${members.length === 0 ? "Add" : members.length + 1} Riders`}</FontText>
-                        </View>
-                      </TO>
-                    )}
-                    {currentRide && (
-                      <View className="flex-row gap-1 p-3 items-center bg-slate-200 rounded-[32px] border border-slate-400">
-                        <UserCirclePlusIcon color={slate500} size="24" />
-                        <FontText className="font-medium color-slate-500">{`${members.length === 0 ? "Add" : members.length + 1} Riders`}</FontText>
-                      </View>
-                    )}
-                  </View>
-                </View>
-              </View>
-            )}
-            containerStyle={{
-              position: "relative",
-              display: "flex",
-              flexDirection: "column",
-            }}
+
+      {/* main bottom sheet */}
+      <BottomSheet
+        ref={sheetRef}
+        snapPoints={snapPoints}
+        enableDynamicSizing={false}
+        index={1}
+        style={{
+          borderRadius: 28,
+          backgroundColor: "transparent",
+          zIndex: 150,
+        }}
+        onChange={(index) => {
+          if (index !== 2) {
+            startLocationRef.current?.blur();
+            destinationRef.current?.blur();
+          }
+          setSnapIndex(index);
+        }}
+        handleComponent={() => (
+          <View
+            className="relative flex-col rounded-t-[28px]"
+            onLayout={calcMinimizedSheetHeight}
           >
-            {pickupLocation && dropoffLocation && !currentRide && (
-              <Animated.View
-                className="absolute bottom-0 w-full z-10 px-5 mb-safe pb-[64px]"
-                entering={FadeInDown.duration(300)
-                  .delay(300)
-                  .easing(Easing.out(Easing.cubic))}
-                exiting={FadeOutDown.duration(300).easing(
-                  Easing.in(Easing.cubic),
-                )}
-              >
-                <LargeButton
-                  title="Continue"
-                  onPress={() => router.navigate("/home/confirm-ride")}
-                />
-              </Animated.View>
-            )}
-            <View className="flex-col mb-[-24px]">
-              <View
-                className="flex-col bg-white pt-4 px-5"
-                onLayout={handleLayout2}
-              >
+            <View className="rounded-t-[28px] flex-col items-center py-4">
+              <View className="bg-slate-300 rounded w-8 h-1" />
+            </View>
+            <View className="flex-col gap-5 px-5 pb-1">
+              <View className="flex-row w-full justify-between items-center h-12">
+                <FontText className="text-2xl font-medium">
+                  {currentRide ? "Ride in Progress" : "Book a ride"}
+                </FontText>
                 {!currentRide && (
-                  <View className="flex-col rounded-lg">
-                    <Pressable
-                      className={`${focusedInput === "pickup" ? "bg-slate-100" : "bg-slate-50"} transition-colors flex-row p-4 gap-4 items-center rounded-t-2xl border border-slate-200`}
-                      onPress={() => startLocationRef.current?.focus()}
-                    >
-                      <View className="bg-[#BF570033] rounded-full items-center justify-center w-[32px] h-[32px]">
-                        <CircleIcon
-                          color={UTBurntOrange}
-                          weight="fill"
-                          size="20"
-                        />
-                      </View>
-                      <View className="flex-1 flex-col gap-1">
-                        <TextInput
-                          ref={startLocationRef}
-                          onFocus={() => {
-                            setFocusedInput("pickup");
-                            setIsInputFocused(true);
-                            snapIndex !== 2 && sheetRef.current?.expand();
-                          }}
-                          onBlur={() => setIsInputFocused(false)}
-                          className="font-medium text-lg"
-                          placeholder="Where from?"
-                          placeholderTextColor={gray900}
-                          onChangeText={(text) => {
-                            setStartLocationText(text);
-                            if (!startLocationAddress.startsWith("Select")) {
-                              setStartAddress("Select your pickup location");
-                              setPickupLocation(null);
-                            }
-                          }}
-                          value={startLocationText}
-                          style={_style}
-                        />
-                        <FontText className="text-lg color-[#333F48]">
-                          {startLocationAddress}
-                        </FontText>
-                      </View>
-                    </Pressable>
-                    <Pressable
-                      className={`${focusedInput === "dropoff" ? "bg-slate-100" : "bg-slate-50"} transition-colors flex-row p-4 gap-4 items-center rounded-b-2xl border border-slate-200 mt-[-1px] mb-6`}
-                      onPress={() => destinationRef.current?.focus()}
-                    >
-                      <View className="bg-[#005F8633] rounded-full items-center justify-center w-[32px] h-[32px]">
-                        <MapPinIcon
-                          color={UTBluebonnet}
-                          size="20"
-                          weight="fill"
-                        />
-                      </View>
-                      <View className="flex-1 flex-col gap-1">
-                        <TextInput
-                          ref={destinationRef}
-                          onFocus={() => {
-                            setFocusedInput("dropoff");
-                            setIsInputFocused(true);
-                            snapIndex !== 2 && sheetRef.current?.expand();
-                          }}
-                          onBlur={() => setIsInputFocused(false)}
-                          className="font-medium text-lg"
-                          placeholder="Where to?"
-                          placeholderTextColor={gray900}
-                          onChangeText={(text) => {
-                            setDestinationText(text);
-                            if (!destinationAddress.startsWith("Select")) {
-                              setDestinationAddress("Select your destination");
-                              setDropoffLocation(null);
-                            }
-                          }}
-                          value={destinationText}
-                          style={_style}
-                        />
-                        <FontText className="text-lg color-[#333F48]">
-                          {destinationAddress}
-                        </FontText>
-                      </View>
-                    </Pressable>
-                  </View>
-                )}
-                {currentRide && (
-                  <View className="p-4 bg-slate-50 rounded-2xl border border-slate-200 flex-col mb-2 gap-6">
-                    <View className="flex-col gap-3">
-                      <View className="flex-row gap-2 items-center">
-                        <InfoIcon color={UTBurntOrange} size={32} />
-                        <FontText className="text-2xl font-medium">
-                          Ride in Progress
-                        </FontText>
-                      </View>
-                      <FontText className="text-lg">
-                        You currently have a Sure Walk booked.
-                      </FontText>
-                    </View>
-                    <View className="flex-col gap-3">
-                      <LargeButton
-                        title="View Ride"
-                        onPress={() => {
-                          goMyRide();
-                        }}
-                      />
-                    </View>
-                  </View>
+                  <TertiaryButton
+                    title={`${members.length === 0 ? "Add" : members.length + 1} Riders`}
+                    icon={<UserCirclePlusIcon color={slate700} size="24" />}
+                    onPress={() => router.navigate("/home/group-ride")}
+                  />
                 )}
               </View>
-              {!currentRide && (
-                <LinearGradient
-                  colors={["#ffffffff", "#ffffff00"]}
-                  style={{
-                    marginTop: -12,
-                    height: 24,
-                    zIndex: 50,
-                  }}
-                />
-              )}
             </View>
+          </View>
+        )}
+        containerStyle={{
+          position: "relative",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        {/* continue button */}
+        {pickupLocation && dropoffLocation && !currentRide && (
+          <Animated.View
+            className="absolute bottom-0 w-full z-10 px-5 mb-safe pb-[80px]"
+            entering={FadeInDown.duration(300)
+              .delay(300)
+              .easing(Easing.out(Easing.cubic))}
+            exiting={FadeOutDown.duration(300).easing(Easing.in(Easing.cubic))}
+          >
+            <LargeButton
+              title="Continue"
+              onPress={() => router.navigate("/home/confirm-ride")}
+            />
+          </Animated.View>
+        )}
+
+        {/* pickup / dropoff location selector or current ride details */}
+        <View className="flex-col mb-[-24px]" onLayout={calcMediumSheetHeight}>
+          <View className="flex-col bg-white pt-4 px-5">
+            {/* location selector */}
             {!currentRide && (
-              <BottomSheetFlatList
-                overScrollMode={"always"}
-                scrollEnabled={
-                  Platform.OS === "android" ? snapIndex === 2 : undefined
-                }
-                data={
-                  focusedInput === "pickup" &&
-                  startLocationText.trim().length >= 1
-                    ? pickupList
-                    : focusedInput === "dropoff" &&
-                        destinationText.trim().length >= 1
-                      ? dropoffList
-                      : []
-                }
-                keyboardShouldPersistTaps="handled"
-                renderItem={({ index, item }) => (
-                  <TouchableOpacity
-                    key={index}
-                    onPress={
-                      focusedInput === "pickup"
-                        ? clickedPickupLocation(item)
-                        : clickedDropoffLocation(item)
-                    }
-                  >
-                    <View
-                      key={index}
-                      className={`flex-col ${index === (focusedInput === "pickup" ? pickupList : dropoffList).length - 1 ? "" : "border-b"} border-gray-200 pb-4 pt-2`}
-                    >
-                      <View className="flex-row gap-2 items-center">
-                        <MapPinIcon color={slate900} size="24" />
-                        <View className="flex-1 flex-col gap-2 justify-around">
-                          <FontText className="font-medium text-lg/1">
-                            {item.name}
-                          </FontText>
-                          <FontText className="font-regular text-[14px]/1 text-gray-500">
-                            {item.address}
-                          </FontText>
-                        </View>
-                        <StarIcon color={slate900} size="24" />
-                      </View>
-                    </View>
-                  </TouchableOpacity>
-                )}
-                ListFooterComponent={
-                  (((focusedInput === "pickup" &&
-                    startLocationText.trim().length >= 1) ||
-                    (focusedInput === "dropoff" &&
-                      destinationText.trim().length >= 1)) && (
-                    <TouchableOpacity
-                      onPress={() =>
-                        focusedInput === "pickup"
-                          ? (setStartLocationText(""),
-                            setStartAddress("Select your pickup location"),
-                            setPickupLocation(null))
-                          : (setDestinationText(""),
-                            setDestinationAddress("Select your destination"),
-                            setDropoffLocation(null))
-                      }
-                    >
-                      <FontText className="mt-4">
-                        Clear {focusedInput} selection
-                      </FontText>
-                    </TouchableOpacity>
-                  )) || <View />
-                }
-                contentContainerStyle={{
-                  paddingTop: 8,
-                  position: "relative",
-                  paddingHorizontal: 20,
-                  flexDirection: "column",
-                  gap: 4,
-                  justifyContent: "flex-start",
-                }}
-                style={{
-                  flexGrow: 1,
-                }}
-              />
+              <View className="flex-col rounded-lg">
+                <Pressable
+                  className={`${focusedInput === "pickup" ? "bg-slate-100" : "bg-slate-50"} transition-colors flex-row p-4 gap-4 items-center rounded-t-2xl border border-slate-200`}
+                  onPress={() => startLocationRef.current?.focus()}
+                >
+                  <View className="bg-[#BF570033] rounded-full items-center justify-center w-[32px] h-[32px]">
+                    <CircleIcon color={UTBurntOrange} weight="fill" size="20" />
+                  </View>
+                  <View className="flex-1 flex-col gap-1">
+                    <TextInput
+                      ref={startLocationRef}
+                      onFocus={() => {
+                        setFocusedInput("pickup");
+                        setIsInputFocused(true);
+                        snapIndex !== 2 && sheetRef.current?.expand();
+                      }}
+                      onBlur={() => setIsInputFocused(false)}
+                      className="font-medium text-lg"
+                      placeholder="Where from?"
+                      placeholderTextColor={gray900}
+                      onChangeText={(text) => {
+                        setPickupLocationText(text);
+                        if (!startLocationAddress.startsWith("Select")) {
+                          setStartAddress("Select your pickup location");
+                          setPickupLocation(null);
+                        }
+                      }}
+                      value={pickupLocationText}
+                      style={_style}
+                    />
+                    <FontText className="text-lg color-[#333F48]">
+                      {startLocationAddress}
+                    </FontText>
+                  </View>
+                </Pressable>
+                <Pressable
+                  className={`${focusedInput === "dropoff" ? "bg-slate-100" : "bg-slate-50"} transition-colors flex-row p-4 gap-4 items-center rounded-b-2xl border border-slate-200 mt-[-1px] mb-4`}
+                  onPress={() => destinationRef.current?.focus()}
+                >
+                  <View className="bg-[#005F8633] rounded-full items-center justify-center w-[32px] h-[32px]">
+                    <MapPinIcon color={UTBluebonnet} size="20" weight="fill" />
+                  </View>
+                  <View className="flex-1 flex-col gap-1">
+                    <TextInput
+                      ref={destinationRef}
+                      onFocus={() => {
+                        setFocusedInput("dropoff");
+                        setIsInputFocused(true);
+                        snapIndex !== 2 && sheetRef.current?.expand();
+                      }}
+                      onBlur={() => setIsInputFocused(false)}
+                      className="font-medium text-lg"
+                      placeholder="Where to?"
+                      placeholderTextColor={gray900}
+                      onChangeText={(text) => {
+                        setDropoffText(text);
+                        if (!dropoffAddress.startsWith("Select")) {
+                          setDropoffAddress("Select your destination");
+                          setDropoffLocation(null);
+                        }
+                      }}
+                      value={dropoffText}
+                      style={_style}
+                    />
+                    <FontText className="text-lg color-[#333F48]">
+                      {dropoffAddress}
+                    </FontText>
+                  </View>
+                </Pressable>
+                <TO onPress={() => rideCodeSheetRef.current?.present()}>
+                  <FontText className="text-lg mb-safe color-ut-bluebonnet">
+                    Have a ride code?
+                  </FontText>
+                </TO>
+              </View>
             )}
-          </BottomSheet>
-          <MyRide initialIndex={showMyRide ? 0 : -1} />
-        </>
-      )}
+
+            {/* current ride details */}
+            {currentRide && (
+              <View className="flex-col gap-4 mb-safe">
+                <View className="pb-4 bg-slate-50 rounded-2xl border border-slate-200 flex-col gap-2">
+                  <View className="flex-row items-center gap-2 mb-2 px-5 py-1.5 bg-orange-100 rounded-t-2xl">
+                    <FontText className="text-lg font-semibold color-ut-burntorange">
+                      {currentRide.pickupLocation?.abbreviation}
+                    </FontText>
+                    <ArrowCircleRightIcon
+                      weight="fill"
+                      color={UTBurntOrange}
+                      size={24}
+                    />
+                    <FontText className="text-lg font-semibold color-ut-burntorange">
+                      {currentRide.dropoffLocation?.name}
+                    </FontText>
+                  </View>
+                  {currentRide.eta && (
+                    <FontText className="text-lg font-semibold px-5">
+                      ETA:{" "}
+                      <FontText className="text-lg font-regular">
+                        {currentRide.eta ?? ""}
+                      </FontText>
+                    </FontText>
+                  )}
+                  <FontText className="text-lg font-semibold px-5">
+                    Status:{" "}
+                    <FontText className="text-lg font-regular">
+                      {`${currentRide.rideState.at(0)?.toUpperCase()}${currentRide.rideState.slice(1)}`}
+                    </FontText>
+                  </FontText>
+                </View>
+                <LargeButton
+                  title="View Live Tracking"
+                  onPress={() => {
+                    setViewRideDisabled(true);
+                    setTimeout(
+                      () => router.push("/home/current-ride-info"),
+                      300,
+                    );
+                    setTimeout(() => setViewRideDisabled(false), 1000);
+                  }}
+                  disabled={viewRideDisabled}
+                />
+              </View>
+            )}
+          </View>
+          {!currentRide && (
+            <LinearGradient
+              colors={["#ffffffff", "#ffffff00"]}
+              style={{
+                marginTop: -12,
+                height: 24,
+                zIndex: 50,
+              }}
+            />
+          )}
+        </View>
+
+        {/* search results */}
+        {!currentRide && (
+          <BottomSheetFlatList
+            overScrollMode={"always"}
+            scrollEnabled={
+              Platform.OS === "android" ? snapIndex === 2 : undefined
+            }
+            data={
+              focusedInput === "pickup" && pickupLocationText.trim().length >= 1
+                ? pickupList
+                : focusedInput === "dropoff" && dropoffText.trim().length >= 1
+                  ? dropoffList
+                  : []
+            }
+            keyboardShouldPersistTaps="handled"
+            renderItem={({ index, item }) => (
+              <TouchableOpacity
+                key={index}
+                onPress={
+                  focusedInput === "pickup"
+                    ? clickedPickupLocation(item)
+                    : clickedDropoffLocation(item)
+                }
+              >
+                <View
+                  key={index}
+                  className={`flex-col ${index === (focusedInput === "pickup" ? pickupList : dropoffList).length - 1 ? "" : "border-b"} border-gray-200 pb-4 pt-2`}
+                >
+                  <View className="flex-row gap-2 items-center">
+                    <MapPinIcon color={slate900} size="24" />
+                    <View className="flex-1 flex-col gap-2 justify-around">
+                      <FontText className="font-medium text-lg/1">
+                        {item.name}
+                      </FontText>
+                      <FontText className="font-regular text-[14px]/1 text-gray-500">
+                        {item.address}
+                      </FontText>
+                    </View>
+                    <StarIcon color={slate900} size="24" />
+                  </View>
+                </View>
+              </TouchableOpacity>
+            )}
+            ListFooterComponent={
+              (((focusedInput === "pickup" &&
+                pickupLocationText.trim().length >= 1) ||
+                (focusedInput === "dropoff" &&
+                  dropoffText.trim().length >= 1)) && (
+                <TouchableOpacity
+                  onPress={() =>
+                    focusedInput === "pickup"
+                      ? (setPickupLocationText(""),
+                        setStartAddress("Select your pickup location"),
+                        setPickupLocation(null))
+                      : (setDropoffText(""),
+                        setDropoffAddress("Select your destination"),
+                        setDropoffLocation(null))
+                  }
+                >
+                  <FontText className="mt-4 mb-safe">
+                    Clear {focusedInput} selection
+                  </FontText>
+                </TouchableOpacity>
+              )) || <View />
+            }
+            contentContainerStyle={{
+              paddingTop: 8,
+              position: "relative",
+              paddingHorizontal: 20,
+              flexDirection: "column",
+              gap: 4,
+              justifyContent: "flex-start",
+            }}
+            style={{
+              flexGrow: 1,
+            }}
+          />
+        )}
+      </BottomSheet>
+
+      {/* ride code bottom sheet modal */}
+      <BottomSheetModalProvider>
+        <BottomSheetModal
+          ref={rideCodeSheetRef}
+          handleComponent={() => (
+            <View className="rounded-t-[28px] flex-col items-center py-4">
+              <View className="bg-slate-300 rounded w-8 h-1" />
+            </View>
+          )}
+          backdropComponent={() => (
+            <AnimatedPressable
+              className="absolute inset-0 bg-[#00000080]"
+              onPress={() => rideCodeSheetRef.current?.dismiss()}
+              entering={FadeIn.duration(200)}
+              exiting={FadeOut.duration(200)}
+            />
+          )}
+        >
+          <BottomSheetView className="px-5 pb-safe">
+            <FontText className="text-2xl font-medium">Join a Ride</FontText>
+            <FontText className="text-lg font-normal mt-2 mb-6">
+              Enter the ride code shared by your group leader.
+            </FontText>
+            <TextInputField
+              placeholder="ABC1234"
+              autoCapitalize={"characters"}
+              value={code}
+              onChangeText={(text) => setCode(text.toUpperCase())}
+              inputRef={codeInputRef}
+              returnKeyType="go"
+              onSubmitEditing={() => {
+                if (code.length !== 7) {
+                  setToast({
+                    title: "Invalid Code",
+                    description: "Please enter a valid 7-digit ride code.",
+                    onDismiss: () => setToast(null),
+                    isError: true,
+                  });
+                  return;
+                }
+                router.push(`/home/current-ride-info?shareCode=${code}`);
+              }}
+              InputComponent={BottomSheetTextInput}
+              styleProps={{ textTransform: "uppercase" }}
+            />
+          </BottomSheetView>
+        </BottomSheetModal>
+      </BottomSheetModalProvider>
+
+      {/* missed ride modal */}
+      <MissedRideModal {...{ showModal, setShowModal, missedRide }} />
     </View>
   );
 };

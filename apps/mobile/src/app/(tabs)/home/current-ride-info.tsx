@@ -4,15 +4,16 @@ import BottomSheet, {
 } from "@gorhom/bottom-sheet";
 import CurrentRideSmall from "@sure-walk/utils/types/current-ride-small";
 import InProgressRideState from "@sure-walk/utils/types/in-progress-ride-state";
+import Location from "@sure-walk/utils/types/location";
 import RideEvent from "@sure-walk/utils/types/ride-event";
 import VehicleInfoShort from "@sure-walk/utils/types/vehicle-info-short";
 import * as Clipboard from "expo-clipboard";
 import { LinearGradient } from "expo-linear-gradient";
+import * as ExpoLocation from "expo-location";
 import { router } from "expo-router";
 import { useSearchParams } from "expo-router/build/hooks";
 import * as SecureStore from "expo-secure-store";
 import {
-  CaretLeftIcon,
   CarSimpleIcon,
   CircleIcon,
   CopyIcon,
@@ -36,30 +37,31 @@ import Animated, {
 
 import { API_URL } from "@/src/client/auth";
 import { api } from "@/src/client/session";
+import BackButton from "@/src/components/back-button";
 import CancelRideModal from "@/src/components/cancel-ride-modal";
 import FontText from "@/src/components/font-text";
 import { GuidelinesListShort } from "@/src/components/guidelines-list";
+import LocationMarker from "@/src/components/location-marker";
 import OutlineButton from "@/src/components/outline-button";
 import PickupDropoffLocationInfo from "@/src/components/pickup-dropoff-location-info";
 import RideStateStep, {
   RideStateStepDivider,
 } from "@/src/components/ride-state-step";
 import RiderCard from "@/src/components/rider-card";
-import { slate700, UTBluebonnet, UTBurntOrange } from "@/src/utils/colors";
+import { UTBluebonnet, UTBurntOrange } from "@/src/utils/colors";
 import { useCurrentRideSession } from "@/src/utils/context/current-ride-context";
 import { useMissedRideSession } from "@/src/utils/context/missed-ride-context";
+import { usePushNotificationsContext } from "@/src/utils/context/push-notifications-context";
 import { useRideDetailsSession } from "@/src/utils/context/ride-details-context";
 import { useToastContext } from "@/src/utils/context/toast-context";
-import { WEST_CAMPUS_LOCATIONS } from "@/src/utils/locations/dropoff-locations";
-import { CAMPUS_LOCATIONS } from "@/src/utils/locations/pickup-locations";
 import LoadingState from "@/src/utils/types/loading-state";
-import Location from "@/src/utils/types/location";
 
 const CurrentRideInfo = () => {
   const { setRideDetails, rideDetails } = useRideDetailsSession();
   const { setCurrentRide } = useCurrentRideSession();
   const { setMissedRide, setShowModal } = useMissedRideSession();
   const { setToast } = useToastContext();
+  const { pushToken } = usePushNotificationsContext();
 
   // shareCode is for viewing group rides
   const params = useSearchParams();
@@ -78,9 +80,11 @@ const CurrentRideInfo = () => {
     undefined,
   );
   const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [userLocation, setUserLocation] =
+    useState<ExpoLocation.LocationObject | null>(null);
 
-  const wsRef = useRef<WebSocket>(undefined);
-  const wsConnectTimeoutRef = useRef<NodeJS.Timeout>(undefined);
+  const wsRef = useRef<WebSocket | undefined>(undefined);
+  const wsConnectTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const mapRef = useRef<MapView | null>(null);
   const sheetRef = useRef<BottomSheet | null>(null);
   const scrollRef = useRef<BottomSheetScrollViewMethods | null>(null);
@@ -96,12 +100,16 @@ const CurrentRideInfo = () => {
   ) as SharedValue<(string | number)[]>;
 
   const connect = (onConnect = () => {}) => {
-    const wsURL = API_URL.replace("http", "ws");
+    const wsURL = new URL(API_URL.replace("http", "ws"));
     const accessToken = SecureStore.getItem("accessToken");
-    const ws = new WebSocket(
-      `${wsURL}/ride/events${shareCode ? `?shareCode=${shareCode}` : ""}`,
-      `Bearer ${accessToken ?? ""}`,
-    );
+    wsURL.pathname = "/api/ride/events";
+    if (shareCode) {
+      wsURL.searchParams.append("shareCode", shareCode);
+    }
+    if (pushToken) {
+      wsURL.searchParams.append("pushToken", pushToken);
+    }
+    const ws = new WebSocket(wsURL.toString(), `Bearer ${accessToken ?? ""}`);
     wsRef.current = ws;
 
     ws.addEventListener("message", (event) => {
@@ -116,14 +124,8 @@ const CurrentRideInfo = () => {
           setMissedRide(data);
           animateToStep(data.rideState);
           setLoadingState("done");
-          setPickupLocation(
-            CAMPUS_LOCATIONS.find((loc) => loc.id === data.pickupLocationID),
-          );
-          setDropoffLocation(
-            WEST_CAMPUS_LOCATIONS.find(
-              (loc) => loc.id === data.dropoffLocationID,
-            ),
-          );
+          setPickupLocation(data.pickupLocation);
+          setDropoffLocation(data.dropoffLocation);
           onConnect();
           break;
         }
@@ -261,6 +263,7 @@ const CurrentRideInfo = () => {
   };
 
   useEffect(() => {
+    fetchUserLocation();
     setRideDetails(null);
     connect(() =>
       setTimeout(() => {
@@ -272,6 +275,7 @@ const CurrentRideInfo = () => {
       if (wsRef.current) {
         wsRef.current.onclose = null;
         wsRef.current.close();
+        wsRef.current = undefined;
       }
       if (wsConnectTimeoutRef.current) {
         clearTimeout(wsConnectTimeoutRef.current);
@@ -279,6 +283,18 @@ const CurrentRideInfo = () => {
       }
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const fetchUserLocation = async () => {
+    const { status } = await ExpoLocation.getForegroundPermissionsAsync();
+    if (status !== "granted") {
+      return;
+    }
+
+    const location = await ExpoLocation.getCurrentPositionAsync({
+      accuracy: ExpoLocation.LocationAccuracy.BestForNavigation,
+    });
+    setUserLocation(location);
+  };
 
   const animateToStep = (rideState: InProgressRideState) => {
     if (rideState === "en route") {
@@ -304,7 +320,7 @@ const CurrentRideInfo = () => {
     if (height === 0) {
       height = 36;
     }
-    snap0.set(height + 48);
+    snap0.set(height + 64);
   };
 
   const handleLayout1 = (event: LayoutChangeEvent) => {
@@ -312,7 +328,7 @@ const CurrentRideInfo = () => {
     if (height === 0) {
       height = 76;
     }
-    snap1.set(height + 48);
+    snap1.set(height + 36);
   };
 
   useAnimatedReaction(
@@ -332,8 +348,8 @@ const CurrentRideInfo = () => {
   };
 
   const TwoMinuteWarning = () => (
-    <View className="pb-2" onLayout={handleLayout0}>
-      <View className="flex-row items-center gap-4 px-4 py-2.5 border border-ut-burntorange rounded-xl mt-1 mb-2">
+    <View className="mb-2" onLayout={handleLayout0}>
+      <View className="flex-row items-center gap-4 px-4 py-2.5 border border-ut-burntorange rounded-xl mt-1">
         <WarningCircleIcon color={UTBurntOrange} size={24} />
         <View className="flex-col">
           <FontText className="color-ut-burntorange text-lg">
@@ -350,15 +366,8 @@ const CurrentRideInfo = () => {
   return (
     <View className="bg-white flex-1 pt-5 flex-col">
       <View className="flex-row gap-4 px-5 items-center mt-safe mb-6">
-        <TouchableOpacity
-          className="w-12 h-12 rounded-2xl bg-slate-100 items-center justify-center"
-          onPress={() => {
-            router.back();
-          }}
-        >
-          <CaretLeftIcon size={24} color={slate700} />
-        </TouchableOpacity>
-        <FontText className="font-medium text-2xl">Your ride details</FontText>
+        <BackButton action={() => router.dismissTo("/home")} />
+        <FontText className="font-medium text-2xl">Your Ride Details</FontText>
       </View>
       <View className="relative w-full mb-8">
         <LinearGradient
@@ -424,7 +433,6 @@ const CurrentRideInfo = () => {
           <MapView
             ref={mapRef}
             style={{ width: "100%", flex: 1, zIndex: 0 }}
-            showsUserLocation
             initialRegion={{
               latitude: 30.282962,
               longitude: -97.737224,
@@ -438,13 +446,15 @@ const CurrentRideInfo = () => {
               right: 0,
             }}
             tintColor={UTBurntOrange}
+            userInterfaceStyle="light"
+            loadingEnabled
           >
             <Marker
               coordinate={{
                 latitude: pickupLocation?.lat ?? 0,
                 longitude: pickupLocation?.lon ?? 0,
               }}
-              tracksViewChanges={false}
+              tracksViewChanges={true}
             >
               <View className="bg-[#EDD9CA] rounded-full items-center justify-center w-[32px] h-[32px]">
                 <CircleIcon color={UTBurntOrange} weight="fill" size="20" />
@@ -455,31 +465,18 @@ const CurrentRideInfo = () => {
                 latitude: dropoffLocation?.lat ?? 0,
                 longitude: dropoffLocation?.lon ?? 0,
               }}
-              tracksViewChanges={false}
+              tracksViewChanges={true}
             >
               <View className="bg-[#C6DBE4] rounded-full items-center justify-center w-[32px] h-[32px]">
                 <MapPinIcon color={UTBluebonnet} size="20" weight="fill" />
               </View>
             </Marker>
-            {/* <Polyline
-              coordinates={[
-                {
-                  latitude: pickupLocation?.lat ?? 0,
-                  longitude: pickupLocation?.lon ?? 0,
-                },
-                {
-                  latitude: dropoffLocation?.lat ?? 0,
-                  longitude: dropoffLocation?.lon ?? 0,
-                },
-              ]}
-              strokeColor="#fff"
-              strokeWidth={4}
-            /> */}
             <Marker
               coordinate={{
                 latitude: vehicleLocation.latitude,
                 longitude: vehicleLocation.longitude,
               }}
+              tracksViewChanges={true}
             >
               <View
                 className="bg-white rounded-full items-center justify-center w-[44px] h-[44px]"
@@ -488,6 +485,7 @@ const CurrentRideInfo = () => {
                 <CarSimpleIcon color={"#000"} size={32} weight="fill" />
               </View>
             </Marker>
+            <LocationMarker location={userLocation} />
           </MapView>
         </View>
       </View>
@@ -496,22 +494,23 @@ const CurrentRideInfo = () => {
         enableDynamicSizing={false}
         snapPoints={snapPoints}
         index={-1}
-        handleComponent={null}
-      >
-        <View className="relative w-full">
-          <View className="rounded-t-[28px] flex-col items-center pt-4">
-            <View className="bg-slate-300 rounded w-8 h-1" />
+        handleComponent={() => (
+          <View className="relative w-full">
+            <View className="rounded-t-[28px] flex-col items-center pt-4">
+              <View className="bg-slate-300 rounded w-8 h-1" />
+            </View>
+            <LinearGradient
+              colors={["#ffffffff", "#ffffff00"]}
+              style={{
+                position: "fixed",
+                top: 16,
+                height: 16,
+                zIndex: 100,
+              }}
+            />
           </View>
-          <LinearGradient
-            colors={["#ffffffff", "#ffffff00"]}
-            style={{
-              position: "fixed",
-              top: 16,
-              height: 16,
-              zIndex: 100,
-            }}
-          />
-        </View>
+        )}
+      >
         <BottomSheetScrollView className="px-5" ref={scrollRef}>
           {loadingState === "done" && rideDetails && (
             <>
@@ -554,7 +553,6 @@ const CurrentRideInfo = () => {
                         )}
                       </View>
                     </View>
-                    <View className="bg-blue-200 rounded-xl flex-1 h-full"></View>
                   </View>
                 </View>
               )}
@@ -569,7 +567,7 @@ const CurrentRideInfo = () => {
                     Booking details
                   </FontText>
                 </View>
-                <View className="mt-2">
+                <View className="mt-2 mb-6">
                   {pickupLocation && dropoffLocation && (
                     <PickupDropoffLocationInfo
                       pickupLocation={pickupLocation}
@@ -580,10 +578,10 @@ const CurrentRideInfo = () => {
               </View>
               {rideDetails.groupRide.length !== 0 && (
                 <>
-                  <FontText className="text-xl font-medium pt-6 pb-4">
+                  <FontText className="text-xl font-medium pb-4">
                     Share group ride
                   </FontText>
-                  <View className="bg-slate-50 rounded-lg border border-slate-200 flex-row items-center justify-between px-4 py-2.5">
+                  <View className="bg-slate-50 rounded-lg border border-slate-200 flex-row items-center justify-between px-4 py-2.5 mb-6">
                     <FontText className="text-lg">
                       {rideDetails.shareCode}
                     </FontText>
@@ -593,7 +591,7 @@ const CurrentRideInfo = () => {
                   </View>
                 </>
               )}
-              <View className="flex-row items-center justify-between w-full pt-6 pb-4">
+              <View className="flex-row items-center justify-between w-full pb-4">
                 <FontText className="text-xl font-medium">
                   Ride members
                 </FontText>
@@ -623,7 +621,7 @@ const CurrentRideInfo = () => {
               {!shareCode &&
                 rideDetails.rideState !== "in progress" &&
                 rideDetails.rideState !== "dropped off" && (
-                  <View className="flex-row pb-6">
+                  <View className="flex-row pb-safe">
                     <OutlineButton
                       title="Cancel booking"
                       onPress={() => setModalVisible(true)}

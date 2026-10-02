@@ -3,6 +3,7 @@ import InProgressRideState from "@sure-walk/utils/types/in-progress-ride-state";
 import { and, eq, gt, isNull, notInArray, sql } from "drizzle-orm";
 
 import { getDBInWorker } from "../db";
+import { dropoffLocations, pickupLocations } from "../db/schema/locations";
 import { Ride, rides } from "../db/schema/rides";
 import { users } from "../db/schema/users";
 import { vehicles } from "../db/schema/vehicles";
@@ -22,6 +23,18 @@ const getActiveRides = async (env: CloudflareEnv) => {
         // using the submittedAt index
         gt(rides.submittedAt, new Date(Date.now() - 1000 * 60 * 60 * 36)),
       ),
+    )
+    .innerJoin(pickupLocations, eq(rides.pickupLocationID, pickupLocations.id))
+    .innerJoin(
+      dropoffLocations,
+      eq(rides.dropoffLocationID, dropoffLocations.id),
+    )
+    .then((res) =>
+      res.map((ride) => ({
+        ...ride.rides,
+        pickupLocation: ride.pickupLocations,
+        dropoffLocation: ride.dropoffLocations,
+      })),
     );
 
   return results;
@@ -42,10 +55,21 @@ const getActiveRideByUserID = async (userID: string, env: CloudflareEnv) => {
       ),
     )
     .leftJoin(vehicles, eq(rides.vehicleID, vehicles.samsaraID))
-    .leftJoin(users, eq(rides.userID, users.id))
+    .innerJoin(users, eq(rides.userID, users.id))
+    .innerJoin(pickupLocations, eq(rides.pickupLocationID, pickupLocations.id))
+    .innerJoin(
+      dropoffLocations,
+      eq(rides.dropoffLocationID, dropoffLocations.id),
+    )
     .then(([res]) => {
       if (res) {
-        return { ...res.rides, vehicle: res.vehicles, user: res.users };
+        return {
+          ...res.rides,
+          vehicle: res.vehicles,
+          user: res.users,
+          pickupLocation: res.pickupLocations,
+          dropoffLocation: res.dropoffLocations,
+        };
       } else {
         return undefined;
       }
@@ -72,10 +96,21 @@ const getActiveRideByShareCode = async (
       ),
     )
     .leftJoin(vehicles, eq(rides.vehicleID, vehicles.samsaraID))
-    .leftJoin(users, eq(rides.userID, users.id))
+    .innerJoin(users, eq(rides.userID, users.id))
+    .innerJoin(pickupLocations, eq(rides.pickupLocationID, pickupLocations.id))
+    .innerJoin(
+      dropoffLocations,
+      eq(rides.dropoffLocationID, dropoffLocations.id),
+    )
     .then(([res]) => {
       if (res) {
-        return { ...res.rides, vehicle: res.vehicles, user: res.users };
+        return {
+          ...res.rides,
+          vehicle: res.vehicles,
+          user: res.users,
+          pickupLocation: res.pickupLocations,
+          dropoffLocation: res.dropoffLocations,
+        };
       } else {
         return undefined;
       }

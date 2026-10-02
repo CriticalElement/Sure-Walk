@@ -3,8 +3,9 @@ import { router } from "expo-router";
 import {
   ArrowUpRightIcon,
   ArrowUUpLeftIcon,
+  CaretLeftIcon,
   CaretRightIcon,
-  SignOutIcon,
+  PencilIcon,
 } from "phosphor-react-native";
 import { useEffect, useState } from "react";
 import { Linking, ScrollView, TouchableOpacity, View } from "react-native";
@@ -16,11 +17,13 @@ import EditProfileTextInput from "@/src/components/edit-profile-text-input";
 import FontText from "@/src/components/font-text";
 import LargeButton from "@/src/components/large-button";
 import OutlineButton from "@/src/components/outline-button";
-import { UTBluebonnet } from "@/src/utils/colors";
+import { slate700, UTBluebonnet } from "@/src/utils/colors";
+import { usePushNotificationsContext } from "@/src/utils/context/push-notifications-context";
 import { useSession } from "@/src/utils/context/user-context";
 
 const Profile = () => {
-  const { user, loadingState, logOut, setUser } = useSession();
+  const { user, logOut, setUser } = useSession();
+  const { pushToken } = usePushNotificationsContext();
 
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -105,14 +108,16 @@ const Profile = () => {
 
   return (
     <View className="bg-white flex-1">
-      {loadingState === "loading" && (
-        <FontText className="mt-4">Loading...</FontText>
-      )}
-      {loadingState === "error" && (
-        <FontText className="mt-4">Error loading user info</FontText>
-      )}
-      {loadingState === "done" && user && (
+      {user && (
         <View className="flex-1">
+          <TouchableOpacity
+            className="absolute left-0 top-safe w-12 h-12 rounded-2xl items-center justify-center ms-5 z-10"
+            onPress={() => {
+              router.back();
+            }}
+          >
+            <CaretLeftIcon size={24} color={slate700} />
+          </TouchableOpacity>
           <View className="w-full bg-[#EFF6FF] pt-safe-offset-[54px]" />
           <View className="text-center w-20 h-20 rounded-full bg-ut-burntorange items-center justify-center self-center -mt-10">
             <FontText className="text-center text-white text-[24px] font-medium">
@@ -127,12 +132,13 @@ const Profile = () => {
             {!isEditing && (
               <View className="gap-[12px] pb-4">
                 <TouchableOpacity
-                  className="text-center px-6 py-2 rounded-full border border-[#E5E7EB] bg-[#F9FAFB] self-center"
+                  className="flex-row gap-1 items-center text-center px-3 py-2 rounded-full border border-[#E5E7EB] bg-[#F9FAFB] self-center"
                   onPress={() => {
                     resetForm();
                     setIsEditing(true);
                   }}
                 >
+                  <PencilIcon size={20} />
                   <FontText className="text-center text-[16px] tracking-[-0.16px]">
                     Edit Profile
                   </FontText>
@@ -166,72 +172,72 @@ const Profile = () => {
                 {!isEditing && (
                   <View className="flex-1 flex-col items-start gap-10 mt-4 px-5">
                     <View className="flex flex-col items-start self-stretch h-[55px]">
-                      <FontText className="font-medium text-md">
+                      <FontText className="font-medium text-lg">
                         First Name
                       </FontText>
-                      <FontText className="mt-4 mb-1 text-md">
+                      <FontText className="mt-4 mb-1 text-lg">
                         {user.firstName}
                       </FontText>
                       <View className="border-b border-b-[#e5e7eb] w-full" />
                     </View>
                     <View className="flex flex-col items-start self-stretch h-[55px]">
-                      <FontText className="font-medium text-md">
+                      <FontText className="font-medium text-lg">
                         Last Name
                       </FontText>
-                      <FontText className="mt-4 mb-1 text-md">
+                      <FontText className="mt-4 mb-1 text-lg">
                         {user.lastName}
                       </FontText>
                       <View className="border-b border-b-[#e5e7eb] w-full" />
                     </View>
                     <View className="flex flex-col items-start self-stretch h-[55px]">
-                      <FontText className="font-medium text-md">
+                      <FontText className="font-medium text-lg">
                         UT EID
                       </FontText>
-                      <FontText className="mt-4 mb-1 text-md">
+                      <FontText className="mt-4 mb-1 text-lg">
                         {user.eid || "Not provided"}
                       </FontText>
                       <View className="border-b border-b-[#e5e7eb] w-full" />
                     </View>
                     <View className="flex flex-col items-start self-stretch h-[55px]">
-                      <FontText className="font-medium text-md">
+                      <FontText className="font-medium text-lg">
                         Phone Number
                       </FontText>
-                      <FontText className="mt-4 mb-1 text-md">
+                      <FontText className="mt-4 mb-1 text-lg">
                         {user.phoneNumber}
                       </FontText>
                       <View className="border-b border-b-[#e5e7eb] w-full" />
                     </View>
                     <View className="flex flex-col items-start self-stretch h-[55px] mb-5">
-                      <FontText className="font-medium text-md">
+                      <FontText className="font-medium text-lg">
                         Americans with Disabilities Act (ADA)
                       </FontText>
-                      <FontText className="mt-4 mb-1 text-md">
+                      <FontText className="mt-4 mb-1 text-lg">
                         {user.requiresAssistance ? "Yes" : "No"}
                       </FontText>
                       <View className="border-b border-b-[#e5e7eb] w-full" />
                     </View>
                     <View className="flex flex-col items-start self-stretch h-[55px]">
-                      <FontText className="font-medium text-md">
+                      <FontText className="font-medium text-lg">
                         Guidelines
                       </FontText>
                       <TouchableOpacity
                         className="flex-row mt-4 mb-1 items-center justify-between w-full"
                         onPress={() => router.push("/profile/guidelines")}
                       >
-                        <FontText className="text-md">
-                          View all guidelines
+                        <FontText className="text-lg">
+                          View all Sure Walk guidelines
                         </FontText>
                         <CaretRightIcon size={24} />
                       </TouchableOpacity>
                       <View className="border-b border-b-[#e5e7eb] w-full" />
                     </View>
                     <View className="flex flex-col items-start self-stretch h-[55px]">
-                      <FontText className="font-medium text-md">FAQs</FontText>
+                      <FontText className="font-medium text-lg">FAQs</FontText>
                       <TouchableOpacity
                         className="flex-row mt-4 mb-1 items-center justify-between w-full"
                         onPress={() => router.push("/profile/faqs")}
                       >
-                        <FontText className="text-md">
+                        <FontText className="text-lg">
                           View frequently asked questions
                         </FontText>
                         <CaretRightIcon size={24} />
@@ -239,7 +245,7 @@ const Profile = () => {
                       <View className="border-b border-b-[#e5e7eb] w-full" />
                     </View>
                     <View className="flex flex-col items-start self-stretch h-[55px]">
-                      <FontText className="font-medium text-md">
+                      <FontText className="font-medium text-lg">
                         UT Night Rides
                       </FontText>
                       <TouchableOpacity
@@ -250,16 +256,17 @@ const Profile = () => {
                           )
                         }
                       >
-                        <FontText className="text-md">Redeem credit</FontText>
+                        <FontText className="text-lg">
+                          Redeem Lyft credit
+                        </FontText>
                         <ArrowUpRightIcon size={24} />
                       </TouchableOpacity>
                       <View className="border-b border-b-[#e5e7eb] w-full" />
                     </View>
-                    <View className="pb-2 w-full mb-6">
+                    <View className="pb-2 pt-6 w-full mb-safe">
                       <OutlineButton
                         title="Log Out"
-                        onPress={logOut}
-                        icon={<SignOutIcon color={UTBluebonnet} size={32} />}
+                        onPress={() => logOut(pushToken ?? undefined)}
                       />
                     </View>
                   </View>
@@ -301,7 +308,7 @@ const Profile = () => {
                         maxLength={20}
                         placeholder="1234567890"
                         editable={false}
-                        className="color-slate-500 text-md mb-1 mt-4 font-regular"
+                        className="color-slate-500 text-lg mb-1 mt-4 font-regular"
                       />
                       <DropdownSelect
                         label="Americans with Disabilities Act (ADA)"
@@ -319,7 +326,7 @@ const Profile = () => {
               </ScrollView>
             </View>
             {isEditing && (
-              <View className="flex-row gap-2 mt-4">
+              <View className="flex-row gap-2 mt-4 mb-safe">
                 <View className="pb-2 flex-1">
                   <OutlineButton
                     title="Cancel"

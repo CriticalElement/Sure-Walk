@@ -1,8 +1,8 @@
+import Location from "@sure-walk/utils/types/location";
 import { CircleIcon, MapPinIcon } from "phosphor-react-native";
 import { View } from "react-native";
 
 import { UTBluebonnet, UTBurntOrange } from "../utils/colors";
-import Location from "../utils/types/location";
 import FontText from "./font-text";
 
 const PickupDropoffLocationInfo = ({
