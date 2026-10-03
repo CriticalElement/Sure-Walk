@@ -6,13 +6,17 @@ import BottomSheet, {
   BottomSheetView,
   TouchableOpacity as TO,
 } from "@gorhom/bottom-sheet";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   dropoffBoundaryHoles,
   dropoffBoundaryPolygons,
   pickupBoundaryPolygons,
 } from "@sure-walk/utils/boundary-info";
 import { getMatchingDropoffLocations } from "@sure-walk/utils/dropoff-locations";
-import { getMatchingPickupLocations } from "@sure-walk/utils/pickup-locations";
+import {
+  getMatchingPickupLocations,
+  sortFavoriteLocations,
+} from "@sure-walk/utils/pickup-locations";
 import LocationType from "@sure-walk/utils/types/location";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Location from "expo-location";
@@ -104,8 +108,8 @@ const Home = () => {
   const destinationRef = useRef<TextInput>(null);
   const rideCodeSheetRef = useRef<BottomSheetModal>(null);
 
-  const snap0 = useSharedValue<number>(92); // minimum botton sheet snapping height
-  const snap1 = useSharedValue<number>(290); // medium botton sheet snapping height
+  const snap0 = useSharedValue<number>(92); // minimum bottom sheet snapping height
+  const snap1 = useSharedValue<number>(290); // medium bottom sheet snapping height
   const snapPoints = useDerivedValue(
     () => [
       snap0.value + 24, // compensate for screen safe area
@@ -143,6 +147,9 @@ const Home = () => {
   );
   const [dropoffAddress, setDropoffAddress] = useState<string>(
     dropoffLocation?.address ?? "Select your destination",
+  );
+  const [favoriteLocations, setFavoriteLocations] = useState<LocationType[]>(
+    [],
   );
 
   const lastNotificationResponse = Notifications.useLastNotificationResponse();
@@ -273,7 +280,21 @@ const Home = () => {
     }
   };
 
+  const loadFavorites = async () => {
+    const stored = await AsyncStorage.getItem("favoriteLocations");
+    try {
+      setFavoriteLocations(
+        (JSON.parse(stored ?? "[]") as LocationType[]).sort(
+          sortFavoriteLocations,
+        ),
+      );
+    } catch {
+      await AsyncStorage.removeItem("favoriteLocations");
+    }
+  };
+
   useEffect(() => {
+    loadFavorites();
     registerForPushNotificationsAsync();
     requestLocationPermissions();
     const responseListener =
@@ -373,6 +394,27 @@ const Home = () => {
       router.navigate("/home/confirm-ride");
     }
   };
+
+  const toggleFavorite = (location: LocationType) => {
+    setFavoriteLocations((prev) => {
+      const isAlreadyFavorited = prev.some((fav) => fav.id === location.id);
+      const updated = isAlreadyFavorited
+        ? prev.filter((fav) => fav.id !== location.id)
+        : [...prev, location];
+      updated.sort(sortFavoriteLocations);
+      AsyncStorage.setItem("favoriteLocations", JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const displayedList =
+    focusedInput === "pickup" && pickupLocationText.trim().length >= 1
+      ? pickupList
+      : focusedInput === "dropoff" && dropoffText.trim().length >= 1
+        ? dropoffList
+        : focusedInput === "dropoff"
+          ? favoriteLocations
+          : favoriteLocations.filter((fav) => fav.type === "pickup");
 
   return (
     <View className="bg-white flex-1 flex-col items-center pt-safe">
@@ -647,11 +689,33 @@ const Home = () => {
                     </FontText>
                   </View>
                 </Pressable>
-                <TO onPress={() => rideCodeSheetRef.current?.present()}>
-                  <FontText className="text-lg mb-safe color-ut-bluebonnet">
-                    Have a ride code?
-                  </FontText>
-                </TO>
+                <View className="flex-row justify-between items-center mb-safe">
+                  <TO onPress={() => rideCodeSheetRef.current?.present()}>
+                    <FontText className="text-lg color-ut-bluebonnet">
+                      Have a ride code?
+                    </FontText>
+                  </TO>
+                  {((focusedInput === "pickup" &&
+                    pickupLocationText.trim().length >= 1) ||
+                    (focusedInput === "dropoff" &&
+                      dropoffText.trim().length >= 1)) && (
+                    <TouchableOpacity
+                      onPress={() =>
+                        focusedInput === "pickup"
+                          ? (setPickupLocationText(""),
+                            setStartAddress("Select your pickup location"),
+                            setPickupLocation(null))
+                          : (setDropoffText(""),
+                            setDropoffAddress("Select your destination"),
+                            setDropoffLocation(null))
+                      }
+                    >
+                      <FontText className="text-lg">
+                        Clear {focusedInput} selection
+                      </FontText>
+                    </TouchableOpacity>
+                  )}
+                </View>
               </View>
             )}
 
@@ -721,14 +785,24 @@ const Home = () => {
             scrollEnabled={
               Platform.OS === "android" ? snapIndex === 2 : undefined
             }
-            data={
-              focusedInput === "pickup" && pickupLocationText.trim().length >= 1
-                ? pickupList
-                : focusedInput === "dropoff" && dropoffText.trim().length >= 1
-                  ? dropoffList
-                  : []
-            }
+            data={displayedList}
             keyboardShouldPersistTaps="handled"
+            ListEmptyComponent={
+              <View className="flex-1 h-full w-full flex-col items-center gap-4 mt-2">
+                {(((focusedInput === "pickup" &&
+                  pickupLocationText.length === 0) ||
+                  (focusedInput === "dropoff" && dropoffText.length === 0)) && (
+                  <>
+                    <FontText className="text-xl">
+                      No favorite locations
+                    </FontText>
+                    <FontText className="text-lg">
+                      Start typing a location name for results
+                    </FontText>
+                  </>
+                )) || <FontText className="text-xl">No results</FontText>}
+              </View>
+            }
             renderItem={({ index, item }) => (
               <TouchableOpacity
                 key={index}
@@ -740,7 +814,7 @@ const Home = () => {
               >
                 <View
                   key={index}
-                  className={`flex-col ${index === (focusedInput === "pickup" ? pickupList : dropoffList).length - 1 ? "" : "border-b"} border-gray-200 pb-4 pt-2`}
+                  className={`flex-col ${index === displayedList.length - 1 ? "" : "border-b"} border-gray-200 pb-4 pt-2`}
                 >
                   <View className="flex-row gap-2 items-center">
                     <MapPinIcon color={slate900} size="24" />
@@ -752,33 +826,27 @@ const Home = () => {
                         {item.address}
                       </FontText>
                     </View>
-                    <StarIcon color={slate900} size="24" />
+                    <TouchableOpacity
+                      onPress={(e) => {
+                        e.stopPropagation();
+                        toggleFavorite(item);
+                      }}
+                      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                    >
+                      <StarIcon
+                        color={slate900}
+                        size="24"
+                        weight={
+                          favoriteLocations.some((fav) => fav.id === item.id)
+                            ? "fill"
+                            : "regular"
+                        }
+                      />
+                    </TouchableOpacity>
                   </View>
                 </View>
               </TouchableOpacity>
             )}
-            ListFooterComponent={
-              (((focusedInput === "pickup" &&
-                pickupLocationText.trim().length >= 1) ||
-                (focusedInput === "dropoff" &&
-                  dropoffText.trim().length >= 1)) && (
-                <TouchableOpacity
-                  onPress={() =>
-                    focusedInput === "pickup"
-                      ? (setPickupLocationText(""),
-                        setStartAddress("Select your pickup location"),
-                        setPickupLocation(null))
-                      : (setDropoffText(""),
-                        setDropoffAddress("Select your destination"),
-                        setDropoffLocation(null))
-                  }
-                >
-                  <FontText className="mt-4 mb-safe">
-                    Clear {focusedInput} selection
-                  </FontText>
-                </TouchableOpacity>
-              )) || <View />
-            }
             contentContainerStyle={{
               paddingTop: 8,
               position: "relative",
@@ -786,6 +854,7 @@ const Home = () => {
               flexDirection: "column",
               gap: 4,
               justifyContent: "flex-start",
+              flexGrow: 1,
             }}
             style={{
               flexGrow: 1,
