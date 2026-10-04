@@ -15,7 +15,7 @@ const Dashboard = () => {
       <header className="py-4 full-width flex flex-row items-center justify-between border-b border-gray-200">
         <Image src={SureWalkLogo} alt="Sure Walk Logo" height={32} />
         <form action={action}>
-          <button disabled={pending} type="submit">
+          <button className="cursor-pointer" disabled={pending} type="submit">
             Log out
           </button>
         </form>
