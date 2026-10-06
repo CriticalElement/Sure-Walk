@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   description: "Dashboard for Sure Walk",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
