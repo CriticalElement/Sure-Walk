@@ -37,7 +37,8 @@ import LargeButton from "./large-button";
 const TabScreens = () => {
   const { loadingState, user, guidelinesAccepted, fetchUserInfo } =
     useSession();
-  const { loadingState: rideLoadingState } = useCurrentRideSession();
+  const { loadingState: rideLoadingState, currentRide } =
+    useCurrentRideSession();
   const {
     loadingState: notificationsLoadingState,
     registerForPushNotificationsAsync,
@@ -107,9 +108,14 @@ const TabScreens = () => {
       notificationsLoadingState !== "loading" &&
       (loaded || error)
     ) {
-      setTimeout(() => SplashScreen.hideAsync(), 200);
+      if (currentRide) {
+        router.push("/home/current-ride-info");
+      } else {
+        setTimeout(() => SplashScreen.hideAsync(), 200);
+      }
     }
   }, [
+    // eslint-disable-line react-hooks/exhaustive-deps
     loadingState,
     rideLoadingState,
     notificationsLoadingState,

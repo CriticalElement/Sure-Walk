@@ -78,8 +78,6 @@ import { usePushNotificationsContext } from "@/src/utils/context/push-notificati
 import { useRideSession } from "@/src/utils/context/ride-context";
 import { useToastContext } from "@/src/utils/context/toast-context";
 
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
-
 const Home = () => {
   let _style: StyleProp<TextStyle> = { fontSize: 16 };
   if (Platform.OS === "ios") {
@@ -687,7 +685,7 @@ const Home = () => {
                     </FontText>
                   </View>
                 </Pressable>
-                <View className="flex-row justify-between items-center mb-safe">
+                <View className="flex-row justify-between items-center pb-2 mb-safe">
                   <TO
                     onPress={() => {
                       rideCodeSheetRef.current?.present();
@@ -874,15 +872,6 @@ const Home = () => {
             <View className="rounded-t-[28px] flex-col items-center py-4">
               <View className="bg-slate-300 rounded w-8 h-1" />
             </View>
-          )}
-          backdropComponent={() => (
-            <AnimatedPressable
-              className="absolute inset-0"
-              onPress={() => {
-                rideCodeSheetRef.current?.dismiss();
-                sheetRef.current?.snapToIndex(1);
-              }}
-            />
           )}
           onDismiss={() => sheetRef.current?.snapToIndex(1)}
         >
