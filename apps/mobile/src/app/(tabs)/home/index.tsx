@@ -46,10 +46,8 @@ import {
 import MapView, { Polygon } from "react-native-maps";
 import Animated, {
   Easing,
-  FadeIn,
   FadeInDown,
   FadeInUp,
-  FadeOut,
   FadeOutDown,
   FadeOutUp,
   useDerivedValue,
@@ -578,7 +576,7 @@ const Home = () => {
               <View className="bg-slate-300 rounded w-8 h-1" />
             </View>
             <View className="flex-col gap-5 px-5 pb-1">
-              <View className="flex-row w-full justify-between items-center h-12">
+              <View className="flex-row w-full justify-between items-center">
                 <FontText className="text-2xl font-medium">
                   {currentRide ? "Ride in Progress" : "Book a ride"}
                 </FontText>
@@ -690,7 +688,12 @@ const Home = () => {
                   </View>
                 </Pressable>
                 <View className="flex-row justify-between items-center mb-safe">
-                  <TO onPress={() => rideCodeSheetRef.current?.present()}>
+                  <TO
+                    onPress={() => {
+                      rideCodeSheetRef.current?.present();
+                      sheetRef.current?.close();
+                    }}
+                  >
                     <FontText className="text-lg color-ut-bluebonnet">
                       Have a ride code?
                     </FontText>
@@ -874,12 +877,14 @@ const Home = () => {
           )}
           backdropComponent={() => (
             <AnimatedPressable
-              className="absolute inset-0 bg-[#00000080]"
-              onPress={() => rideCodeSheetRef.current?.dismiss()}
-              entering={FadeIn.duration(200)}
-              exiting={FadeOut.duration(200)}
+              className="absolute inset-0"
+              onPress={() => {
+                rideCodeSheetRef.current?.dismiss();
+                sheetRef.current?.snapToIndex(1);
+              }}
             />
           )}
+          onDismiss={() => sheetRef.current?.snapToIndex(1)}
         >
           <BottomSheetView className="px-5 pb-safe">
             <FontText className="text-2xl font-medium">Join a Ride</FontText>
