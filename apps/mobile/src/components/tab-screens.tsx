@@ -110,7 +110,7 @@ const TabScreens = () => {
       (loaded || error)
     ) {
       if (currentRide) {
-        router.push("/home/current-ride-info");
+        router.navigate("/home/current-ride-info");
       } else {
         setTimeout(() => SplashScreen.hideAsync(), 200);
       }
