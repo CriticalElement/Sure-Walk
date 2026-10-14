@@ -11,6 +11,7 @@ import { users } from "../db/schema/users";
 import { Vehicle, vehicles } from "../db/schema/vehicles";
 import {
   fetchPushReceipts,
+  sendCancelledRideNotification,
   sendMissedRideNotification,
   sendRideFeedbackNotification,
   sendRouteUpdateNotification,
@@ -670,6 +671,15 @@ export class RideInfoStream extends DurableObject<CloudflareEnv> {
       .get(rideID)
       ?.forEach((ws) => ws.close(1000, "Ride cancelled."));
     this.streams.delete(rideID);
+    const subscribers = this.getSubscribers(rideID);
+    if (subscribers) {
+      const res = await sendCancelledRideNotification({
+        pushTokens: subscribers.pushTokens,
+        rideID,
+        isLeader: subscribers.isLeader,
+      });
+      this.addPushTickets(res);
+    }
     this.clearSubscribers(rideID);
   }
 }

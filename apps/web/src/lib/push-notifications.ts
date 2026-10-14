@@ -125,6 +125,32 @@ const createMissedRidePayload = ({
   };
 };
 
+const createCancelledRidePayload = ({
+  pushToken,
+  rideID,
+}: {
+  pushToken: string;
+  rideID: string;
+}): ExpoPushMessage => {
+  const title = "Ride cancelled";
+  const body = "Your ride was cancelled by the group leader.";
+
+  const data = {
+    eventType: "rideCancelled",
+  };
+
+  return {
+    title,
+    body,
+    data,
+    to: pushToken,
+    priority: "high",
+    interruptionLevel: "time-sensitive",
+    threadId: rideID,
+    channelId: "default",
+  };
+};
+
 const createRideFeedbackPayload = ({
   pushToken,
   rideID,
@@ -306,6 +332,27 @@ export const sendMissedRideNotification = async ({
       rideID,
     }),
   );
+
+  return sendMessages(messages);
+};
+
+export const sendCancelledRideNotification = async ({
+  pushTokens,
+  rideID,
+  isLeader,
+}: {
+  pushTokens: string[];
+  rideID: string;
+  isLeader: boolean[];
+}) => {
+  const messages = pushTokens
+    .filter((_, i) => !isLeader[i])
+    .map((pushToken) =>
+      createCancelledRidePayload({
+        pushToken,
+        rideID,
+      }),
+    );
 
   return sendMessages(messages);
 };
