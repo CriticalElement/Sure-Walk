@@ -206,9 +206,7 @@ const cancelRide = async (ride: Ride, user: User) => {
       await samsaraClient.routes.patchRoute({
         id: ride.samsaraID,
         name: newName,
-        // @ts-expect-error should be null to remove vehicleId
         vehicleId: null,
-        // @ts-expect-error should be null to remove driverId
         driverId: null,
         stops: [
           {
@@ -257,9 +255,7 @@ const missRide = async (ride: Ride, user: User) => {
       await samsaraClient.routes.patchRoute({
         id: ride.samsaraID,
         name: newName,
-        // @ts-expect-error should be null to remove vehicleId
         vehicleId: null,
-        // @ts-expect-error should be null to remove driverId
         driverId: null,
         stops: [
           {
@@ -282,6 +278,16 @@ const getVehicleFromDriver = async (driverID: string) => {
         filterBy: "drivers",
         driverIds: driverID,
         assignmentType: "HOS",
+      }),
+  );
+  return res;
+};
+
+const getAssetFromDriver = async (driverID: string) => {
+  const res = await retry(
+    async () =>
+      await samsaraClient.betaApIs.listAssetAssignments({
+        assigneeIds: [driverID],
       }),
   );
   return res;
@@ -315,6 +321,7 @@ export {
   createRoute,
   fetchCurrentRoutes,
   getAsset,
+  getAssetFromDriver,
   getAssetLocations,
   getCurrentWaitTime,
   getDriverFromVehicle,

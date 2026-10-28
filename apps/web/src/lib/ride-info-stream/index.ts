@@ -26,6 +26,7 @@ import {
 import {
   fetchCurrentRoutes,
   getAsset,
+  getAssetFromDriver,
   getAssetLocations,
   getFormSubmission,
   getRouteUpdates,
@@ -416,6 +417,12 @@ export class RideInfoStream extends DurableObject<CloudflareEnv> {
                   vehicleAssignment.data.length > 0
                 ) {
                   vehicleID = vehicleAssignment.data[0].vehicle.id;
+                } else {
+                  // they might be assigned to equipment
+                  const assetAssignment = await getAssetFromDriver(driverID);
+                  if (assetAssignment.data && assetAssignment.data.length > 0) {
+                    vehicleID = assetAssignment.data[0].asset.id;
+                  }
                 }
               }
               if (vehicleID) {
