@@ -76,6 +76,32 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  const formatter = Intl.DateTimeFormat("en-US", {
+    hour: "numeric",
+    hour12: false,
+    timeZone: "America/Chicago",
+    timeZoneName: "longOffset",
+  });
+  const parts = formatter.formatToParts(new Date());
+  const tzOffset = parts.find((t) => t.type == "timeZoneName")?.value;
+  const dstActive = tzOffset === "GMT-05:00";
+  const startHour = dstActive ? 20 : 19;
+  const endHour = 2;
+  const currentHour = parseInt(
+    parts.find((t) => t.type == "hour")?.value ?? "0",
+  );
+  const prod = process.env.ENV == "production";
+
+  // out of hours handling
+  if (currentHour < startHour && currentHour >= endHour && prod) {
+    return NextResponse.json(
+      {
+        message: "Sure Walk is closed.",
+      },
+      { status: 400 },
+    );
+  }
+
   const { pickupLocation, dropoffLocation, groupRide } = validationResult.data;
 
   const [pickupLocationInfo] = await getDB()

@@ -12,12 +12,13 @@ import { User } from "../db/schema/users";
 const samsaraClient = new SamsaraClient({ token: process.env.SAMSARA_API_KEY });
 
 const getCurrentWaitTime = async () => {
-  return 30;
+  return 15;
 };
 
 const getRideName = (user: User, members: GroupRideMember[]) => {
+  const env = process.env.ENV == "production" ? "" : "Testing ";
   // make sure the title of the route contains the # of people (group ride), if ADA is required, or both
-  return `${members.length > 0 ? `${members.length + 1}-person ` : ``}${user.requiresAssistance ? "ADA " : ""}Sure Walk for ${user.firstName} ${user.lastName}`;
+  return `${env}${members.length > 0 ? `${members.length + 1}-person ` : ``}${user.requiresAssistance ? "ADA " : ""}Sure Walk for ${user.firstName} ${user.lastName}`;
 };
 
 const retry = async <T>(func: () => Promise<T>) => {

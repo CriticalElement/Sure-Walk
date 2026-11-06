@@ -58,6 +58,12 @@ const Phone = () => {
         return;
       }
 
+      setToast({
+        title: "Code",
+        description: response.data.code ?? "code",
+        onDismiss: () => setToast(null),
+      });
+
       router.navigate("/login/sign-up/confirm");
     } catch (error) {
       handleNetworkFailure(error, setToast);

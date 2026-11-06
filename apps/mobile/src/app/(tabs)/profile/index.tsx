@@ -306,11 +306,16 @@ const Profile = () => {
                       </TouchableOpacity>
                       <View className="border-b border-slate-200 w-full" />
                     </View>
-                    <View className="pb-2 pt-6 w-full mb-safe">
+                    <View className="pt-6 w-full mb-safe flex-col gap-4">
                       <OutlineButton
                         title="Log Out"
                         onPress={() => logOut(pushToken ?? undefined)}
                       />
+                      <FontText className="text-sm text-center color-slate-400">
+                        made with ♡ from the Longhorn Lifts team at Longhorn
+                        Developers{"\n"}
+                        in collaboration with PTS
+                      </FontText>
                     </View>
                   </View>
                 )}

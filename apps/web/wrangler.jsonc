@@ -35,12 +35,15 @@
       "new_sqlite_classes": ["RideInfoStream"],
     },
   ],
-  "workflows": [
-    {
-      "name": "push-receipts-workflow",
-      "binding": "PUSH_RECEIPTS_WORKFLOW",
-      "class_name": "PushReceiptsWorkflow",
-      "schedules": ["15 * * * *"],
+  "triggers": {
+    "crons": ["15 * * * *"],
+  },
+  "vars": {
+    "ENV": "production",
+  },
+  "previews": {
+    "vars": {
+      "ENV": "preview",
     },
-  ],
+  },
 }

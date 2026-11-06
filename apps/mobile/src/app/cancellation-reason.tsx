@@ -124,7 +124,7 @@ const CancellationReason = () => {
         onPress={submit}
         disabled={
           selectedOption === null ||
-          (selectedOption === "Other" && extraText.length <= 5) ||
+          (selectedOption === "Other" && extraText.length < 1) ||
           submitting
         }
       />

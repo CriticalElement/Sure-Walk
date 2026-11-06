@@ -43,6 +43,12 @@ const Index = () => {
         return;
       }
 
+      setToast({
+        title: "Code",
+        description: response.data.code ?? "code",
+        onDismiss: () => setToast(null),
+      });
+
       router.navigate("/login/login-generic/confirm");
     } catch (error) {
       handleNetworkFailure(error, setToast);
