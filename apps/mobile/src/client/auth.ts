@@ -3,12 +3,13 @@ import axios from "axios";
 import Constants from "expo-constants";
 import * as SecureStore from "expo-secure-store";
 
-const useProdAPI = false;
+const useProdAPI = true;
+export const usePreview = false;
 let API_URL: string;
 if (__DEV__ && !useProdAPI) {
   API_URL = `http://${Constants.expoConfig?.hostUri?.split(":").shift()}:3000/api`;
 } else {
-  API_URL = "https://lifts-web.longhorn-developers.workers.dev/api";
+  API_URL = `https://${usePreview ? "preview-" : ""}lifts-web.longhorn-developers.workers.dev/api`;
 }
 
 export const registerGeneric = async ({
