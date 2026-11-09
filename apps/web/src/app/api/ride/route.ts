@@ -1,4 +1,5 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
+import { isInHours } from "@sure-walk/utils/hours-handling";
 import CurrentRideMini from "@sure-walk/utils/types/current-ride-mini";
 import { and, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
@@ -76,24 +77,10 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const formatter = Intl.DateTimeFormat("en-US", {
-    hour: "numeric",
-    hour12: false,
-    timeZone: "America/Chicago",
-    timeZoneName: "longOffset",
-  });
-  const parts = formatter.formatToParts(new Date());
-  const tzOffset = parts.find((t) => t.type == "timeZoneName")?.value;
-  const dstActive = tzOffset === "GMT-05:00";
-  const startHour = dstActive ? 20 : 19;
-  const endHour = 2;
-  const currentHour = parseInt(
-    parts.find((t) => t.type == "hour")?.value ?? "0",
-  );
-  const prod = process.env.ENV == "production";
+  const prod = process.env.ENV === "production";
 
   // out of hours handling
-  if (currentHour < startHour && currentHour >= endHour && prod) {
+  if (!isInHours() && prod) {
     return NextResponse.json(
       {
         message: "Sure Walk is closed.",

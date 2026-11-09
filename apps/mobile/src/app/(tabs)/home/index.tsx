@@ -13,6 +13,7 @@ import {
   pickupBoundaryPolygons,
 } from "@sure-walk/utils/boundary-info";
 import { getMatchingDropoffLocations } from "@sure-walk/utils/dropoff-locations";
+import { dstActive, isInHours } from "@sure-walk/utils/hours-handling";
 import {
   getMatchingPickupLocations,
   sortFavoriteLocations,
@@ -54,6 +55,7 @@ import Animated, {
   useSharedValue,
 } from "react-native-reanimated";
 
+import { usePreview } from "@/src/client/auth";
 import { api } from "@/src/client/session";
 import CheckButton from "@/src/components/check-button";
 import FontText from "@/src/components/font-text";
@@ -64,6 +66,7 @@ import TertiaryButton from "@/src/components/tertiary-button";
 import TextInputField from "@/src/components/text-input-field";
 import {
   gray900,
+  slate400,
   slate700,
   slate900,
   UTBluebonnet,
@@ -104,17 +107,6 @@ const Home = () => {
   const destinationRef = useRef<TextInput>(null);
   const rideCodeSheetRef = useRef<BottomSheetModal>(null);
 
-  const snap0 = useSharedValue<number>(92); // minimum bottom sheet snapping height
-  const snap1 = useSharedValue<number>(290); // medium bottom sheet snapping height
-  const snapPoints = useDerivedValue(
-    () => [
-      snap0.value + 24, // compensate for screen safe area
-      snap1.value + snap0.value,
-      ...(!currentRide ? ["80.5%"] : []), // maximum sheet snapping height
-    ],
-    [snap0, snap1, currentRide],
-  );
-
   const [code, setCode] = useState<string>("");
   const [viewRideDisabled, setViewRideDisabled] = useState<boolean>(false);
   const [snapIndex, setSnapIndex] = useState<number>(1);
@@ -146,6 +138,20 @@ const Home = () => {
   );
   const [favoriteLocations, setFavoriteLocations] = useState<LocationType[]>(
     [],
+  );
+  const [isOpen, setIsOpen] = useState<boolean>(
+    usePreview ? true : isInHours(),
+  );
+
+  const snap0 = useSharedValue<number>(92); // minimum bottom sheet snapping height
+  const snap1 = useSharedValue<number>(290); // medium bottom sheet snapping height
+  const snapPoints = useDerivedValue(
+    () => [
+      snap0.value + 24, // compensate for screen safe area
+      snap1.value + snap0.value,
+      ...(!currentRide && isOpen ? ["80.5%"] : []), // maximum sheet snapping height
+    ],
+    [snap0, snap1, currentRide, isOpen],
   );
 
   const lastNotificationResponse = Notifications.useLastNotificationResponse();
@@ -289,6 +295,10 @@ const Home = () => {
     }
   };
 
+  const checkHours = () => {
+    setIsOpen(usePreview ? true : isInHours());
+  };
+
   useEffect(() => {
     loadFavorites();
     registerForPushNotificationsAsync();
@@ -298,9 +308,11 @@ const Home = () => {
         handleMissedRideNotificationResponse,
       );
     const interval = setInterval(fetchCurrentRide, 30 * 1000);
+    const hoursInterval = setInterval(checkHours, 10 * 1000);
 
     return () => {
       clearInterval(interval);
+      clearInterval(hoursInterval);
       responseListener.remove();
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -581,8 +593,14 @@ const Home = () => {
                 {!currentRide && (
                   <TertiaryButton
                     title={`${members.length === 0 ? "Add" : members.length + 1} Riders`}
-                    icon={<UserCirclePlusIcon color={slate700} size="24" />}
+                    icon={
+                      <UserCirclePlusIcon
+                        color={isOpen ? slate700 : slate400}
+                        size="24"
+                      />
+                    }
                     onPress={() => router.navigate("/home/group-ride")}
+                    disabled={!isOpen}
                   />
                 )}
               </View>
@@ -615,7 +633,7 @@ const Home = () => {
         <View className="flex-col mb-[-24px]" onLayout={calcMediumSheetHeight}>
           <View className="flex-col bg-white pt-4 px-5">
             {/* location selector */}
-            {!currentRide && (
+            {!currentRide && isOpen && (
               <View className="flex-col rounded-lg">
                 <Pressable
                   className={`${focusedInput === "pickup" ? "bg-slate-100" : "bg-slate-50"} transition-colors flex-row p-4 gap-4 items-center rounded-t-2xl border border-slate-200`}
@@ -720,6 +738,27 @@ const Home = () => {
               </View>
             )}
 
+            {/* closed banner */}
+            {!currentRide && !isOpen && (
+              <View className="mb-safe">
+                <View className="px-5 py-3 bg-[#B91C1C33] border-x border-t border-slate-200 rounded-t-3xl">
+                  <FontText className="text-lg font-semibold text-red-700">
+                    Sure Walk is Closed
+                  </FontText>
+                </View>
+                <View className="px-5 py-4 bg-50 border-x border-b border-slate-200 rounded-b-3xl flex-col gap-2">
+                  <FontText className="text-lg font-semibold">
+                    Hours of Operation:{" "}
+                    <FontText className="font-regular">{`${dstActive() ? "8" : "7"}pm - 2am`}</FontText>
+                  </FontText>
+                  <FontText className="text-md font-medium text-slate-500">
+                    *Sure Walk doesn't operate during holidays and campus
+                    closures
+                  </FontText>
+                </View>
+              </View>
+            )}
+
             {/* current ride details */}
             {currentRide && (
               <View className="flex-col gap-4 mb-safe">
@@ -780,7 +819,7 @@ const Home = () => {
         </View>
 
         {/* search results */}
-        {!currentRide && (
+        {!currentRide && isOpen && (
           <BottomSheetFlatList
             overScrollMode={"always"}
             scrollEnabled={
