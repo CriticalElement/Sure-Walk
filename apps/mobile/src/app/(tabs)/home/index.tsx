@@ -55,7 +55,7 @@ import Animated, {
   useSharedValue,
 } from "react-native-reanimated";
 
-import { usePreview } from "@/src/client/auth";
+import { environment } from "@/src/client/auth";
 import { api } from "@/src/client/session";
 import CheckButton from "@/src/components/check-button";
 import FontText from "@/src/components/font-text";
@@ -140,7 +140,7 @@ const Home = () => {
     [],
   );
   const [isOpen, setIsOpen] = useState<boolean>(
-    usePreview ? true : isInHours(),
+    environment !== "production" ? true : isInHours(),
   );
 
   const snap0 = useSharedValue<number>(92); // minimum bottom sheet snapping height
@@ -296,7 +296,7 @@ const Home = () => {
   };
 
   const checkHours = () => {
-    setIsOpen(usePreview ? true : isInHours());
+    setIsOpen(environment !== "production" ? true : isInHours());
   };
 
   useEffect(() => {
@@ -417,12 +417,14 @@ const Home = () => {
 
   const displayedList =
     focusedInput === "pickup" && pickupLocationText.trim().length >= 1
-      ? pickupList
+      ? pickupList.filter((loc) => loc.id !== dropoffLocation?.id)
       : focusedInput === "dropoff" && dropoffText.trim().length >= 1
-        ? dropoffList
+        ? dropoffList.filter((loc) => loc.id !== pickupLocation?.id)
         : focusedInput === "dropoff"
-          ? favoriteLocations
-          : favoriteLocations.filter((fav) => fav.type === "pickup");
+          ? favoriteLocations.filter((loc) => loc.id !== pickupLocation?.id)
+          : favoriteLocations.filter(
+              (fav) => fav.type === "pickup" && fav.id !== dropoffLocation?.id,
+            );
 
   return (
     <View className="bg-white flex-1 flex-col items-center pt-safe">
@@ -663,6 +665,8 @@ const Home = () => {
                       }}
                       value={pickupLocationText}
                       style={_style}
+                      autoCorrect={false}
+                      spellCheck={false}
                     />
                     <FontText className="text-lg color-[#333F48]">
                       {startLocationAddress}
@@ -697,6 +701,8 @@ const Home = () => {
                       }}
                       value={dropoffText}
                       style={_style}
+                      autoCorrect={false}
+                      spellCheck={false}
                     />
                     <FontText className="text-lg color-[#333F48]">
                       {dropoffAddress}
